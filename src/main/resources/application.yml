@@ -1,9 +1,9 @@
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://${DATABASE_HOST}:${DATABASE_PORT}/${DATABASE_DB}?serverTimezone=Asia/Seoul
-    username: ${DATABASE_USER}
-    password: ${DATABASE_PASSWORD}
+    url: jdbc:mysql://localhost:3306/hooking?serverTimezone=Asia/Seoul
+    username: root
+    password: yexxi2118#
 
   jpa:
     hibernate:
@@ -12,7 +12,7 @@ spring:
     show-sql: true
 
   jwt:
-    secret-key: ${SECRET-KEY}
+    secret-key: yexxi2118#
     blacklist:
       access-token: BlackList_AccessToken_
 
