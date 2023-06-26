@@ -48,7 +48,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
         String token = jwtTokenProvider.createJwtAccessToken(oAuth2User.getAttribute("id").toString(), role); //토큰발행
         log.info("{}", token);
-        targetUrl = UriComponentsBuilder.fromUriString("/home") //토큰을 포함해 리다이렉트,우린 홈으로 설정
+        targetUrl = UriComponentsBuilder.fromUriString("http://localhost:8080/kakaologin") //토큰을 포함해 리다이렉트,우린 홈으로 설정
                 .queryParam("token", token)
                 .queryParam("firstLogin", firstLogin)
                 .build().toUriString();

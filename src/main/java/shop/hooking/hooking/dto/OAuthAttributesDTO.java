@@ -14,16 +14,16 @@ import shop.hooking.hooking.config.Role;
 public class OAuthAttributesDTO {
     private Map<String, Object> attributes;
     private Long kakaoId;
-    private String name;
+    private String nickname;
     private String email;
     private String picture;
 
     @Builder
-    public OAuthAttributesDTO(Map<String, Object> attributes, Long kakaoId, String name,
+    public OAuthAttributesDTO(Map<String, Object> attributes, Long kakaoId, String nickname,
                               String email, String picture) {
         this.kakaoId = kakaoId;
         this.attributes = attributes;
-        this.name = name;
+        this.nickname = nickname;
         this.email = email;
         this.picture = picture;
     }
@@ -34,7 +34,7 @@ public class OAuthAttributesDTO {
 
         return OAuthAttributesDTO.builder()
                 .kakaoId((Long)attributes.get("id"))
-                .name((String)profile.get("nickname"))
+                .nickname((String)profile.get("nickname"))
                 .email((String)response.get("email"))
                 .picture((String)profile.get("profile_image_url"))
                 .attributes(attributes)
@@ -42,9 +42,9 @@ public class OAuthAttributesDTO {
     }
 
     public User toEntity() {
-         User user = User.builder()
+        User user = User.builder()
                 .kakaoId(kakaoId)
-                .nickname(name)
+                .nickname(nickname)
                 .image(picture)
                 .email(email)
                 .role(Role.USER)
@@ -53,4 +53,3 @@ public class OAuthAttributesDTO {
         return user;
     }
 }
-

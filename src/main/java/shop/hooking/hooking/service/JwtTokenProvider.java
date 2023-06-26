@@ -13,6 +13,8 @@ import org.springframework.security.core.Authentication;
 
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
+import shop.hooking.hooking.dto.OAuthAttributesDTO;
+import shop.hooking.hooking.dto.ResDTO;
 import shop.hooking.hooking.dto.SessionUserDTO;
 import shop.hooking.hooking.entity.User;
 import shop.hooking.hooking.repository.UserRepository;
@@ -30,10 +32,10 @@ import java.util.Date;
 public class JwtTokenProvider {
     private final UserRepository userRepository;
 
-    @Value("${jwt.secretKey}")
+    @Value("yexxi2118#")
     private String SECRET_KEY;
 
-    private final long ACCESS_TOKEN_VALID_TIME = 5 * 60 * 60 * 1000L; //5시간
+    private final long ACCESS_TOKEN_VALID_TIME = 24 * 60 * 60 * 1000L; //5시간
 
     @PostConstruct
     protected void init() {
@@ -76,6 +78,7 @@ public class JwtTokenProvider {
             Jws<Claims> claims = Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(jwtToken);
             return !claims.getBody().getExpiration().before(new Date()); // 유효하면 return
         } catch (Exception e){
+            System.out.println(e);
             return false; //유효하지 않은 경우
         }
     }
@@ -85,6 +88,17 @@ public class JwtTokenProvider {
         if(validateToken(token)) {
             User user = userRepository.findMemberByKakaoId(Long.parseLong(getUserPk(token)));
             return new SessionUserDTO(user);
+        }
+        else {
+            return null;
+        }
+    }
+
+    public ResDTO getKakaoInfo(HttpServletRequest request) {
+        String token = resolveToken(request);
+        if(validateToken(token)) {
+            User user = userRepository.findMemberByKakaoId(Long.parseLong(getUserPk(token)));
+            return new ResDTO(user);
         }
         else {
             return null;
