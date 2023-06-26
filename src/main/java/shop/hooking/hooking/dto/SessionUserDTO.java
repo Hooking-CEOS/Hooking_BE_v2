@@ -10,7 +10,7 @@ import java.util.Collection;
 import java.util.Collections;
 
 
-//인증된 사용자 유저
+//인증된 사용자 유
 @Getter
 public class SessionUserDTO implements UserDetails {
     private Long Id;
