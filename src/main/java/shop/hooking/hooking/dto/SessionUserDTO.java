@@ -6,9 +6,10 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import shop.hooking.hooking.entity.User;
-
 import java.util.Collection;
 import java.util.Collections;
+
+
 //인증된 사용자 유저
 @Getter
 public class SessionUserDTO implements UserDetails {
