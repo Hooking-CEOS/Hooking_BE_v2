@@ -41,7 +41,7 @@ public class OAuthAttributesDTO {
     }
 
     public User toEntity() {
-         User user = User.builder()
+        User user = User.builder()
                 .kakaoId(kakaoId)
                 .nickname(nickname)
                 .image(picture)
@@ -52,4 +52,3 @@ public class OAuthAttributesDTO {
         return user;
     }
 }
-

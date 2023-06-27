@@ -8,12 +8,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
-import shop.hooking.hooking.dto.SessionUserDTO;
-import shop.hooking.hooking.dto.response.OAuthUserResponseDTO;
 import shop.hooking.hooking.entity.User;
 import shop.hooking.hooking.repository.UserRepository;
+import shop.hooking.hooking.dto.response.OAuthUserResponseDTO;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
@@ -28,10 +26,10 @@ import java.util.Date;
 public class JwtTokenProvider {
     private final UserRepository userRepository;
 
-    @Value("JiwonKim08!")
+    @Value("yexxi2118#")
     private String SECRET_KEY;
 
-    private final long ACCESS_TOKEN_VALID_TIME = 5 * 60 * 60 * 1000L; //5시간
+    private final long ACCESS_TOKEN_VALID_TIME = 24 * 60 * 60 * 1000L; //5시간
 
     @PostConstruct
     protected void init() {
@@ -52,11 +50,10 @@ public class JwtTokenProvider {
     }
 
 
-    // jwt에서 인증정보 조회
     public Authentication getAuthentication(String token) {
         User user = userRepository.findMemberByKakaoId(Long.parseLong(getUserPk(token)));
-        UserDetails sessionUserDTO = SessionUserDTO.builder().user(user).build();
-        return new UsernamePasswordAuthenticationToken(sessionUserDTO, "", sessionUserDTO.getAuthorities());
+        OAuthUserResponseDTO resDTO = OAuthUserResponseDTO.builder().user(user).build();
+        return new UsernamePasswordAuthenticationToken(resDTO, "", resDTO.getAuthorities());
     }
 
 
@@ -93,6 +90,7 @@ public class JwtTokenProvider {
         }
 
     }
+
 
 
     public OAuthUserResponseDTO getKakaoInfo(HttpServletRequest request) {
