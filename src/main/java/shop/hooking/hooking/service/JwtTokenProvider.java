@@ -56,11 +56,10 @@ public class JwtTokenProvider {
     }
 
 
-    // token 가공해서 정보 추출
     public Authentication getAuthentication(String token) {
         User user = userRepository.findMemberByKakaoId(Long.parseLong(getUserPk(token)));
-        UserDetails sessionUserDTO = SessionUserDTO.builder().user(user).build();
-        return new UsernamePasswordAuthenticationToken(sessionUserDTO, "", sessionUserDTO.getAuthorities());
+        ResDTO resDTO = ResDTO.builder().user(user).build();
+        return new UsernamePasswordAuthenticationToken(resDTO, "", resDTO.getAuthorities());
     }
 
 

@@ -1,8 +1,11 @@
 package shop.hooking.hooking.config;
 
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 
 import org.springframework.security.oauth2.core.user.OAuth2User;
@@ -12,11 +15,15 @@ import org.springframework.web.util.UriComponentsBuilder;
 import shop.hooking.hooking.entity.User;
 import shop.hooking.hooking.repository.UserRepository;
 import shop.hooking.hooking.service.JwtTokenProvider;
+import shop.hooking.hooking.service.OAuthUserService;
 
 import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 
 //Success Handler에 진입했다는 것은, 로그인이 완료되었다는 뜻이다.
@@ -33,6 +40,8 @@ import java.io.IOException;
 public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
     private final JwtTokenProvider jwtTokenProvider;
     private final UserRepository userRepository;
+
+    private OAuthUserService oAuthUserService;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication)
@@ -54,5 +63,6 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
                 .build().toUriString();
         getRedirectStrategy().sendRedirect(request, response, targetUrl);
     }
+
 }
 

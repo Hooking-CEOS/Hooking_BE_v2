@@ -11,7 +11,7 @@ import java.util.Collection;
 import java.util.Collections;
 //인증된 사용자 유저
 @Getter
-public class SessionUserDTO implements UserDetails {  //nickname,picture, email
+public class SessionUserDTO implements UserDetails {
     private Long Id;
     private Long kakaoId;
     private String nickname;
