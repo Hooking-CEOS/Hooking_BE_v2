@@ -2,22 +2,16 @@ package shop.hooking.hooking.service;
 
 
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jws;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
-import shop.hooking.hooking.dto.OAuthAttributesDTO;
-import shop.hooking.hooking.dto.ResDTO;
-import shop.hooking.hooking.dto.SessionUserDTO;
 import shop.hooking.hooking.entity.User;
 import shop.hooking.hooking.repository.UserRepository;
+import shop.hooking.hooking.dto.response.OAuthUserResponseDTO;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
@@ -58,11 +52,12 @@ public class JwtTokenProvider {
 
     public Authentication getAuthentication(String token) {
         User user = userRepository.findMemberByKakaoId(Long.parseLong(getUserPk(token)));
-        ResDTO resDTO = ResDTO.builder().user(user).build();
+        OAuthUserResponseDTO resDTO = OAuthUserResponseDTO.builder().user(user).build();
         return new UsernamePasswordAuthenticationToken(resDTO, "", resDTO.getAuthorities());
     }
 
 
+    // jwt에서 회원정보 추출
     public String getUserPk(String token){
         return Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(token).getBody().getSubject();
     }
@@ -72,32 +67,37 @@ public class JwtTokenProvider {
         return request.getHeader("X-AUTH-TOKEN");
     }
 
-    public boolean validateToken(String jwtToken) {
+    // 토큰 유효성 + 만료일자 확인
+    public boolean validateToken(String jwtToken, HttpServletRequest request) {
         try {
             Jws<Claims> claims = Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(jwtToken);
             return !claims.getBody().getExpiration().before(new Date()); // 유효하면 return
-        } catch (Exception e){
-            System.out.println(e);
+        } catch (SignatureException e){
+            System.out.println("Invalid Signature");
+            return false; //유효하지 않은 경우
+        } catch (MalformedJwtException e){
+            System.out.println("Invalid JWT");
+            return false; //유효하지 않은 경우
+        } catch (ExpiredJwtException e){
+            System.out.println("Expired JWT");
+            return false; //유효하지 않은 경우
+        } catch (UnsupportedJwtException e){
+            System.out.println("Unsupported Excepton");
+            return false; //유효하지 않은 경우
+        } catch (IllegalArgumentException e){
+            System.out.println("Empty JWT Claims string");
             return false; //유효하지 않은 경우
         }
+
     }
 
-    public SessionUserDTO getUserInfoByToken(HttpServletRequest request) {
-        String token = resolveToken(request);
-        if(validateToken(token)) {
-            User user = userRepository.findMemberByKakaoId(Long.parseLong(getUserPk(token)));
-            return new SessionUserDTO(user);
-        }
-        else {
-            return null;
-        }
-    }
 
-    public ResDTO getKakaoInfo(HttpServletRequest request) {
+
+    public OAuthUserResponseDTO getKakaoInfo(HttpServletRequest request) {
         String token = resolveToken(request);
-        if(validateToken(token)) {
+        if(validateToken(token,request)) {
             User user = userRepository.findMemberByKakaoId(Long.parseLong(getUserPk(token)));
-            return new ResDTO(user);
+            return new OAuthUserResponseDTO(user);
         }
         else {
             return null;

@@ -5,11 +5,10 @@ package shop.hooking.hooking.dto;
 import lombok.Builder;
 import lombok.Getter;
 import shop.hooking.hooking.entity.User;
-
 import java.util.Map;
 import shop.hooking.hooking.config.Role;
 
-//소셜에서 가져온 유저 정보를 담을 도메인
+
 @Getter
 public class OAuthAttributesDTO {
     private Map<String, Object> attributes;

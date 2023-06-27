@@ -1,18 +1,17 @@
-package shop.hooking.hooking.dto;
+package shop.hooking.hooking.dto.response;
 
 import lombok.Builder;
 import lombok.Getter;
 //import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 import shop.hooking.hooking.entity.User;
 
 import java.util.Collection;
 import java.util.Collections;
 
 @Getter
-public class ResDTO  {
+public class OAuthUserResponseDTO {
     private String nickname;
 
     private String email;
@@ -22,7 +21,7 @@ public class ResDTO  {
     private String role;
 
     @Builder
-    public ResDTO(User user){
+    public OAuthUserResponseDTO(User user){
         this.nickname = user.getNickname();
         this.email = user.getEmail();
         this.picture = user.getImage();

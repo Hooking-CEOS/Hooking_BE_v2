@@ -1,7 +1,5 @@
 package shop.hooking.hooking.config;
 
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
@@ -26,14 +24,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 
-//Success Handler에 진입했다는 것은, 로그인이 완료되었다는 뜻이다.
-//        이 때가 정말 중요하다.
-//
-//        해당 클래스의 주요 기능은 크게 2가지이다.
-//
-//        최초 로그인인지 확인
-//        Access Token, Refresh Token 생성 및 발급
-//        token을 포함하여 리다이렉트
+//로그인 다 완료되고 우리 서버에서 쓸 수 있는 jwt 토큰을 발급
 @Slf4j
 @RequiredArgsConstructor
 @Component
@@ -51,13 +42,15 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         String role = user.getRole();
         Boolean firstLogin = oAuth2User.getAttribute("firstLogin");
 
-        log.info("Principal에서 꺼낸 OAuth2User = {}", oAuth2User);
+        log.info("OAuth2User = {}", oAuth2User);
         String targetUrl;
         log.info("토큰 발행 시작");
 
         String token = jwtTokenProvider.createJwtAccessToken(oAuth2User.getAttribute("id").toString(), role); //토큰발행
         log.info("{}", token);
-        targetUrl = UriComponentsBuilder.fromUriString("http://localhost:8080/kakaologin") //토큰을 포함해 리다이렉트,우린 홈으로 설정
+
+        targetUrl = UriComponentsBuilder.fromUriString("http://localhost:8080/kakaologin")
+
                 .queryParam("token", token)
                 .queryParam("firstLogin", firstLogin)
                 .build().toUriString();

@@ -79,4 +79,33 @@ public class OAuthUserService implements OAuth2UserService<OAuth2UserRequest, OA
         }
     }
 
+//    public UserProfileResponseDTO findSessionUser(Long userId) {
+//        User user = findUserEntity(userId);
+//        String imageUrl;
+//        if(user.getImage().contains("k.kakaocdn.net")) {
+//            imageUrl = user.getImage();
+//        }
+//        else {
+//            imageUrl = findProfileImage(userId);
+//        }
+//        return new UserProfileResponseDTO(user,imageUrl);
+//    }
+//
+//    public User findUserEntity(Long memberId) {
+//        return userRepository.findMemberByMemberIdAndDeleteFlagIsFalse(memberId)
+//                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND, null));
+//    }
+//
+//    @Transactional
+//    public String findProfileImage(Long memberId) {
+//        User user = findUserEntity(memberId);
+//        String fileName = user.getImage();
+//
+//        S3Presigner presigner = ImageUploadService.createPresigner(properties.getCredentials().getAccessKey(), properties.getCredentials().getSecretKey());
+//
+//        String url = ImageUploadService.getS3DownloadURL(presigner, properties.getS3().getBucket(), fileName);
+//        presigner.close();
+//        return url;
+//    }
+
 }
