@@ -2,6 +2,8 @@ package shop.hooking.hooking.config;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 
 import org.springframework.security.oauth2.core.user.OAuth2User;
@@ -11,11 +13,15 @@ import org.springframework.web.util.UriComponentsBuilder;
 import shop.hooking.hooking.entity.User;
 import shop.hooking.hooking.repository.UserRepository;
 import shop.hooking.hooking.service.JwtTokenProvider;
+import shop.hooking.hooking.service.OAuthUserService;
 
 import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 
 //로그인 다 완료되고 우리 서버에서 쓸 수 있는 jwt 토큰을 발급
@@ -25,6 +31,8 @@ import java.io.IOException;
 public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
     private final JwtTokenProvider jwtTokenProvider;
     private final UserRepository userRepository;
+
+    private OAuthUserService oAuthUserService;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication)
@@ -40,11 +48,14 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
         String token = jwtTokenProvider.createJwtAccessToken(oAuth2User.getAttribute("id").toString(), role); //토큰발행
         log.info("{}", token);
+
         targetUrl = UriComponentsBuilder.fromUriString("http://localhost:8080/kakaologin")
+
                 .queryParam("token", token)
                 .queryParam("firstLogin", firstLogin)
                 .build().toUriString();
         getRedirectStrategy().sendRedirect(request, response, targetUrl);
     }
+
 }
 

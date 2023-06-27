@@ -13,12 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 public class UserController {
     private final JwtTokenProvider jwtTokenProvider;
 
-//    @GetMapping("/profile")
-//    public SessionUserDTO sessionMemberDetails(HttpServletRequest httpRequest) {
-//        SessionUserDTO sessionUser = jwtTokenProvider.getUserInfoByToken(httpRequest);
-//        return sessionUser;
-//    }
-
+    // 유저 정보 반환
     @GetMapping("/profile")
     public OAuthUserResponseDTO sessionMemberDetails(HttpServletRequest httpRequest) {
         OAuthUserResponseDTO oAuthUserResponseDTO = jwtTokenProvider.getKakaoInfo(httpRequest);
