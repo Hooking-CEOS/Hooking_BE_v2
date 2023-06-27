@@ -8,7 +8,7 @@ import shop.hooking.hooking.entity.User;
 import java.util.Map;
 import shop.hooking.hooking.config.Role;
 
-
+//ㅇㅇ
 @Getter
 public class OAuthAttributesDTO {
     private Map<String, Object> attributes;
