@@ -43,8 +43,9 @@ public class UserController {
         }
         User user = userRepository.findMemberByKakaoId(Long.parseLong(jwtTokenProvider.getUserPk(token)));
         Long senderId = user.getId(); //유저를 식별할 수 있는 컬럼 아무거나
-        String content =writeReviewDto.getContent();
-        reviewService.writeReview(content, senderId);
+        String title = writeReviewDto.getTitle();
+        String content = writeReviewDto.getContent();
+        reviewService.writeReview(title, content, senderId);
 
         return "리뷰쓰기 성공!";
     }
