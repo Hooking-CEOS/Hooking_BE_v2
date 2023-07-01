@@ -17,7 +17,7 @@ public class ReviewRes {
     @Builder
     public static class ReviewDto {
         String content; // 건의사항 내용
-        LocalDateTime writeTime; // 작성시간
+        //LocalDateTime writeTime; // 작성시간
 
     }
 }
