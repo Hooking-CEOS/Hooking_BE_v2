@@ -8,6 +8,8 @@ import shop.hooking.hooking.entity.User;
 import shop.hooking.hooking.exception.BadRequestException;
 import shop.hooking.hooking.repository.UserRepository;
 import shop.hooking.hooking.service.JwtTokenProvider;
+import shop.hooking.hooking.service.ReviewService;
+
 import javax.servlet.http.HttpServletRequest;
 
 
@@ -19,6 +21,8 @@ public class UserController {
 
     private final UserRepository userRepository;
 
+    private final ReviewService reviewService;
+
     // 유저 정보 반환
     @GetMapping("/profile")
     public OAuthUserResponseDTO sessionMemberDetails(HttpServletRequest httpRequest) {
@@ -28,7 +32,7 @@ public class UserController {
 
     // 건의사항 작성
     @PostMapping("/review")
-    public void writeReview(@RequestBody ReviewReq.WriteReviewDto writeReviewDto,
+    public String writeReview(@RequestBody ReviewReq.WriteReviewDto writeReviewDto,
                             HttpServletRequest httpServletRequest){ // <건의사항 내용>과 시간, <작성자 이름> 등등
         String token = jwtTokenProvider.resolveToken(httpServletRequest); //헤더에서 토큰을 빼내오는 과정
         if(!jwtTokenProvider.validateToken(token,httpServletRequest)){ //토큰이 유효하지 않을 때
@@ -37,7 +41,9 @@ public class UserController {
         User user = userRepository.findMemberByKakaoId(Long.parseLong(jwtTokenProvider.getUserPk(token)));
         Long senderId = user.getId(); //유저를 식별할 수 있는 컬럼 아무거나
         String content =writeReviewDto.getContent();
-        // 리뷰서비스.리뷰쓰기(작성자아이디, 내용)
+        reviewService.writeReview(content, senderId);
+
+        return "리뷰쓰기 성공!";
     }
 
 }
