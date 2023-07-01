@@ -27,14 +27,14 @@ public class Review extends BaseEntity{
     private Long writerId; //작성자
 
     @Column(name = "created_at")
-    private LocalDateTime createdAt; // 작성일자
+    private LocalDateTime createdTime;
 
     @Column(name = "delete_yn")
     private boolean deleteYn; // 삭제여부
 
     @PrePersist
     public void prePersist() {
-        createdAt = LocalDateTime.now();
+        createdTime = LocalDateTime.now();
     }
 
 }
