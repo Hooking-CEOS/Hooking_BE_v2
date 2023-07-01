@@ -20,8 +20,9 @@ public class ReviewService {
     private final ReviewRepository reviewRepository;
 
     @Transactional
-    public void writeReview(String content, Long writerId){
+    public void writeReview(String title, String content, Long writerId){
         Review review =Review.builder()
+                .title(title)
                 .content(content)
                 .writerId(writerId)
                 .build();
@@ -36,6 +37,7 @@ public class ReviewService {
         for(Review review : reviews){
             reviewDtoList.add(ReviewRes.ReviewDto.builder()
                     .writeTime(review.getCreatedTime())
+                    .title(review.getTitle())
                     .content(review.getContent())
                     .build());
         }

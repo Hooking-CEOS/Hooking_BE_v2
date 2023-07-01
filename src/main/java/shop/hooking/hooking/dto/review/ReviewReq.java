@@ -15,6 +15,7 @@ public class ReviewReq {
     @AllArgsConstructor
     @Builder
     public static class WriteReviewDto {
+        private String title; // 건의사항 제목
         private String content; // 건의사항 내용
 
 

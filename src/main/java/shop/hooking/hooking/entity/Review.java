@@ -22,6 +22,8 @@ public class Review extends BaseEntity{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private String title; //건의사항 제목
+
     private String content; //건의사항 내용
 
     private Long writerId; //작성자
