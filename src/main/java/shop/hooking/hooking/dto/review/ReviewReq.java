@@ -1,0 +1,22 @@
+package shop.hooking.hooking.dto.review;
+
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@Builder
+public class ReviewReq {
+
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    public static class WriteReviewDto {
+        private String content; // 건의사항 내용
+
+
+    }
+}
