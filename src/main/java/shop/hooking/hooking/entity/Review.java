@@ -15,7 +15,7 @@ import javax.persistence.*;
 @Entity
 @Table(name = "review")
 @Where(clause = "delete_yn = 0")
-public class Review { //베이스타임 엔티티상속 받아야함
+public class Review extends BaseEntity{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
