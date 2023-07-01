@@ -35,6 +35,7 @@ public class ReviewService {
         List<Review> reviews = reviewRepository.findAllByWriterId(writerId);//데이터베이스에서 리뷰 목록 다 찾아옴
         for(Review review : reviews){
             reviewDtoList.add(ReviewRes.ReviewDto.builder()
+                    .writeTime(review.getCreatedAt())
                     .content(review.getContent())
                     .build());
         }
