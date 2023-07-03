@@ -5,6 +5,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Where;
 import shop.hooking.hooking.config.Role;
 
 
@@ -12,14 +13,15 @@ import javax.persistence.*;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED, force = true)
 @Getter
+@Where(clause = "delete_flag=0")
 @Entity
 @Table(name = "user")
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long Id;
+    private Long id;
 
-    @Column
+    @Column(name="kakao_id")
     @NotNull
     private Long kakaoId;
 
@@ -37,7 +39,7 @@ public class User {
     @NotNull
     private String role;
 
-    @Column
+    @Column(name="delete_flag")
     @NotNull
     private Boolean deleteFlag;
 
