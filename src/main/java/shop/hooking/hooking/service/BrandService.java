@@ -5,12 +5,11 @@ import org.springframework.stereotype.Service;
 import shop.hooking.hooking.dto.response.BrandRes;
 import shop.hooking.hooking.dto.response.ReviewRes;
 import shop.hooking.hooking.entity.*;
-import shop.hooking.hooking.repository.BrandRepository;
-import shop.hooking.hooking.repository.CardRepository;
-import shop.hooking.hooking.repository.FollowRepository;
+import shop.hooking.hooking.repository.*;
 
 import javax.transaction.Transactional;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -24,20 +23,33 @@ public class BrandService {
 
     private final CardRepository cardRepository;
 
+    private final HaveRepository haveRepository;
+
+    private final MoodRepository moodRepository;
+
     public List<BrandRes.BrandDto> getBrandList(){
         List<BrandRes.BrandDto> brandDtoList = new ArrayList<>();
         List<Brand> brands = brandRepository.findAll();// 데이터베이스에서 모든 브랜드 기본정보 가져옴
         //무드 테이블에서 분위기 3개
-        //카드 테이블에서 카피라이팅 본문만 랜덤 1개
+        //카드 테이블에서 카피라이팅 본문만 랜덤 1개 -> 완료
         for( Brand brand : brands){
             Long brandId = brand.getId();
             List<Card> cards = cardRepository.findCardsByBrandId(brandId);
             Card randomCard = cards.get(0); // 임의로 첫번재 카드 본문 가져오게 만듦
+
+            List<Have> haves = haveRepository.findByBrandId(brandId);
+
+            Mood moodZero = moodRepository.findMoodById(haves.get(0).getMood().getId());
+            Mood moodOne = moodRepository.findMoodById(haves.get(1).getMood().getId());
+            Mood moodTwo = moodRepository.findMoodById(haves.get(2).getMood().getId());
+
+
             brandDtoList.add(BrandRes.BrandDto.builder()
                     .brandId(brand.getId())
                     .brandName(brand.getBrandName())
                     .brandLink(brand.getBrandLink())
                     .randomCard(randomCard.getText())
+                    .mood(Arrays.asList(moodOne.getMoodName(),moodZero.getMoodName(),moodTwo.getMoodName()))
                     .build());
         }
         return  brandDtoList;
