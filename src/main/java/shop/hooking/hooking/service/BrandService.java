@@ -4,9 +4,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import shop.hooking.hooking.dto.response.BrandRes;
 import shop.hooking.hooking.dto.response.ReviewRes;
-import shop.hooking.hooking.entity.Brand;
-import shop.hooking.hooking.entity.Review;
+import shop.hooking.hooking.entity.*;
 import shop.hooking.hooking.repository.BrandRepository;
+import shop.hooking.hooking.repository.CardRepository;
+import shop.hooking.hooking.repository.FollowRepository;
 
 import javax.transaction.Transactional;
 import java.util.ArrayList;
@@ -19,16 +20,24 @@ public class BrandService {
 
     private final BrandRepository brandRepository;
 
+    private final FollowRepository followRepository;
+
+    private final CardRepository cardRepository;
+
     public List<BrandRes.BrandDto> getBrandList(){
         List<BrandRes.BrandDto> brandDtoList = new ArrayList<>();
         List<Brand> brands = brandRepository.findAll();// 데이터베이스에서 모든 브랜드 기본정보 가져옴
         //무드 테이블에서 분위기 3개
-        //카드 테이블에서 카피라이팅 랜덤 1개
+        //카드 테이블에서 카피라이팅 본문만 랜덤 1개
         for( Brand brand : brands){
+            Long brandId = brand.getId();
+            List<Card> cards = cardRepository.findCardsByBrandId(brandId);
+            Card randomCard = cards.get(0); // 임의로 첫번재 카드 본문 가져오게 만듦
             brandDtoList.add(BrandRes.BrandDto.builder()
                     .brandId(brand.getId())
                     .brandName(brand.getBrandName())
                     .brandLink(brand.getBrandLink())
+                    .randomCard(randomCard.getText())
                     .build());
         }
         return  brandDtoList;
@@ -50,5 +59,16 @@ public class BrandService {
                 .build();
 
         return brandDetailDto;
+    }
+
+    public void followBrand(Long brandId, User user){
+
+        Brand brand = brandRepository.findBrandById(brandId);
+
+        Follow follow =Follow.builder()
+                .brand(brand)
+                .user(user)
+                .build();
+        followRepository.save(follow); // 데이터베이스에 저장
     }
 }
