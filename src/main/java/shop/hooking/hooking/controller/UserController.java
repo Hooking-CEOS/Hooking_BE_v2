@@ -3,8 +3,8 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import shop.hooking.hooking.dto.response.OAuthUserRes;
 import shop.hooking.hooking.dto.HttpRes;
-import shop.hooking.hooking.dto.response.OAuthUserResponseDTO;
 import shop.hooking.hooking.dto.review.ReviewReq;
 import shop.hooking.hooking.dto.review.ReviewRes;
 import shop.hooking.hooking.entity.User;
@@ -29,9 +29,9 @@ public class UserController {
 
     // 유저 정보 반환
     @GetMapping("/profile")
-    public OAuthUserResponseDTO sessionMemberDetails(HttpServletRequest httpRequest) {
-        OAuthUserResponseDTO oAuthUserResponseDTO = jwtTokenProvider.getKakaoInfo(httpRequest);
-        return oAuthUserResponseDTO;
+    public OAuthUserRes sessionMemberDetails(HttpServletRequest httpRequest) {
+        OAuthUserRes oAuthUserRes = jwtTokenProvider.getKakaoInfo(httpRequest);
+        return oAuthUserRes;
     }
 
     // 건의사항 작성
@@ -51,7 +51,7 @@ public class UserController {
         return new HttpRes<>("건의사항이 정상적으로 처리되었습니다.");
     }
 
-    // 작성했던 건의사항 전체 조회
+    // 작성했던 건의사항 전체 조회하기
     @GetMapping("/review")
     public List<ReviewRes.ReviewDto> getReviewList(HttpServletRequest httpServletRequest){
         String token = jwtTokenProvider.resolveToken(httpServletRequest); //헤더에서 토큰을 빼내오는 과정

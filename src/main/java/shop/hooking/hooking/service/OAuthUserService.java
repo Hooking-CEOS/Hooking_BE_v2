@@ -14,7 +14,6 @@ import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import shop.hooking.hooking.dto.OAuthAttributesDTO;
-import shop.hooking.hooking.dto.SessionUserDTO;
 import shop.hooking.hooking.entity.User;
 import shop.hooking.hooking.exception.CustomException;
 import shop.hooking.hooking.exception.ErrorCode;
@@ -39,8 +38,8 @@ public class OAuthUserService implements OAuth2UserService<OAuth2UserRequest, OA
             OAuthAttributesDTO attributes = OAuthAttributesDTO.ofKakao(oAuth2User.getAttributes()); //회원정보 JSON 정제해서 반환
 
             Map<String, Object> newAttribute = updateAttributes(attributes);
-            SessionUserDTO sessionUser = saveOrUpdate(attributes); //정제된 회원정보 삽입
-            String key = sessionUser.getRole();
+            User user = saveOrUpdate(attributes); //정제된 회원정보 삽입
+            String key = user.getRole();
 
 
             return new DefaultOAuth2User(
@@ -68,44 +67,16 @@ public class OAuthUserService implements OAuth2UserService<OAuth2UserRequest, OA
     }
 
     //인증된 유저 DTO 반환
-    private SessionUserDTO saveOrUpdate(OAuthAttributesDTO attributes){
+    private User saveOrUpdate(OAuthAttributesDTO attributes){
         User user = userRepository.findMemberByKakaoId(attributes.getKakaoId()); //db에 있는 유저인지 확인
         if(user!=null){ //있으면
-            return new SessionUserDTO(user); //유저반환
+            return user; //유저반환
         } else{
             userRepository.save(attributes.toEntity()); //없으면
             User newUser = userRepository.findMemberByKakaoId(attributes.getKakaoId()); //회원가입
-            return new SessionUserDTO(newUser);
+            return newUser;
         }
     }
 
-//    public UserProfileResponseDTO findSessionUser(Long userId) {
-//        User user = findUserEntity(userId);
-//        String imageUrl;
-//        if(user.getImage().contains("k.kakaocdn.net")) {
-//            imageUrl = user.getImage();
-//        }
-//        else {
-//            imageUrl = findProfileImage(userId);
-//        }
-//        return new UserProfileResponseDTO(user,imageUrl);
-//    }
-//
-//    public User findUserEntity(Long memberId) {
-//        return userRepository.findMemberByMemberIdAndDeleteFlagIsFalse(memberId)
-//                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND, null));
-//    }
-//
-//    @Transactional
-//    public String findProfileImage(Long memberId) {
-//        User user = findUserEntity(memberId);
-//        String fileName = user.getImage();
-//
-//        S3Presigner presigner = ImageUploadService.createPresigner(properties.getCredentials().getAccessKey(), properties.getCredentials().getSecretKey());
-//
-//        String url = ImageUploadService.getS3DownloadURL(presigner, properties.getS3().getBucket(), fileName);
-//        presigner.close();
-//        return url;
-//    }
 
 }
