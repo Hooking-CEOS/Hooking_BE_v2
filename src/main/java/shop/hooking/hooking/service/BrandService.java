@@ -58,16 +58,36 @@ public class BrandService {
 
 
     public BrandRes.BrandDetailDto getOneBrand(Long id) {
-        Brand brand = brandRepository.findBrandById(id); // brand 엔티티에서 4개(아이디, 이름, 한줄소개, 링크)만 가져옴
         //무드 테이블에서 분위기 3개
         //카드 테이블에서 카피라이팅 본문 랜덤 3개
         //카드 테이블에서 카피라이팅 전체 가져오기
-        BrandRes.BrandDetailDto brandDetailDto = new BrandRes.BrandDetailDto();
-        brandDetailDto.builder()
+
+        Brand brand = brandRepository.findBrandById(id);// brand 엔티티에서 4개(아이디, 이름, 한줄소개, 링크)만 가져옴
+
+        List<Card> cards = cardRepository.findCardsByBrandId(brand.getId()); //카드 리스트 가져옴
+
+        List<String> cardTexts = new ArrayList<>();
+        int maxCardCount = Math.min(cards.size(), 3);
+        for (int i = 0; i < maxCardCount; i++) {
+            Card card = cards.get(i);
+            cardTexts.add(card.getText());
+        }
+
+        List<Have> haves = haveRepository.findByBrandId(brand.getId());
+
+        Mood moodZero = moodRepository.findMoodById(haves.get(0).getMood().getId());
+        Mood moodOne = moodRepository.findMoodById(haves.get(1).getMood().getId());
+        Mood moodTwo = moodRepository.findMoodById(haves.get(2).getMood().getId());
+
+
+        BrandRes.BrandDetailDto brandDetailDto = BrandRes.BrandDetailDto.builder()
                 .brandId(brand.getId())
                 .brandName(brand.getBrandName())
                 .brandIntro(brand.getBrandIntro())
                 .brandLink(brand.getBrandLink())
+                .randomCard(cardTexts)
+                .card(cards)
+                .mood(Arrays.asList(moodOne.getMoodName(),moodZero.getMoodName(),moodTwo.getMoodName()))
                 .build();
 
         return brandDetailDto;

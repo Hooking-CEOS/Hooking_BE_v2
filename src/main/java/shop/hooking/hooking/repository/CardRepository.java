@@ -11,4 +11,6 @@ import java.util.List;
 public interface CardRepository extends JpaRepository<Card, Long>{
 
     List<Card> findCardsByBrandId(Long brandId); //  브랜드 아이디로 카피라이팅 카드 찾기
+
+
 }
