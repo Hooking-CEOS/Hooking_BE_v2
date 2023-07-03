@@ -1,14 +1,13 @@
 package shop.hooking.hooking.dto;
 
 
-
 import lombok.Builder;
 import lombok.Getter;
 import shop.hooking.hooking.entity.User;
 import java.util.Map;
 import shop.hooking.hooking.config.Role;
 
-//ㅇㅇ
+
 @Getter
 public class OAuthAttributesDTO {
     private Map<String, Object> attributes;

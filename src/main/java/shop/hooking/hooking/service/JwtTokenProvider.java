@@ -11,7 +11,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 import shop.hooking.hooking.entity.User;
 import shop.hooking.hooking.repository.UserRepository;
-import shop.hooking.hooking.dto.response.OAuthUserResponseDTO;
+import shop.hooking.hooking.dto.response.OAuthUserRes;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
@@ -52,7 +52,7 @@ public class JwtTokenProvider {
 
     public Authentication getAuthentication(String token) {
         User user = userRepository.findMemberByKakaoId(Long.parseLong(getUserPk(token)));
-        OAuthUserResponseDTO resDTO = OAuthUserResponseDTO.builder().user(user).build();
+        OAuthUserRes resDTO = OAuthUserRes.builder().user(user).build();
         return new UsernamePasswordAuthenticationToken(resDTO, "", resDTO.getAuthorities());
     }
 
@@ -93,11 +93,11 @@ public class JwtTokenProvider {
 
 
 
-    public OAuthUserResponseDTO getKakaoInfo(HttpServletRequest request) {
+    public OAuthUserRes getKakaoInfo(HttpServletRequest request) {
         String token = resolveToken(request);
         if(validateToken(token,request)) {
             User user = userRepository.findMemberByKakaoId(Long.parseLong(getUserPk(token)));
-            return new OAuthUserResponseDTO(user);
+            return new OAuthUserRes(user);
         }
         else {
             return null;
