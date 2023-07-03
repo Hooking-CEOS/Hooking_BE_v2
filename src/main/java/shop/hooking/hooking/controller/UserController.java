@@ -3,6 +3,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import shop.hooking.hooking.dto.HttpRes;
 import shop.hooking.hooking.dto.response.OAuthUserResponseDTO;
 import shop.hooking.hooking.dto.review.ReviewReq;
 import shop.hooking.hooking.dto.review.ReviewRes;
@@ -35,8 +36,8 @@ public class UserController {
 
     // 건의사항 작성
     @PostMapping("/review")
-    public String writeReview(@RequestBody ReviewReq.WriteReviewDto writeReviewDto,
-                            HttpServletRequest httpServletRequest){ // <건의사항 내용>과 시간, <작성자 이름> 등등
+    public HttpRes<String> writeReview(@RequestBody ReviewReq.WriteReviewDto writeReviewDto,
+                                      HttpServletRequest httpServletRequest){ // <건의사항 내용>과 시간, <작성자 이름> 등등
         String token = jwtTokenProvider.resolveToken(httpServletRequest); //헤더에서 토큰을 빼내오는 과정
         if(!jwtTokenProvider.validateToken(token,httpServletRequest)){ //토큰이 유효하지 않을 때
             throw new BadRequestException("사용자 정보를 찾을 수 없습니다.");
@@ -47,7 +48,7 @@ public class UserController {
         String content = writeReviewDto.getContent();
         reviewService.writeReview(title, content, user);
 
-        return "리뷰쓰기 성공!";
+        return new HttpRes<>("건의사항이 정상적으로 처리되었습니다.");
     }
 
     // 작성했던 건의사항 전체 조회
