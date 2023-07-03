@@ -6,9 +6,12 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import shop.hooking.hooking.config.Role;
+import shop.hooking.hooking.entity.Review;
 
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED, force = true)
 @Getter
@@ -36,6 +39,9 @@ public class User {
     @Column(name = "role")
     @NotNull
     private String role;
+
+    @OneToMany(mappedBy = "user")
+    private List<Review> reviews = new ArrayList<>();
 
     @Column
     @NotNull
