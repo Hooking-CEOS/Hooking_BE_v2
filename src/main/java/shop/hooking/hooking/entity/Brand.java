@@ -23,27 +23,27 @@ public class Brand {
 
     @NotNull
     @Column(name="brand_name")
-    private String brandName;
+    private String brandName; // 브랜드 이름
 
     @NotNull
     @Column(name="brand_intro")
-    private String brandIntro;
+    private String brandIntro; // 브랜드 한줄소개
 
     @NotNull
     @Column(name="brand_link")
-    private String brandLink;
+    private String brandLink; // 브랜드 인스타 링크
 
     @NotNull
     @Column(name="brand_product")
-    private String brandProduct;
+    private String brandProduct; // 브랜드 타켓 제품
 
     @NotNull
     @Column(name="brand_age")
-    private String brandAge;
+    private String brandAge; // 브랜드 나이대
 
     @NotNull
     @Column(name="brand_price")
-    private String brandPrice;
+    private String brandPrice; // 브랜드 가격대
 
     @Builder
     public Brand(String brandName,String brandIntro,String brandLink,String brandProduct,String brandAge,String brandPrice) {
