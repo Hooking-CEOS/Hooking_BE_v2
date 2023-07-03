@@ -1,4 +1,4 @@
-package shop.hooking.hooking.dto.review;
+package shop.hooking.hooking.dto.request;
 
 
 import lombok.AllArgsConstructor;
