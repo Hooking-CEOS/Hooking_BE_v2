@@ -42,10 +42,10 @@ public class UserController {
             throw new BadRequestException("사용자 정보를 찾을 수 없습니다.");
         }
         User user = userRepository.findMemberByKakaoId(Long.parseLong(jwtTokenProvider.getUserPk(token)));
-        Long senderId = user.getId(); //유저를 식별할 수 있는 컬럼 아무거나
+        //Long senderId = user.getId(); //유저를 식별할 수 있는 컬럼 아무거나
         String title = writeReviewDto.getTitle();
         String content = writeReviewDto.getContent();
-        reviewService.writeReview(title, content, senderId);
+        reviewService.writeReview(title, content, user);
 
         return "리뷰쓰기 성공!";
     }
@@ -58,8 +58,8 @@ public class UserController {
             throw new BadRequestException("사용자 정보를 찾을 수 없습니다.");
         }
         User user = userRepository.findMemberByKakaoId(Long.parseLong(jwtTokenProvider.getUserPk(token)));
-        Long senderId = user.getId(); //유저를 식별할 수 있는 컬럼 아무거나
-        List<ReviewRes.ReviewDto> reviewDtos = reviewService.getReviewList(senderId);
+        //Long senderId = user.getId(); //유저를 식별할 수 있는 컬럼 아무거나
+        List<ReviewRes.ReviewDto> reviewDtos = reviewService.getReviewList(user);
         return reviewDtos;
 
     }

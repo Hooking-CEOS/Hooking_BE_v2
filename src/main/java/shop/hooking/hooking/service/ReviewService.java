@@ -20,20 +20,20 @@ public class ReviewService {
     private final ReviewRepository reviewRepository;
 
     @Transactional
-    public void writeReview(String title, String content, Long writerId){
+    public void writeReview(String title, String content, User user){
         Review review =Review.builder()
                 .title(title)
                 .content(content)
-                .writerId(writerId)
+                .user(user)
                 .build();
 
         reviewRepository.save(review); // 데이터베이스에 저장
     }
 
 
-    public List<ReviewRes.ReviewDto> getReviewList(Long writerId){ // 반환해줄 값을 content 랑 write
+    public List<ReviewRes.ReviewDto> getReviewList(User user){ // 반환해줄 값을 content 랑 write
         List<ReviewRes.ReviewDto> reviewDtoList = new ArrayList<>();
-        List<Review> reviews = reviewRepository.findAllByWriterId(writerId);//데이터베이스에서 리뷰 목록 다 찾아옴
+        List<Review> reviews = reviewRepository.findAllByUser(user);//데이터베이스에서 리뷰 목록 다 찾아옴
         for(Review review : reviews){
             reviewDtoList.add(ReviewRes.ReviewDto.builder()
                     .writeTime(review.getCreatedTime())

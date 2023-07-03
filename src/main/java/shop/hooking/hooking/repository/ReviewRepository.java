@@ -10,6 +10,6 @@ import java.util.List;
 @Repository
 public interface ReviewRepository extends JpaRepository<Review, Long> {
 
-    List<Review> findAllByWriterId(Long writerId); // 작성자아이디로 리뷰 찾기
+    List<Review> findAllByUser(User user); // 작성자아이디로 리뷰 찾기
 
 }

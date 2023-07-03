@@ -22,7 +22,9 @@ public class Review extends BaseEntity{
 
     private String content; //건의사항 내용
 
-    private Long writerId; //작성자
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user; //작성자
 
     @Column(name = "created_at")
     private LocalDateTime createdTime;
@@ -36,10 +38,10 @@ public class Review extends BaseEntity{
     }
 
     @Builder
-    public Review(String title, String content, Long writeId,LocalDateTime createdTime){
+    public Review(String title, String content, User user, LocalDateTime createdTime){
         this.title = title;
         this.content = content;
-        this.writerId = writeId;
+        this.user = user;
         this.createdTime = createdTime;
     }
 
