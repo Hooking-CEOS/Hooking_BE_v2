@@ -7,12 +7,8 @@ import org.hibernate.annotations.Where;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
-@DynamicInsert
-@AllArgsConstructor
 @NoArgsConstructor
-@Builder
 @Getter
-@Setter
 @Entity
 @Table(name = "review")
 @Where(clause = "delete_yn = 0")
@@ -37,6 +33,14 @@ public class Review extends BaseEntity{
     @PrePersist
     public void prePersist() {
         createdTime = LocalDateTime.now();
+    }
+
+    @Builder
+    public Review(String title, String content, Long writeId,LocalDateTime createdTime){
+        this.title = title;
+        this.content = content;
+        this.writerId = writeId;
+        this.createdTime = createdTime;
     }
 
 }
