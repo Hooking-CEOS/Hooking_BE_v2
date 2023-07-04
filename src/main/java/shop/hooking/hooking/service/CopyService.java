@@ -5,16 +5,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import shop.hooking.hooking.dto.request.CopyReq;
 import shop.hooking.hooking.dto.response.CopyRes;
-import shop.hooking.hooking.entity.Brand;
-import shop.hooking.hooking.entity.Card;
-import shop.hooking.hooking.entity.Scrap;
-import shop.hooking.hooking.entity.User;
+import shop.hooking.hooking.entity.*;
 import shop.hooking.hooking.exception.CustomException;
 import shop.hooking.hooking.exception.ErrorCode;
-import shop.hooking.hooking.repository.BrandRepository;
-import shop.hooking.hooking.repository.CardRepository;
-import shop.hooking.hooking.repository.ScrapRepository;
-import shop.hooking.hooking.repository.UserRepository;
+import shop.hooking.hooking.repository.*;
 
 import javax.transaction.Transactional;
 import java.io.IOException;
@@ -32,6 +26,9 @@ public class CopyService {
     private final BrandRepository brandRepository;
     private final ScrapRepository scrapRepository;
 
+    private final MoodRepository moodRepository;
+
+    private final HaveRepository haveRepository;
     @Transactional
     public List<CopyRes> getCopyList() {
         List<Card> cards = cardRepository.findAll(); //카피 다가져옴
@@ -58,6 +55,41 @@ public class CopyService {
     }
 
 
+    @Transactional
+    public List<CopyRes> selectBrandByQuery(String q){
+        Brand brand = brandRepository.findBrandByBrandNameContaining(q);
+        List<Card> cards = cardRepository.findCardsByBrandId(brand.getId());
+        List<CopyRes> copyResList = new ArrayList<>();
+
+        for (Card card : cards) {
+            CopyRes copyRes = createCopyRes(card);
+            copyResList.add(copyRes);
+        }
+        return copyResList;
+    }
+
+    @Transactional
+    public List<CopyRes> selectMoodByQuery(String q){
+        Mood mood = moodRepository.findByMoodNameContaining(q);
+        List<Have> haves = haveRepository.findByMoodId(mood.getId());
+
+        List<CopyRes> copyResList = new ArrayList<>();
+
+        List<Brand> brands = new ArrayList<>(); // 브랜드 가져옴
+        for (Have have : haves) {
+            brands.add(have.getBrand());
+        }
+        for ( Brand brand : brands){
+            List<Card> cards = cardRepository.findCardsByBrandId(brand.getId());
+
+            for (Card card : cards) {
+                CopyRes copyRes = createCopyRes(card);
+                copyResList.add(copyRes);
+            }
+        }
+        return copyResList;
+    }
+
 
     @Transactional
     public List<CopyRes> getCopyScrapList(User user) {
@@ -74,20 +106,22 @@ public class CopyService {
 
     @Transactional
     public CopyRes createCopyRes(Card card) {
+        Long id = card.getId();
         Brand brand = card.getBrand();
         String text = card.getText();
         Integer scrapCnt = card.getScrapCnt();
         LocalDateTime createdAt = card.getCreatedAt();
-        return new CopyRes(brand,text,scrapCnt,createdAt);
+        return new CopyRes(id, brand,text,scrapCnt,createdAt);
     }
 
     @Transactional
     public CopyRes createScrapRes(Scrap scrap) {
+        Long id = scrap.getCard().getId();
         Brand brand = scrap.getCard().getBrand();
         String text = scrap.getCard().getText();
         Integer scrapCnt = scrap.getCard().getScrapCnt();
         LocalDateTime createdAt = scrap.getCreatedAt();
-        return new CopyRes(brand,text,scrapCnt,createdAt);
+        return new CopyRes(id, brand,text,scrapCnt,createdAt);
     }
 
 
