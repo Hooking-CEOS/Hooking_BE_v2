@@ -32,6 +32,11 @@ public class Scrap {
     @JoinColumn(name="card_id")
     private Card card;
 
+    @PrePersist
+    public void prePersist() {
+        createdAt = LocalDateTime.now();
+    }
+
     @Builder
     public Scrap(LocalDateTime createdAt, User user, Card card) {
         this.createdAt = createdAt;
