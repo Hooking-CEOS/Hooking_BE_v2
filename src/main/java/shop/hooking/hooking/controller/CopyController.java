@@ -36,6 +36,11 @@ public class CopyController {
 //        return new ResponseEntity<>(copyService.selectCopyByQuery(q), HttpStatus.OK);
 //    }
 
+    @GetMapping("/search")
+    ResponseEntity<?> copySearchList(@RequestParam(name = "keyword") String q){
+        return new ResponseEntity<>(copyService.selectBrandByQuery(q), HttpStatus.OK);
+    }
+
     //스크랩한 카피라이팅 조회(유저가 스크랩한 거 가져와)
     @GetMapping("/scrap")
     ResponseEntity<?> copyScrapList(HttpServletRequest httpRequest){

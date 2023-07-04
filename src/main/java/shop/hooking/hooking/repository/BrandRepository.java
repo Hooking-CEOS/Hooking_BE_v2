@@ -13,4 +13,6 @@ public interface BrandRepository extends JpaRepository<Brand, Long> {
     List<Brand> findAll();
 
     Brand findBrandById(Long id);
+
+    Brand findBrandByBrandNameContaining(String q);
 }

@@ -45,17 +45,30 @@ public class CopyService {
         return copyResList;
     }
 
-//    @Transactional
-//    public List<CopyRes> selectCopyByQuery(String q) {
-//        List<Card> cards = cardRepository.findByNameContains(q);
-//        List<CopyRes> copyResList = new ArrayList<>();
-//
-//        for (Card card : cards) {
-//            CopyRes copyRes = createCopyRes(card);
-//            copyResList.add(copyRes);
-//        }
-//        return copyResList;
-//    }
+    @Transactional
+    public List<CopyRes> selectCopyByQuery(String q) {
+        List<Card> cards = cardRepository.findByTextContaining(q);
+        List<CopyRes> copyResList = new ArrayList<>();
+
+        for (Card card : cards) {
+            CopyRes copyRes = createCopyRes(card);
+            copyResList.add(copyRes);
+        }
+        return copyResList;
+    }
+
+    @Transactional
+    public List<CopyRes> selectBrandByQuery(String q){
+        Brand brand = brandRepository.findBrandByBrandNameContaining(q);
+        List<Card> cards = cardRepository.findCardsByBrandId(brand.getId());
+        List<CopyRes> copyResList = new ArrayList<>();
+
+        for (Card card : cards) {
+            CopyRes copyRes = createCopyRes(card);
+            copyResList.add(copyRes);
+        }
+        return copyResList;
+    }
 
     @Transactional
     public List<CopyRes> getCopyScrapList(User user) {
@@ -72,20 +85,22 @@ public class CopyService {
 
     @Transactional
     public CopyRes createCopyRes(Card card) {
+        Long id = card.getId();
         Brand brand = card.getBrand();
         String text = card.getText();
         Integer scrapCnt = card.getScrapCnt();
         LocalDateTime createdAt = card.getCreatedAt();
-        return new CopyRes(brand,text,scrapCnt,createdAt);
+        return new CopyRes(id, brand,text,scrapCnt,createdAt);
     }
 
     @Transactional
     public CopyRes createScrapRes(Scrap scrap) {
+        Long id = scrap.getCard().getId();
         Brand brand = scrap.getCard().getBrand();
         String text = scrap.getCard().getText();
         Integer scrapCnt = scrap.getCard().getScrapCnt();
         LocalDateTime createdAt = scrap.getCreatedAt();
-        return new CopyRes(brand,text,scrapCnt,createdAt);
+        return new CopyRes(id, brand,text,scrapCnt,createdAt);
     }
 
 
