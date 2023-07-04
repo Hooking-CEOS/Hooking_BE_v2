@@ -24,6 +24,8 @@ public class BrandController {
     private final JwtTokenProvider jwtTokenProvider;
 
     private final UserRepository userRepository;
+
+
     // 전체 브랜드 기본정보 조회
     @GetMapping("")
     public List<BrandRes.BrandDto> showAllBrand(){ // 로그인하지 않은 모든 사용자가 이용할 수 있음
@@ -40,7 +42,8 @@ public class BrandController {
         return brandDetailDto; // 브랜드 상세정보 반환
     }
 
-    // 해당 브랜드 팔로우하기
+    // 해당 브랜드 팔로우
+    @CrossOrigin(origins = "https://hooking.shop, https://hooking-dev.netlify.app/, https://hooking.netlify.app/, http://localhost:3000, http://localhost:3001")
     @PostMapping("/{brand_id}/follow")
     public HttpRes<String> followBrand(@PathVariable Long brand_id, HttpServletRequest httpServletRequest)// 로그인한 사용자 정보 필요함
     {
