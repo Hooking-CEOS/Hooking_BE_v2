@@ -1,6 +1,7 @@
 package shop.hooking.hooking.dto.response;
 
 
+import com.querydsl.core.annotations.QueryProjection;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,6 +23,7 @@ public class CopyRes {
     private LocalDateTime createdAt;
 
     @Builder
+    @QueryProjection
     public CopyRes(Long id, Brand brand, String text, Integer scrapCnt, LocalDateTime createdAt) {
         this.id = id;
         this.brandName = brand.getBrandName();
