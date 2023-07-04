@@ -4,15 +4,19 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import shop.hooking.hooking.dto.CardSearchCondition;
 import shop.hooking.hooking.dto.request.CopyReq;
+import shop.hooking.hooking.dto.response.CopyRes;
 import shop.hooking.hooking.entity.Card;
 import shop.hooking.hooking.entity.User;
+import shop.hooking.hooking.repository.CardJpaRepository;
 import shop.hooking.hooking.repository.CardRepository;
 import shop.hooking.hooking.service.CopyService;
 import shop.hooking.hooking.service.JwtTokenProvider;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -23,6 +27,8 @@ public class CopyController {
     private final CopyService copyService;
     private final CardRepository cardRepository;
 
+    private final CardJpaRepository cardJpaRepository;
+
 
     //전체 카피라이팅 조회
     @GetMapping("")
@@ -30,11 +36,6 @@ public class CopyController {
         return new ResponseEntity<>(copyService.getCopyList(), HttpStatus.OK);
     }
 
-    //카피라이팅 검색 조회
-//    @GetMapping("/search")
-//    ResponseEntity<?> copySearchList(@RequestParam(name = "keyword") String q){
-//
-//    }
 
     @GetMapping("/search")
     ResponseEntity<?> copySearchList(@RequestParam(name = "keyword") String q){
@@ -68,12 +69,8 @@ public class CopyController {
     }
 
     //카피라이팅 필터
-//    @PostMapping("/filter")
-//    ResponseEntity<?> copyFilter(HttpServletRequest httpRequest, @RequestBody CopyReq copyReq) throws IOException {
-//        User user = jwtTokenProvider.getUserInfoByToken(httpRequest);
-//
-//        return new ResponseEntity<>(copyService.saveCopy(user.getId(), copyReq.getBrandId()), HttpStatus.OK);
-//
-//    }
-
+    @GetMapping ("/filter")//검색도 로그인 안 한 유저 사용할 수 있지 않나?
+    public List<CopyRes> searchFilterCard(CardSearchCondition condition){
+        return cardJpaRepository.search(condition);
+    }
 }

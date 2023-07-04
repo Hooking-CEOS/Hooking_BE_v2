@@ -13,9 +13,6 @@ class HookingApplicationTests {
 	void contextLoads() {
 	}
 
-	@Test
-	public List<card> dynamicdsl() throws Exception {
-		String username
-	}
+
 
 }
