@@ -1,12 +1,11 @@
 package shop.hooking.hooking.controller;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import shop.hooking.hooking.dto.response.OAuthUserRes;
 import shop.hooking.hooking.dto.HttpRes;
-import shop.hooking.hooking.dto.review.ReviewReq;
-import shop.hooking.hooking.dto.review.ReviewRes;
+import shop.hooking.hooking.dto.request.ReviewReq;
+import shop.hooking.hooking.dto.response.ReviewRes;
 import shop.hooking.hooking.entity.User;
 import shop.hooking.hooking.exception.BadRequestException;
 import shop.hooking.hooking.repository.UserRepository;
