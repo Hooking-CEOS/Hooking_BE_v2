@@ -54,6 +54,7 @@ public class CopyService {
         return copyResList;
     }
 
+
     @Transactional
     public List<CopyRes> selectBrandByQuery(String q){
         Brand brand = brandRepository.findBrandByBrandNameContaining(q);
@@ -88,6 +89,7 @@ public class CopyService {
         }
         return copyResList;
     }
+
 
     @Transactional
     public List<CopyRes> getCopyScrapList(User user) {
