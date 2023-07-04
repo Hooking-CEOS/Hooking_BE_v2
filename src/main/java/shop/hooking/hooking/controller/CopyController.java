@@ -58,8 +58,8 @@ public class CopyController {
 
         } else if (q.equals("퓨어한") || q.equals("화려한") || q.equals("키치한") || q.equals("고급스러운")
                 || q.equals("자연의") || q.equals("심플한") || q.equals("네추럴한") || q.equals("발랄한")
-                || q.equals("발랄한") || q.equals("독특한") || q.equals("비비드한") || q.equals("첨단의")
-                || q.equals("도시적인") || q.equals("감각적인") || q.equals("수줍은") || q.equals("전통적인") || q.equals("친근한")) {
+                || q.equals("독특한") || q.equals("비비드한") || q.equals("첨단의") || q.equals("도시적인")
+                || q.equals("감각적인") || q.equals("수줍은") || q.equals("전통적인") || q.equals("친근한")) {
 
             return new ResponseEntity<>(copyService.selectMoodByQuery(q), HttpStatus.OK);
 
