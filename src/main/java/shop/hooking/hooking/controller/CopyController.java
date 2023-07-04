@@ -33,8 +33,20 @@ public class CopyController {
     //카피라이팅 검색 조회
 //    @GetMapping("/search")
 //    ResponseEntity<?> copySearchList(@RequestParam(name = "keyword") String q){
-//        return new ResponseEntity<>(copyService.selectCopyByQuery(q), HttpStatus.OK);
+//
 //    }
+
+    @GetMapping("/search")
+    ResponseEntity<?> copySearchList(@RequestParam(name = "keyword") String q){
+        if( q.equals("freshian") || q.equals("hera")){ // 모든 브랜드 추가해야함
+            return new ResponseEntity<>(copyService.selectBrandByQuery(q), HttpStatus.OK);
+        } else if (q.equals("퓨어한")) {
+            return new ResponseEntity<>(copyService.selectMoodByQuery(q), HttpStatus.OK);
+        } else{
+            return new ResponseEntity<>(copyService.selectCopyByQuery(q), HttpStatus.OK);
+
+        }
+    }
 
     //스크랩한 카피라이팅 조회(유저가 스크랩한 거 가져와)
     @GetMapping("/scrap")
