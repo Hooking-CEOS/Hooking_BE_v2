@@ -18,6 +18,8 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import shop.hooking.hooking.service.JwtTokenProvider;
 import shop.hooking.hooking.service.OAuthUserService;
 
+import java.util.Arrays;
+
 
 @RequiredArgsConstructor
 @EnableWebSecurity
@@ -33,8 +35,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.addAllowedOrigin("https://hooking.shop/");
-        configuration.addAllowedOrigin("http://localhost:3000");
+        configuration.setAllowedOriginPatterns(Arrays.asList("https://hooking.shop/","https://hooking-dev.netlify.app/","https://hooking.netlify.app/","http://localhost:3000", "https://bakery-front-rho.vercel.app/"));
         configuration.addAllowedHeader("*");
         configuration.addExposedHeader("Set-Cookie");
         configuration.addAllowedMethod("*");
@@ -55,10 +56,7 @@ public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
             .and()
             .authorizeRequests()
             .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
-
-            .antMatchers("**/oauth2/**","/kakaologin","/copy", "/copy/search", "/brand", "/brand/{brand_id}", "/api/v1/users/signup/**", "/api/v1/users/login",
-                    "/api/v1/users/re-issue", "/api/v1/settings", "/api/v1/users/certification/**",
-                    "/api/v1/notification/subscribe", "/api/v1/util/**").permitAll()
+            .antMatchers("**/oauth2/**","/kakaologin","/copy", "/copy/search","/brand", "/brand/{brand_id}").permitAll()
             .anyRequest().authenticated()
             .and()
                 .logout()

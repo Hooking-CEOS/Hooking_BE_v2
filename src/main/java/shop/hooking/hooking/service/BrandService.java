@@ -3,11 +3,13 @@ package shop.hooking.hooking.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import shop.hooking.hooking.dto.response.BrandRes;
+import shop.hooking.hooking.dto.response.CopyRes;
 import shop.hooking.hooking.dto.response.ReviewRes;
 import shop.hooking.hooking.entity.*;
 import shop.hooking.hooking.repository.*;
 
 import javax.transaction.Transactional;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
