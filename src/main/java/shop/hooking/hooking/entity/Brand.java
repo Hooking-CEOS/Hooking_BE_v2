@@ -11,7 +11,7 @@ import shop.hooking.hooking.config.Role;
 import javax.persistence.*;
 
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor(access = AccessLevel.PROTECTED, force = true)
 @Entity
 @Table(name="brand")
 public class Brand {

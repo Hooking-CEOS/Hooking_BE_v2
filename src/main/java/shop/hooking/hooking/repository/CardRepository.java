@@ -10,7 +10,17 @@ import java.util.List;
 @Repository
 public interface CardRepository extends JpaRepository<Card, Long>{
 
+
+    Card findCardByBrandId(Long brandId); //  브랜드 아이디로 카피라이팅 카드 찾기
+
+    @Override
+    List<Card> findAll();
+    //List<Card> findByNameContains(String q);
+
+    Card findCardById(Long Id);
+
     List<Card> findCardsByBrandId(Long brandId); //  브랜드 아이디로 카피라이팅 카드 찾기
+
 
 
 }
