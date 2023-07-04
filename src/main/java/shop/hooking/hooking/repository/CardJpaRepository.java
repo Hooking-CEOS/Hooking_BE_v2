@@ -29,6 +29,26 @@ public class CardJpaRepository {
     }
 
     public List<CopyRes> search(CardSearchCondition condition){
+
+        String priceString = condition.getPrice();
+        String[] prices = null; // null처리 해줘야함
+        if (priceString != null) {
+            prices = priceString.split(",");
+        }
+
+        String ageString = condition.getAge();
+        String[] ages = null;
+        if (ageString != null) {
+            ages = ageString.split(",");
+        }
+
+
+        String productString = condition.getProduct();
+        String[] products = null;
+        if (productString != null) {
+            products = productString.split(",");
+        }
+
         return queryFactory
                 .select(new QCopyRes(
                         card.id,
@@ -39,16 +59,16 @@ public class CardJpaRepository {
                 .from(card)
                 .leftJoin(card.brand, brand) // 조인
                 .where(
-                        productEq(condition.getProducts()),
-                        ageEq(condition.getAges()),
-                        priceEq(condition.getPrices())
+                        productEq(products),
+                        ageEq(ages),
+                        priceEq(prices)
                 )
                 .fetch();
     }
 
-    private BooleanExpression productEq(List<String> products) {
+    private BooleanExpression productEq(String[] products) { // 스킨케어, 색조화장
         BooleanExpression productExpression = null;
-        if (products != null && !products.isEmpty()) {
+        if (products != null ) {
             for (String product : products) {
                 BooleanExpression condition = brand.brandProduct.eq(product);
                 productExpression = (productExpression != null) ? productExpression.or(condition) : condition;
@@ -58,9 +78,9 @@ public class CardJpaRepository {
     }
 
 
-    private BooleanExpression ageEq(List<String> ages) {
+    private BooleanExpression ageEq(String[] ages) {
         BooleanExpression ageExpression = null;
-        if (ages != null && !ages.isEmpty()) {
+        if (ages != null ) {
             for (String age : ages) {
                 BooleanExpression condition = brand.brandAge.eq(age);
                 ageExpression = (ageExpression != null) ? ageExpression.or(condition) : condition;
@@ -69,9 +89,9 @@ public class CardJpaRepository {
         return ageExpression;
     }
 
-    private BooleanExpression priceEq(List<String> prices) {
+    private BooleanExpression priceEq(String[] prices) {
         BooleanExpression priceExpression = null;
-        if (prices != null && !prices.isEmpty()) {
+        if (prices != null ) {
             for (String price : prices) {
                 BooleanExpression condition = brand.brandPrice.eq(price);
                 priceExpression = (priceExpression != null) ? priceExpression.or(condition) : condition;
@@ -79,5 +99,16 @@ public class CardJpaRepository {
         }
         return priceExpression;
     }
+//private BooleanExpression priceEq(String price) {
+//    return hasText(price) ? brand.brandPrice.eq(price) : null;
+//}
+//
+//    private BooleanExpression ageEq(String age) {
+//        return hasText(age) ? brand.brandAge.eq(age) : null;
+//    }
+//
+//    private BooleanExpression productEq(String product) {
+//        return hasText(product) ? brand.brandProduct.eq(product) : null;
+//    }
 
 }
