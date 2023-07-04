@@ -8,6 +8,7 @@ import shop.hooking.hooking.dto.request.CopyReq;
 import shop.hooking.hooking.entity.Card;
 import shop.hooking.hooking.entity.User;
 import shop.hooking.hooking.repository.CardRepository;
+import shop.hooking.hooking.service.BrandService;
 import shop.hooking.hooking.service.CopyService;
 import shop.hooking.hooking.service.JwtTokenProvider;
 
@@ -21,6 +22,7 @@ public class CopyController {
 
     private final JwtTokenProvider jwtTokenProvider;
     private final CopyService copyService;
+    private final BrandService brandService;
     private final CardRepository cardRepository;
 
 
@@ -33,7 +35,17 @@ public class CopyController {
     //카피라이팅 검색 조회
 //    @GetMapping("/search")
 //    ResponseEntity<?> copySearchList(@RequestParam(name = "keyword") String q){
-//        return new ResponseEntity<>(copyService.selectCopyByQuery(q), HttpStatus.OK);
+//        //if(q.isEmpty()) {}
+//
+//        if(q.equals("freshian")){
+//            return new ResponseEntity<>(brandService.selectBrandNameByQuery(q), HttpStatus.OK);
+//        }
+//        if(q.equals("퓨어한")){
+//            return new ResponseEntity<>(brandService.selectBrandMoodByQuery(q), HttpStatus.OK);
+//        } // 퓨어한 -> 퓨어한id > brandid > card
+//        else{
+//            return new ResponseEntity<>(copyService.selectCopyByQuery(q), HttpStatus.OK);
+//        }
 //    }
 
     //스크랩한 카피라이팅 조회(유저가 스크랩한 거 가져와)

@@ -45,17 +45,19 @@ public class CopyService {
         return copyResList;
     }
 
-//    @Transactional
-//    public List<CopyRes> selectCopyByQuery(String q) {
-//        List<Card> cards = cardRepository.findByNameContains(q);
-//        List<CopyRes> copyResList = new ArrayList<>();
-//
-//        for (Card card : cards) {
-//            CopyRes copyRes = createCopyRes(card);
-//            copyResList.add(copyRes);
-//        }
-//        return copyResList;
-//    }
+    @Transactional
+    public List<CopyRes> selectCopyByQuery(String q) {
+        List<Card> cards = cardRepository.findByTextContaining(q);
+        List<CopyRes> copyResList = new ArrayList<>();
+
+        for (Card card : cards) {
+            CopyRes copyRes = createCopyRes(card);
+            copyResList.add(copyRes);
+        }
+        return copyResList;
+    }
+
+
 
     @Transactional
     public List<CopyRes> getCopyScrapList(User user) {

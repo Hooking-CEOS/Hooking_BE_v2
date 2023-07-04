@@ -1,3 +1,9 @@
+buildscript {
+	ext {
+		queryDslVersion = "5.0.0"
+	}
+}
+
 plugins {
 	id 'java'
 	id 'org.springframework.boot' version '2.7.13-SNAPSHOT'
@@ -5,6 +11,7 @@ plugins {
 	//QueryDSL 추가
 	id "com.ewerk.gradle.plugins.querydsl" version "1.0.10"
 }
+
 
 group = 'shop.hooking'
 version = '0.0.1-SNAPSHOT'
@@ -35,7 +42,8 @@ dependencies {
 	implementation group: 'io.jsonwebtoken', name: 'jjwt', version: '0.9.1'
 
 	//querydsl 추가
-	implementation 'com.querydsl:querydsl-jpa'
+	implementation "com.querydsl:querydsl-jpa:${queryDslVersion}"
+	implementation "com.querydsl:querydsl-apt:${queryDslVersion}"
 
 	//querydsl log 추가
 	//implementation 'com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.9.0'
