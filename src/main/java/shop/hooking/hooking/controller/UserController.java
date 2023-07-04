@@ -34,6 +34,7 @@ public class UserController {
     }
 
     // 건의사항 작성
+    @CrossOrigin(origins = "https://hooking.shop, https://hooking-dev.netlify.app/, https://hooking.netlify.app/, http://localhost:3000, http://localhost:3001")
     @PostMapping("/review")
     public HttpRes<String> writeReview(@RequestBody ReviewReq.WriteReviewDto writeReviewDto,
                                       HttpServletRequest httpServletRequest){ // <건의사항 내용>과 시간, <작성자 이름> 등등
