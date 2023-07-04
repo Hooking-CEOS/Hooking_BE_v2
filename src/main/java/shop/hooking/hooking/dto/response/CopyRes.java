@@ -22,7 +22,8 @@ public class CopyRes {
     private LocalDateTime createdAt;
 
     @Builder
-    public CopyRes(Brand brand, String text, Integer scrapCnt, LocalDateTime createdAt) {
+    public CopyRes(Long id, Brand brand, String text, Integer scrapCnt, LocalDateTime createdAt) {
+        this.id = id;
         this.brandName = brand.getBrandName();
         this.text = text;
         this.scrapCnt = scrapCnt;
