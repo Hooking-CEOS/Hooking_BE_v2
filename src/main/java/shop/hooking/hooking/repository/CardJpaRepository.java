@@ -51,10 +51,10 @@ public class CardJpaRepository {
     }
 
     private BooleanExpression ageEq(String age) {
-        return hasText(age) ? brand.brandPrice.eq(age) : null;
+        return hasText(age) ? brand.brandAge.eq(age) : null;
     }
 
     private BooleanExpression productEq(String product) {
-        return hasText(product) ? brand.brandPrice.eq(product) : null;
+        return hasText(product) ? brand.brandProduct.eq(product) : null;
     }
 }
