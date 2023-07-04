@@ -2,6 +2,8 @@ package shop.hooking.hooking.dto;
 
 import lombok.Data;
 
+import java.util.List;
+
 @Data
 public class CardSearchCondition {
     // 분위기, 나이대, 가격대, 제품군
