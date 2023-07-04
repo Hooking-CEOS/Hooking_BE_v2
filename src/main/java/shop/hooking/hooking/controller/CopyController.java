@@ -4,15 +4,19 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import shop.hooking.hooking.dto.CardSearchCondition;
 import shop.hooking.hooking.dto.request.CopyReq;
+import shop.hooking.hooking.dto.response.CopyRes;
 import shop.hooking.hooking.entity.Card;
 import shop.hooking.hooking.entity.User;
+import shop.hooking.hooking.repository.CardJpaRepository;
 import shop.hooking.hooking.repository.CardRepository;
 import shop.hooking.hooking.service.BrandService;
 import shop.hooking.hooking.service.CopyService;
 import shop.hooking.hooking.service.JwtTokenProvider;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -24,6 +28,8 @@ public class CopyController {
     private final CopyService copyService;
 
     private final CardRepository cardRepository;
+
+    private final CardJpaRepository cardJpaRepository;
 
 
     // 전체 카피라이팅 조회
@@ -87,12 +93,10 @@ public class CopyController {
     }
 
 
-    // 카피라이팅 필터
-    @CrossOrigin(origins = "https://hooking.shop, https://hooking-dev.netlify.app/, https://hooking.netlify.app/, http://localhost:3000, http://localhost:3001")
-    @PostMapping("/filter")
-    ResponseEntity<?> copyFilter(HttpServletRequest httpRequest, @RequestBody CopyReq copyReq) throws IOException{
-
-        return new ResponseEntity<>("스크랩을 완료하였습니다.",HttpStatus.OK);
+    //카피라이팅 필터
+    @GetMapping ("/filter")//검색도 로그인 안 한 유저 사용할 수 있지 않나?
+    public List<CopyRes> searchFilterCard(CardSearchCondition condition){
+        return cardJpaRepository.search(condition);
     }
 
 }
