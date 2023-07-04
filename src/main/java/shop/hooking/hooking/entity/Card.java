@@ -1,10 +1,7 @@
 package shop.hooking.hooking.entity;
 
 import com.sun.istack.NotNull;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;

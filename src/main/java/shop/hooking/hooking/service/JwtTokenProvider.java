@@ -103,5 +103,17 @@ public class JwtTokenProvider {
             return null;
         }
     }
+
+
+    public User getUserInfoByToken(HttpServletRequest request) {
+        String token = resolveToken(request);
+        if(validateToken(token,request)) {
+            User user = userRepository.findMemberByKakaoId(Long.parseLong(getUserPk(token)));
+            return user;
+        }
+        else {
+            return null;
+        }
+    }
 }
 
