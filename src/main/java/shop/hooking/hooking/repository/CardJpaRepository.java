@@ -39,22 +39,45 @@ public class CardJpaRepository {
                 .from(card)
                 .leftJoin(card.brand, brand) // 조인
                 .where(
-                        productEq(condition.getProduct()),
-                        ageEq(condition.getAge()),
-                        priceEq(condition.getPrice())
+                        productEq(condition.getProducts()),
+                        ageEq(condition.getAges()),
+                        priceEq(condition.getPrices())
                 )
                 .fetch();
     }
 
-    private BooleanExpression priceEq(String price) {
-        return hasText(price) ? brand.brandPrice.eq(price) : null;
+    private BooleanExpression productEq(List<String> products) {
+        BooleanExpression productExpression = null;
+        if (products != null && !products.isEmpty()) {
+            for (String product : products) {
+                BooleanExpression condition = brand.brandProduct.eq(product);
+                productExpression = (productExpression != null) ? productExpression.or(condition) : condition;
+            }
+        }
+        return productExpression;
     }
 
-    private BooleanExpression ageEq(String age) {
-        return hasText(age) ? brand.brandAge.eq(age) : null;
+
+    private BooleanExpression ageEq(List<String> ages) {
+        BooleanExpression ageExpression = null;
+        if (ages != null && !ages.isEmpty()) {
+            for (String age : ages) {
+                BooleanExpression condition = brand.brandAge.eq(age);
+                ageExpression = (ageExpression != null) ? ageExpression.or(condition) : condition;
+            }
+        }
+        return ageExpression;
     }
 
-    private BooleanExpression productEq(String product) {
-        return hasText(product) ? brand.brandProduct.eq(product) : null;
+    private BooleanExpression priceEq(List<String> prices) {
+        BooleanExpression priceExpression = null;
+        if (prices != null && !prices.isEmpty()) {
+            for (String price : prices) {
+                BooleanExpression condition = brand.brandPrice.eq(price);
+                priceExpression = (priceExpression != null) ? priceExpression.or(condition) : condition;
+            }
+        }
+        return priceExpression;
     }
+
 }
