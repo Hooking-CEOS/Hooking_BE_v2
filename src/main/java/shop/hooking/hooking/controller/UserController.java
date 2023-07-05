@@ -10,6 +10,7 @@ import shop.hooking.hooking.entity.User;
 import shop.hooking.hooking.exception.BadRequestException;
 import shop.hooking.hooking.repository.UserRepository;
 import shop.hooking.hooking.service.JwtTokenProvider;
+import shop.hooking.hooking.service.OAuthUserService;
 import shop.hooking.hooking.service.ReviewService;
 
 import javax.servlet.http.HttpServletRequest;
@@ -21,6 +22,8 @@ import java.util.List;
 @RequestMapping("/users")
 public class UserController {
     private final JwtTokenProvider jwtTokenProvider;
+
+    private final OAuthUserService oAuthUserService;
 
     private final UserRepository userRepository;
 
@@ -64,5 +67,11 @@ public class UserController {
         return reviewDtos;
 
     }
+
+//    @DeleteMapping("/user")
+//    public String memberDelete(HttpServletRequest httpRequest) {
+//        User user = jwtTokenProvider.getUserInfoByToken(httpRequest);
+//        return oAuthUserService.deleteSessionMember(user.getId());
+//    }
 
 }

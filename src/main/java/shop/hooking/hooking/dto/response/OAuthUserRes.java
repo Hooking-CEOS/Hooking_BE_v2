@@ -17,6 +17,10 @@ public class OAuthUserRes {
 
     private String picture;
 
+    private String gender;
+
+    private String ageRange;
+
     private String role;
 
     @Builder
@@ -24,8 +28,9 @@ public class OAuthUserRes {
         this.nickname = user.getNickname();
         this.email = user.getEmail();
         this.picture = user.getImage();
+        this.gender = user.getGender();
+        this.ageRange = user.getAgeRange();
         this.role = user.getRole();
-
     }
 
 
