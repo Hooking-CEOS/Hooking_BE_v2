@@ -61,17 +61,17 @@ public class CardJpaRepository {
 
 
         return queryFactory
-                .select(new QCopyRes(
+                .selectDistinct(new QCopyRes( //중복X
                         card.id,
                         card.brand,
                         card.text,
                         card.scrapCnt,
                         card.createdAt))
                 .from(card)
-                .leftJoin(card.brand, brand)
-                .leftJoin(have)
-                .on(have.brand.eq(brand))
-                .join(have.mood, mood)
+                .leftJoin(card.brand, brand) // card, brand 조인
+                .leftJoin(have) // brand, have 조인
+                .on(have.brand.eq(brand)) // 조인 조건 설정
+                .join(have.mood, mood) // have와 mood 조인
                 .where(
                         productEq(products),
                         ageEq(ages),
