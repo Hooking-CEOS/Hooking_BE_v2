@@ -14,15 +14,19 @@ public class OAuthAttributesDTO {
     private Long kakaoId;
     private String nickname;
     private String email;
+    private String gender;
+    private String ageRange;
     private String picture;
 
     @Builder
     public OAuthAttributesDTO(Map<String, Object> attributes, Long kakaoId, String nickname,
-                              String email, String picture) {
+                              String email,String gender,String ageRange, String picture) {
         this.kakaoId = kakaoId;
         this.attributes = attributes;
         this.nickname = nickname;
         this.email = email;
+        this.gender = gender;
+        this.ageRange = ageRange;
         this.picture = picture;
     }
 
@@ -34,6 +38,8 @@ public class OAuthAttributesDTO {
                 .kakaoId((Long)attributes.get("id"))
                 .nickname((String)profile.get("nickname"))
                 .email((String)response.get("email"))
+                .gender((String)response.get("gender"))
+                .ageRange((String)response.get("age_range"))
                 .picture((String)profile.get("profile_image_url"))
                 .attributes(attributes)
                 .build();
@@ -45,6 +51,8 @@ public class OAuthAttributesDTO {
                 .nickname(nickname)
                 .image(picture)
                 .email(email)
+                .gender(gender)
+                .ageRange(ageRange)
                 .role(Role.USER)
                 .build();
 

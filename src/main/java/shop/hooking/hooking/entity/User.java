@@ -38,6 +38,12 @@ public class User {
     @Column
     private String image;
 
+    @Column
+    private String gender;
+
+    @Column(name = "age_range")
+    private String ageRange;
+
     @Column(name = "role")
     @NotNull
     private String role;
@@ -47,11 +53,13 @@ public class User {
     private Boolean deleteFlag;
 
     @Builder
-    public User(Long kakaoId, String nickname, String email, String image, Role role) {
+    public User(Long kakaoId, String nickname, String email, String image, String gender, String ageRange, Role role) {
         this.kakaoId = kakaoId;
         this.nickname = nickname;
         if(email!=null) this.email = email;
         this.image = image;
+        if(gender!=null) this.gender = gender;
+        if(ageRange!=null) this.ageRange = ageRange;
         this.role = role.getValue();
         this.deleteFlag = false;
     }
