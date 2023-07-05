@@ -13,6 +13,8 @@ import java.util.Optional;
 public interface UserRepository extends JpaRepository<User, Long> {
     User findMemberByKakaoId(Long kakaoId);
 
+   // Optional<User> findMemberByMemberIdAndDeleteFlagIsFalse(Long memberId);
+
 }
 
 
