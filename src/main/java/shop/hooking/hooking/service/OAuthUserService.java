@@ -19,6 +19,7 @@ import shop.hooking.hooking.exception.CustomException;
 import shop.hooking.hooking.exception.ErrorCode;
 import shop.hooking.hooking.repository.UserRepository;
 
+import javax.transaction.Transactional;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -77,6 +78,18 @@ public class OAuthUserService implements OAuth2UserService<OAuth2UserRequest, OA
             return newUser;
         }
     }
+
+//    @Transactional
+//    public String deleteSessionMember(Long memberId) {
+//        User user = findMemberEntity(memberId);
+//        user.updateDeleteFlag();
+//        return "삭제 완료";
+//    }
+//
+//    public User findMemberEntity(Long memberId) {
+//        return userRepository.findMemberByMemberIdAndDeleteFlagIsFalse(memberId)
+//                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND, null));
+//    }
 
 
 }
