@@ -95,14 +95,20 @@ public class BrandService {
         return brandDetailDto;
     }
 
-    public void followBrand(Long brandId, User user){
+    public boolean followBrand(Long brandId, User user){
 
         Brand brand = brandRepository.findBrandById(brandId);
+
+        if(followRepository.existsByBrandAndUser(brand, user)){
+            return false;
+        }
 
         Follow follow =Follow.builder()
                 .brand(brand)
                 .user(user)
                 .build();
         followRepository.save(follow); // 데이터베이스에 저장
+
+        return true;
     }
 }

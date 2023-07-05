@@ -30,13 +30,13 @@ public class CardJpaRepository {
     public List<CopyRes> search(CardSearchCondition condition){
 
         String moodString = condition.getMood();
-        String[] moods = null; // null처리 해줘야함
+        String[] moods = null;
         if (moodString != null) {
             moods = moodString.split(",");
         }
 
         String priceString = condition.getPrice();
-        String[] prices = null; // null처리 해줘야함
+        String[] prices = null;
         if (priceString != null) {
             prices = priceString.split(",");
         }
@@ -51,7 +51,7 @@ public class CardJpaRepository {
         String productString = condition.getProduct();
         String[] products = null;
         if (productString != null) {
-            products = productString.split(","); // 리스트 형태로 삽입
+            products = productString.split(",");
         }
 
         QHave have = QHave.have;
@@ -61,7 +61,7 @@ public class CardJpaRepository {
 
 
         return queryFactory
-                .selectDistinct(new QCopyRes( //중복X
+                .selectDistinct(new QCopyRes(
                         card.id,
                         card.brand,
                         card.text,
@@ -83,7 +83,7 @@ public class CardJpaRepository {
 
 
 
-    private BooleanExpression moodEq(String[] moods) { // 스킨케어, 색조화장
+    private BooleanExpression moodEq(String[] moods) {
         BooleanExpression moodExpression = null;
         if (moods != null ) {
             for (String mood : moods) {
@@ -94,7 +94,7 @@ public class CardJpaRepository {
         return moodExpression;
     }
 
-    private BooleanExpression productEq(String[] products) { // 스킨케어, 색조화장
+    private BooleanExpression productEq(String[] products) {
         BooleanExpression productExpression = null;
         if (products != null ) {
             for (String product : products) {
@@ -117,14 +117,12 @@ public class CardJpaRepository {
         return ageExpression;
     }
 
-    private BooleanExpression priceEq(String[] prices) { //[저가라인, 중저가라인, 고가라인]
+    private BooleanExpression priceEq(String[] prices) {
         BooleanExpression priceExpression = null;
         if (prices != null ) {
             for (String price : prices) {
                 BooleanExpression condition = brand.brandPrice.eq(price);
                 priceExpression = (priceExpression != null) ? priceExpression.or(condition) : condition;
-                // (brand.brandPrice.eq("저가라인")).or(brand.brandPrice.eq("중저가라인")).or(brand.brandPrice.eq("고가라인"))
-                // brand.brandPrice = "저가라인" OR brand.brandPrice = "중저가라인" OR brand.brandPrice = "고가라인"
             }
         }
         return priceExpression;
