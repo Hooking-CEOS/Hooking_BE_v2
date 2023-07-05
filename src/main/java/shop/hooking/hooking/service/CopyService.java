@@ -134,7 +134,11 @@ public class CopyService {
 
 
     @Transactional
-    public void saveCopy(User user, Card card) throws IOException {
+    public boolean saveCopy(User user, Card card) throws IOException {
+
+        if(scrapRepository.existsByUserAndCard(user,card)){
+            return false;
+        }
         Scrap scrap = Scrap.builder()
                 .user(user)
                 .card(card)
@@ -142,6 +146,7 @@ public class CopyService {
 
         scrapRepository.save(scrap);
 
+        return true;
     }
 
 
