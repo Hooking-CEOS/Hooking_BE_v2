@@ -3,6 +3,7 @@ package shop.hooking.hooking.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+import shop.hooking.hooking.entity.Card;
 import shop.hooking.hooking.entity.Scrap;
 import shop.hooking.hooking.entity.User;
 
@@ -16,5 +17,7 @@ public interface ScrapRepository extends JpaRepository<Scrap, Long> {
     List<Scrap> findScrapByUser(User user);
 
     List<Scrap> findByCardId(Long id); // 카드 식별번호로 스크랩 객체 찾기
+
+    boolean existsByUserAndCard(User user, Card card); // 유저와 카드로 존재 여부 확인하기
 
 }
