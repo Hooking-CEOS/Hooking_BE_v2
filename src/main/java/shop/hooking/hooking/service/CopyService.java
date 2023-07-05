@@ -106,27 +106,39 @@ public class CopyService {
 
     @Transactional
     public CopyRes createCopyRes(Card card) {
-        Long id = card.getId();
+        Long id = card.getId(); // id로 넘어옴
+
+        List<Scrap> scraps = scrapRepository.findByCardId(id); // 스크랩 객체들 모두 불러옴
+        int length = scraps.size();
+
         Brand brand = card.getBrand();
         String text = card.getText();
-        Integer scrapCnt = card.getScrapCnt();
+        Integer scrapCnt = length;
         LocalDateTime createdAt = card.getCreatedAt();
         return new CopyRes(id, brand,text,scrapCnt,createdAt);
     }
 
     @Transactional
     public CopyRes createScrapRes(Scrap scrap) {
-        Long id = scrap.getCard().getId();
+        Long id = scrap.getCard().getId(); // cardId
+
+        List<Scrap> scraps = scrapRepository.findByCardId(id); // 스크랩 객체들 모두 불러옴
+        int length = scraps.size();
+
         Brand brand = scrap.getCard().getBrand();
         String text = scrap.getCard().getText();
-        Integer scrapCnt = scrap.getCard().getScrapCnt();
+        Integer scrapCnt = length;
         LocalDateTime createdAt = scrap.getCreatedAt();
         return new CopyRes(id, brand,text,scrapCnt,createdAt);
     }
 
 
     @Transactional
-    public void saveCopy(User user, Card card) throws IOException {
+    public boolean saveCopy(User user, Card card) throws IOException {
+
+        if(scrapRepository.existsByUserAndCard(user,card)){
+            return false;
+        }
         Scrap scrap = Scrap.builder()
                 .user(user)
                 .card(card)
@@ -134,6 +146,7 @@ public class CopyService {
 
         scrapRepository.save(scrap);
 
+        return true;
     }
 
 
