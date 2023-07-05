@@ -21,7 +21,7 @@ public class Card {
     private String text;
 
     @Column(name = "scrap_cnt")
-    private Integer scrapCnt;
+    private Integer scrapCnt; // scrap 테이블에서 횟수로 넘어와야함
 
     @Column(name = "created_at")
     @CreatedDate

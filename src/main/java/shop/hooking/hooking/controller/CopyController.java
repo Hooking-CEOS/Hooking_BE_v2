@@ -86,15 +86,17 @@ public class CopyController {
     ResponseEntity<?> copyScrap(HttpServletRequest httpRequest, @RequestBody CopyReq copyReq) throws IOException {
         User user = jwtTokenProvider.getUserInfoByToken(httpRequest);
         Card card = cardRepository.findCardById(copyReq.getCardId());
-        copyService.saveCopy(user, card);
+        boolean isScrap = copyService.saveCopy(user, card); // 스크랩됐으면->true, 안됐으면->false
+        if(isScrap){
+            return new ResponseEntity<>("스크랩을 완료하였습니다.",HttpStatus.OK);
+        }
 
-        return new ResponseEntity<>("스크랩을 완료하였습니다.",HttpStatus.OK);
-
+        return new ResponseEntity<>("스크랩에 실패하였습니다",HttpStatus.OK);
     }
 
 
     //카피라이팅 필터
-    @GetMapping ("/filter")//검색도 로그인 안 한 유저 사용할 수 있지 않나?
+    @GetMapping ("/filter")
     public List<CopyRes> searchFilterCard(CardSearchCondition condition){
         return cardJpaRepository.search(condition);
     }
