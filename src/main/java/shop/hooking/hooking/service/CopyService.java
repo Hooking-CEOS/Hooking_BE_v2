@@ -25,10 +25,10 @@ public class CopyService {
     private final CardRepository cardRepository;
     private final BrandRepository brandRepository;
     private final ScrapRepository scrapRepository;
-
     private final MoodRepository moodRepository;
-
     private final HaveRepository haveRepository;
+
+
     @Transactional
     public List<CopyRes> getCopyList() {
         List<Card> cards = cardRepository.findAll(); //카피 다가져옴
@@ -75,16 +75,16 @@ public class CopyService {
 
         List<CopyRes> copyResList = new ArrayList<>();
 
-        List<Brand> brands = new ArrayList<>(); // 브랜드 가져옴
+        List<Brand> brands = new ArrayList<>();
         for (Have have : haves) {
-            brands.add(have.getBrand());
+            brands.add(have.getBrand()); // 브랜드 다 가져오고
         }
         for ( Brand brand : brands){
-            List<Card> cards = cardRepository.findCardsByBrandId(brand.getId());
+            List<Card> cards = cardRepository.findCardsByBrandId(brand.getId()); // 카드 다 가져오고
 
             for (Card card : cards) {
                 CopyRes copyRes = createCopyRes(card);
-                copyResList.add(copyRes);
+                copyResList.add(copyRes); // 리스트 형태로 반환
             }
         }
         return copyResList;
