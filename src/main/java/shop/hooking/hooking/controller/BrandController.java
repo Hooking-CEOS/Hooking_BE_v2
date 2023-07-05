@@ -53,8 +53,10 @@ public class BrandController {
         }
         User user = userRepository.findMemberByKakaoId(Long.parseLong(jwtTokenProvider.getUserPk(token)));
 
-        brandService.followBrand(brand_id, user); // 여기서 브랜드 팔로우 기능을 구현해야함
-
-        return new HttpRes<>("해당 브랜드 팔로우가 완료되었습니다.");
+        boolean isFollow = brandService.followBrand(brand_id, user);
+        if(isFollow){
+            return new HttpRes<>("해당 브랜드 팔로우가 완료되었습니다.");
+        }
+        return new HttpRes<>("이미 팔로우하였습니다. ");
     }
 }
