@@ -5,10 +5,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import shop.hooking.hooking.dto.CardSearchCondition;
+import shop.hooking.hooking.dto.HttpRes;
 import shop.hooking.hooking.dto.request.CopyReq;
 import shop.hooking.hooking.dto.response.CopyRes;
 import shop.hooking.hooking.entity.Card;
 import shop.hooking.hooking.entity.User;
+import shop.hooking.hooking.exception.BadRequestException;
 import shop.hooking.hooking.repository.CardJpaRepository;
 import shop.hooking.hooking.repository.CardRepository;
 import shop.hooking.hooking.service.BrandService;
@@ -34,16 +36,17 @@ public class CopyController {
 
     // 전체 카피라이팅 조회
     @GetMapping("")
-    ResponseEntity<?> copyList(){
-        return new ResponseEntity<>(copyService.getCopyList(), HttpStatus.OK);
+    public List<CopyRes> copyList(){
+        List<CopyRes> copyRes = copyService.getCopyList();
+        return copyRes;
     }
 
 
     // 카피라이팅 검색 조회
     @GetMapping("/search")
-    ResponseEntity<?> copySearchList(@RequestParam(name = "keyword") String q){
+    public List<CopyRes> copySearchList(@RequestParam(name = "keyword") String q){
         if(q.isEmpty()){
-            return new ResponseEntity<>("검색 결과가 없습니다.",HttpStatus.BAD_REQUEST);
+            throw new BadRequestException("검색 결과를 찾을 수 없습니다.");
         }
 
         if(q.equals("프레시안") || q.equals("롬앤") || q.equals("헤라") || q.equals("피지오겔")
@@ -54,18 +57,24 @@ public class CopyController {
                 || q.equals("애프터 블로우") || q.equals("더바디샵") || q.equals("롱테이크") || q.equals("어뮤즈")
                 || q.equals("탬버린즈") || q.equals("논픽션") || q.equals("에스쁘아") || q.equals("스킨푸드")){
 
-            return new ResponseEntity<>(copyService.selectBrandByQuery(q), HttpStatus.OK);
+            List<CopyRes> copyRes = copyService.selectBrandByQuery(q);
+
+            return copyRes;
 
         } else if (q.equals("퓨어한") || q.equals("화려한") || q.equals("키치한") || q.equals("고급스러운")
                 || q.equals("자연의") || q.equals("심플한") || q.equals("네추럴한") || q.equals("발랄한")
                 || q.equals("독특한") || q.equals("비비드한") || q.equals("첨단의") || q.equals("도시적인")
                 || q.equals("감각적인") || q.equals("수줍은") || q.equals("전통적인") || q.equals("친근한")) {
 
-            return new ResponseEntity<>(copyService.selectMoodByQuery(q), HttpStatus.OK);
+            List<CopyRes> copyRes = copyService.selectMoodByQuery(q);
+
+            return copyRes;
 
         } else{
 
-            return new ResponseEntity<>(copyService.selectCopyByQuery(q), HttpStatus.OK);
+            List<CopyRes> copyRes = copyService.selectCopyByQuery(q);
+
+            return copyRes;
 
         }
 
@@ -74,24 +83,25 @@ public class CopyController {
 
     // 스크랩한 카피라이팅 조회
     @GetMapping("/scrap")
-    ResponseEntity<?> copyScrapList(HttpServletRequest httpRequest){
+    public List<CopyRes> copyScrapList(HttpServletRequest httpRequest){
         User user = jwtTokenProvider.getUserInfoByToken(httpRequest);
-        return new ResponseEntity<>(copyService.getCopyScrapList(user), HttpStatus.OK);
+        List<CopyRes> copyRes = copyService.getCopyScrapList(user);
+        return copyRes;
     }
 
 
     // 카피라이팅 스크랩
     @CrossOrigin(origins = "https://hooking.shop, https://hooking-dev.netlify.app/, https://hooking.netlify.app/, http://localhost:3000, http://localhost:3001")
     @PostMapping("/scrap")
-    ResponseEntity<?> copyScrap(HttpServletRequest httpRequest, @RequestBody CopyReq copyReq) throws IOException {
+    public HttpRes<String> copyScrap(HttpServletRequest httpRequest, @RequestBody CopyReq copyReq) throws IOException {
         User user = jwtTokenProvider.getUserInfoByToken(httpRequest);
         Card card = cardRepository.findCardById(copyReq.getCardId());
         boolean isScrap = copyService.saveCopy(user, card); // 스크랩됐으면->true, 안됐으면->false
         if(isScrap){
-            return new ResponseEntity<>("스크랩을 완료하였습니다.",HttpStatus.OK);
+            return new HttpRes<>("스크랩을 완료하였습니다.");
         }
 
-        return new ResponseEntity<>("스크랩에 실패하였습니다",HttpStatus.OK);
+        return new HttpRes<>("스크랩에 실패하였습니다.");
     }
 
 
