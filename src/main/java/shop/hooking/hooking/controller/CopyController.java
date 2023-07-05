@@ -80,7 +80,7 @@ public class CopyController {
     }
 
 
-    // 카피라이팅 스크랩
+    // 카피라이팅 스크랩 -> 한번 스크랩 한 카드는 중복할 수 없음 -> 처리
     @CrossOrigin(origins = "https://hooking.shop, https://hooking-dev.netlify.app/, https://hooking.netlify.app/, http://localhost:3000, http://localhost:3001")
     @PostMapping("/scrap")
     ResponseEntity<?> copyScrap(HttpServletRequest httpRequest, @RequestBody CopyReq copyReq) throws IOException {
