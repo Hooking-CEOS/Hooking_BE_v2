@@ -9,11 +9,11 @@ public class CardSearchCondition {
     // 분위기, 나이대, 가격대, 제품군
     // 화면에서 이러한 조건들이 넘어옴
 
-    private List<String> moods;
+    private String mood;
 
-    private List<String> ages;
+    private String age;
 
-    private List<String> prices;
+    private String price;
 
-    private List<String> products;
+    private String product;
 }
