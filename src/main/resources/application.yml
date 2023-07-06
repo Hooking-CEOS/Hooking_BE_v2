@@ -33,7 +33,7 @@ spring:
       format_sql: true
       use_sql_comments: true
   jwt:
-    secretKey: ${SECRET-KEY}
+    secretKey: ${SECRET_KEY}
     blacklist:
       access-token: BlackList_AccessToken_
 
