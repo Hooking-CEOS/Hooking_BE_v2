@@ -35,7 +35,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOriginPatterns(Arrays.asList("https://hooking.shop/","https://hooking-dev.netlify.app/","https://hooking.netlify.app/","http://localhost:3000", "https://bakery-front-rho.vercel.app/"));
+        configuration.setAllowedOriginPatterns(Arrays.asList("https://hooking.shop/","https://hooking-dev.netlify.app/","https://hooking.netlify.app/","http://localhost:3000"));
         configuration.addAllowedHeader("*");
         configuration.addExposedHeader("Set-Cookie");
         configuration.addAllowedMethod("*");
@@ -72,10 +72,5 @@ public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
     return http.addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class).build();
 }
-
-
-
-
-
 }
 
