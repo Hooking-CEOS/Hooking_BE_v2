@@ -60,6 +60,8 @@ public class CopyController {
 
             List<CopyRes> copyRes = copyService.selectBrandByQuery(q);
 
+            Collections.shuffle(copyRes);
+
             return copyRes;
 
         } else if (q.equals("퓨어한") || q.equals("화려한") || q.equals("키치한") || q.equals("고급스러운")
@@ -69,11 +71,15 @@ public class CopyController {
 
             List<CopyRes> copyRes = copyService.selectMoodByQuery(q);
 
+            Collections.shuffle(copyRes);
+
             return copyRes;
 
         } else{
 
             List<CopyRes> copyRes = copyService.selectCopyByQuery(q);
+
+            Collections.shuffle(copyRes);
 
             return copyRes;
 
