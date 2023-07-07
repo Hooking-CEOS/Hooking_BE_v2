@@ -39,6 +39,7 @@ public class CopyController {
     @GetMapping("")
     public List<CopyRes> copyList(){
         List<CopyRes> copyRes = copyService.getCopyList();
+        Collections.shuffle(copyRes);
         return copyRes;
     }
 
