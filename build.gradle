@@ -56,6 +56,9 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
 	implementation 'org.springframework.session:spring-session-jdbc'
+
+	//swagger
+	//implementation group: 'io.springfox', name: 'springfox-boot-starter', version: '3.0.0'
 }
 
 tasks.named('test') {
