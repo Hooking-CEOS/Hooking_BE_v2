@@ -55,9 +55,11 @@ dependencies {
 	testImplementation 'org.springframework.security:spring-security-test'
 	implementation 'org.springframework.session:spring-session-jdbc'
 
+
 	// swagger
 	compile('io.springfox:springfox-swagger2:3.0.0')
 	compile('io.springfox:springfox-swagger-ui:3.0.0')
+
 }
 
 tasks.named('test') {
