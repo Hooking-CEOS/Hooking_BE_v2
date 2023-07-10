@@ -53,7 +53,7 @@ public class JwtTokenProvider {
     public Authentication getAuthentication(String token) {
         User user = userRepository.findMemberByKakaoId(Long.parseLong(getUserPk(token)));
         OAuthUserRes resDTO = OAuthUserRes.builder().user(user).build();
-        return new UsernamePasswordAuthenticationToken(resDTO, "");
+        return new UsernamePasswordAuthenticationToken(resDTO, "", resDTO.getAuthorities());
     }
 
 
