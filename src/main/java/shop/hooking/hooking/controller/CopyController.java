@@ -87,6 +87,7 @@ public class CopyController {
 
 
     // 카피라이팅 스크랩
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @CrossOrigin(origins = "https://hooking.shop, https://hooking-dev.netlify.app/, https://hooking.netlify.app/, http://localhost:3000, http://localhost:3001")
     @PostMapping("/scrap")
     public HttpRes<String> copyScrap(HttpServletRequest httpRequest, @RequestBody CopyReq copyReq) throws IOException {
@@ -97,7 +98,7 @@ public class CopyController {
             return new HttpRes<>("스크랩을 완료하였습니다.");
         }
 
-        return new HttpRes<>("스크랩에 실패하였습니다.");
+        return new HttpRes<>(HttpStatus.BAD_REQUEST.value(),"중복 스크랩이 불가능합니다.");
     }
 
 
