@@ -47,11 +47,13 @@ public class CopyController {
 
 
     // 카피라이팅 검색 조회
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @GetMapping("/search")
     public HttpRes<List<CopyRes>> copySearchList(@RequestParam(name = "keyword") String q) {
         if (q.isEmpty()) {
-            throw new BadRequestException("검색 결과를 찾을 수 없습니다.");
+            return new HttpRes<>(HttpStatus.BAD_REQUEST.value(),"검색 결과를 찾을 수 없습니다.");
         }
+
 
         MoodType moodType = MoodType.fromKeyword(q);
         if (moodType != null) {
@@ -64,6 +66,9 @@ public class CopyController {
             return new HttpRes<>(copyRes);
         } else {
             List<CopyRes> copyRes = copyService.selectCopyByQuery(q);
+            if (copyRes.isEmpty()){
+                return new HttpRes<>(HttpStatus.BAD_REQUEST.value(),"검색 결과를 찾을 수 없습니다.");
+            }
             Collections.shuffle(copyRes);
             return new HttpRes<>(copyRes);
         }
