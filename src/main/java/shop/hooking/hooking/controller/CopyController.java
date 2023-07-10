@@ -39,10 +39,10 @@ public class CopyController {
 
     // 전체 카피라이팅 조회
     @GetMapping("")
-    public List<CopyRes> copyList(){
+    public HttpRes<List<CopyRes>> copyList(){
         List<CopyRes> copyRes = copyService.getCopyList();
         Collections.shuffle(copyRes);
-        return copyRes;
+        return new HttpRes<>(copyRes);
     }
 
 
