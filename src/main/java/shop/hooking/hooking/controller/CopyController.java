@@ -39,16 +39,16 @@ public class CopyController {
 
     // 전체 카피라이팅 조회
     @GetMapping("")
-    public List<CopyRes> copyList(){
+    public HttpRes<List<CopyRes>> copyList(){
         List<CopyRes> copyRes = copyService.getCopyList();
         Collections.shuffle(copyRes);
-        return copyRes;
+        return new HttpRes<>(copyRes);
     }
 
 
     // 카피라이팅 검색 조회
     @GetMapping("/search")
-    public List<CopyRes> copySearchList(@RequestParam(name = "keyword") String q) {
+    public HttpRes<List<CopyRes>> copySearchList(@RequestParam(name = "keyword") String q) {
         if (q.isEmpty()) {
             throw new BadRequestException("검색 결과를 찾을 수 없습니다.");
         }
@@ -57,15 +57,15 @@ public class CopyController {
         if (moodType != null) {
             List<CopyRes> copyRes = copyService.selectMoodByQuery(q);
             Collections.shuffle(copyRes);
-            return copyRes;
+            return new HttpRes<>(copyRes);
         } else if (BrandType.containsKeyword(q)) {
             List<CopyRes> copyRes = copyService.selectBrandByQuery(q);
             Collections.shuffle(copyRes);
-            return copyRes;
+            return new HttpRes<>(copyRes);
         } else {
             List<CopyRes> copyRes = copyService.selectCopyByQuery(q);
             Collections.shuffle(copyRes);
-            return copyRes;
+            return new HttpRes<>(copyRes);
         }
     }
 
@@ -74,10 +74,10 @@ public class CopyController {
 
     // 스크랩한 카피라이팅 조회
     @GetMapping("/scrap")
-    public List<CopyRes> copyScrapList(HttpServletRequest httpRequest){
+    public HttpRes<List<CopyRes>> copyScrapList(HttpServletRequest httpRequest){
         User user = jwtTokenProvider.getUserInfoByToken(httpRequest);
         List<CopyRes> copyRes = copyService.getCopyScrapList(user);
-        return copyRes;
+        return new HttpRes<>(copyRes);
     }
 
 
@@ -98,9 +98,9 @@ public class CopyController {
 
     //카피라이팅 필터
     @GetMapping("/filter")
-    public List<CopyRes> searchFilterCard(CardSearchCondition condition) {
+    public HttpRes<List<CopyRes>> searchFilterCard(CardSearchCondition condition) {
         List<CopyRes> results = cardJpaRepository.search(condition);
         Collections.shuffle(results);
-        return results;
+        return new HttpRes<>(results);
     }
 }

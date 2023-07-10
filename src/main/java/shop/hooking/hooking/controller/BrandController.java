@@ -28,35 +28,35 @@ public class BrandController {
 
     // 전체 브랜드 기본정보 조회
     @GetMapping("")
-    public List<BrandRes.BrandDto> showAllBrand(){ // 로그인하지 않은 모든 사용자가 이용할 수 있음
+    public HttpRes<List<BrandRes.BrandDto>> showAllBrand(){ // 로그인하지 않은 모든 사용자가 이용할 수 있음
         List<BrandRes.BrandDto> brandDtoList = brandService.getBrandList();
 
-        return brandDtoList; // 브랜드 기본정보 반환
+        return new HttpRes<>(brandDtoList); // 브랜드 기본정보 반환
     }
 
     // 해당 브랜드 상세정보 조회
     @PostMapping("/{brand_id}")
-    public BrandRes.BrandDetailDto showOneBrand(@PathVariable Long brand_id){ // 로그인하지 않은 모든 사용자가 이용할 수 있음
+    public HttpRes<BrandRes.BrandDetailDto> showOneBrand(@PathVariable Long brand_id){ // 로그인하지 않은 모든 사용자가 이용할 수 있음
         BrandRes.BrandDetailDto brandDetailDto = brandService.getOneBrand(brand_id);
 
-        return brandDetailDto; // 브랜드 상세정보 반환
+        return new HttpRes<>(brandDetailDto); // 브랜드 상세정보 반환
     }
 
-    // 해당 브랜드 팔로우
-    @CrossOrigin(origins = "https://hooking.shop, https://hooking-dev.netlify.app/, https://hooking.netlify.app/, http://localhost:3000, http://localhost:3001")
-    @PostMapping("/{brand_id}/follow")
-    public HttpRes<String> followBrand(@PathVariable Long brand_id, HttpServletRequest httpServletRequest)// 로그인한 사용자 정보 필요함
-    {
-        String token = jwtTokenProvider.resolveToken(httpServletRequest); //헤더에서 토큰을 빼내오는 과정
-        if(!jwtTokenProvider.validateToken(token,httpServletRequest)){ //토큰이 유효하지 않을 때
-            throw new BadRequestException("사용자 정보를 찾을 수 없습니다.");
-        }
-        User user = userRepository.findMemberByKakaoId(Long.parseLong(jwtTokenProvider.getUserPk(token)));
-
-        boolean isFollow = brandService.followBrand(brand_id, user);
-        if(isFollow){
-            return new HttpRes<>("해당 브랜드 팔로우가 완료되었습니다.");
-        }
-        return new HttpRes<>("이미 팔로우하였습니다. ");
-    }
+//    // 해당 브랜드 팔로우
+//    @CrossOrigin(origins = "https://hooking.shop, https://hooking-dev.netlify.app/, https://hooking.netlify.app/, http://localhost:3000, http://localhost:3001")
+//    @PostMapping("/{brand_id}/follow")
+//    public HttpRes<String> followBrand(@PathVariable Long brand_id, HttpServletRequest httpServletRequest)// 로그인한 사용자 정보 필요함
+//    {
+//        String token = jwtTokenProvider.resolveToken(httpServletRequest); //헤더에서 토큰을 빼내오는 과정
+//        if(!jwtTokenProvider.validateToken(token,httpServletRequest)){ //토큰이 유효하지 않을 때
+//            throw new BadRequestException("사용자 정보를 찾을 수 없습니다.");
+//        }
+//        User user = userRepository.findMemberByKakaoId(Long.parseLong(jwtTokenProvider.getUserPk(token)));
+//
+//        boolean isFollow = brandService.followBrand(brand_id, user);
+//        if(isFollow){
+//            return new HttpRes<>("해당 브랜드 팔로우가 완료되었습니다.");
+//        }
+//        return new HttpRes<>("이미 팔로우하였습니다. ");
+//    }
 }
