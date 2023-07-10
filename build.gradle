@@ -55,17 +55,19 @@ dependencies {
 	testImplementation 'org.springframework.security:spring-security-test'
 	implementation 'org.springframework.session:spring-session-jdbc'
 
-	//swagger
-	//implementation group: 'io.springfox', name: 'springfox-boot-starter', version: '3.0.0'
+
+	// swagger
+	compile('io.springfox:springfox-swagger2:3.0.0')
+	compile('io.springfox:springfox-swagger-ui:3.0.0')
+
 }
 
 tasks.named('test') {
 	useJUnitPlatform()
 }
 
-//querydsl 추가 시작
+// querydsl 세팅 시작
 def querydslDir = "$buildDir/generated/querydsl"
-
 querydsl {
 	jpa = true
 	querydslSourcesDir = querydslDir
@@ -79,4 +81,4 @@ configurations {
 compileQuerydsl {
 	options.annotationProcessorPath = configurations.querydsl
 }
-//querydsl 추가 끝
+// querydsl 세팅 끝
