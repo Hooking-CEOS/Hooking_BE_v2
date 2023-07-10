@@ -20,7 +20,6 @@ import shop.hooking.hooking.service.CopyService;
 import shop.hooking.hooking.service.JwtTokenProvider;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
-
 import java.util.Collections;
 import java.util.List;
 
@@ -57,18 +56,19 @@ public class CopyController {
         MoodType moodType = MoodType.fromKeyword(q);
         if (moodType != null) {
             List<CopyRes> copyRes = copyService.selectMoodByQuery(q);
-
+            Collections.shuffle(copyRes);
             return copyRes;
         } else if (BrandType.containsKeyword(q)) {
             List<CopyRes> copyRes = copyService.selectBrandByQuery(q);
-
+            Collections.shuffle(copyRes);
             return copyRes;
         } else {
             List<CopyRes> copyRes = copyService.selectCopyByQuery(q);
-
+            Collections.shuffle(copyRes);
             return copyRes;
         }
     }
+
 
 
 
@@ -97,9 +97,10 @@ public class CopyController {
 
 
     //카피라이팅 필터
-    @GetMapping ("/filter")
-    public List<CopyRes> searchFilterCard(CardSearchCondition condition){
-        return cardJpaRepository.search(condition);
+    @GetMapping("/filter")
+    public List<CopyRes> searchFilterCard(CardSearchCondition condition) {
+        List<CopyRes> results = cardJpaRepository.search(condition);
+        Collections.shuffle(results);
+        return results;
     }
-
 }
