@@ -4,6 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import shop.hooking.hooking.config.BrandType;
+import shop.hooking.hooking.config.MoodType;
 import shop.hooking.hooking.dto.CardSearchCondition;
 import shop.hooking.hooking.dto.HttpRes;
 import shop.hooking.hooking.dto.request.CopyReq;
@@ -46,47 +48,28 @@ public class CopyController {
 
     // 카피라이팅 검색 조회
     @GetMapping("/search")
-    public List<CopyRes> copySearchList(@RequestParam(name = "keyword") String q){
-        if(q.isEmpty()){
+    public List<CopyRes> copySearchList(@RequestParam(name = "keyword") String q) {
+        if (q.isEmpty()) {
             throw new BadRequestException("검색 결과를 찾을 수 없습니다.");
         }
 
-        if(q.equals("프레시안") || q.equals("롬앤") || q.equals("헤라") || q.equals("피지오겔")
-                || q.equals("멜릭서") || q.equals("려") || q.equals("이니스프리") || q.equals("설화수")
-                || q.equals("에뛰드") || q.equals("미샤")|| q.equals("아비브") || q.equals("에스트라")
-                || q.equals("베네피트") || q.equals("숨37도") || q.equals("오휘") || q.equals("fmgt")
-                || q.equals("네이밍") || q.equals("키스미") || q.equals("힌스") || q.equals("데이지크")
-                || q.equals("애프터 블로우") || q.equals("더바디샵") || q.equals("롱테이크") || q.equals("어뮤즈")
-                || q.equals("탬버린즈") || q.equals("논픽션") || q.equals("에스쁘아") || q.equals("스킨푸드")){
-
-            List<CopyRes> copyRes = copyService.selectBrandByQuery(q);
-
-            Collections.shuffle(copyRes);
-
-            return copyRes;
-
-        } else if (q.equals("퓨어한") || q.equals("화려한") || q.equals("키치한") || q.equals("고급스러운")
-                || q.equals("자연의") || q.equals("심플한") || q.equals("네추럴한") || q.equals("발랄한")
-                || q.equals("독특한") || q.equals("비비드한") || q.equals("첨단의") || q.equals("도시적인")
-                || q.equals("감각적인") || q.equals("수줍은") || q.equals("전통적인") || q.equals("친근한")) {
-
+        MoodType moodType = MoodType.fromKeyword(q);
+        if (moodType != null) {
             List<CopyRes> copyRes = copyService.selectMoodByQuery(q);
-
             Collections.shuffle(copyRes);
-
             return copyRes;
-
-        } else{
-
+        } else if (BrandType.containsKeyword(q)) {
+            List<CopyRes> copyRes = copyService.selectBrandByQuery(q);
+            Collections.shuffle(copyRes);
+            return copyRes;
+        } else {
             List<CopyRes> copyRes = copyService.selectCopyByQuery(q);
-
             Collections.shuffle(copyRes);
-
             return copyRes;
-
         }
-
     }
+
+
 
 
     // 스크랩한 카피라이팅 조회
