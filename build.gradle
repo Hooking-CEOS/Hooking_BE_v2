@@ -66,9 +66,8 @@ tasks.named('test') {
 	useJUnitPlatform()
 }
 
-//querydsl 추가 시작
+// querydsl 세팅 시작
 def querydslDir = "$buildDir/generated/querydsl"
-
 querydsl {
 	jpa = true
 	querydslSourcesDir = querydslDir
@@ -77,9 +76,9 @@ sourceSets {
 	main.java.srcDir querydslDir
 }
 configurations {
-	querydsl.extendsFrom compileClassp ath
+	querydsl.extendsFrom compileClasspath
 }
 compileQuerydsl {
 	options.annotationProcessorPath = configurations.querydsl
 }
-//querydsl 추가 끝
+// querydsl 세팅 끝
