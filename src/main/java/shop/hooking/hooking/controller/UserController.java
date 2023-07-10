@@ -29,7 +29,6 @@ public class UserController {
 
     private final ReviewService reviewService;
 
-    // 유저 정보 반환
     @GetMapping("/profile")
     public OAuthUserRes sessionMemberDetails(HttpServletRequest httpRequest) {
         OAuthUserRes oAuthUserRes = jwtTokenProvider.getKakaoInfo(httpRequest);
