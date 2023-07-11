@@ -27,4 +27,6 @@ public class HttpRes<T> {
         this.message = "요청에 성공하였습니다";
         this.data = data;
     }
+
+
 }

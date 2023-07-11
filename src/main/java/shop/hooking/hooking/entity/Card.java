@@ -27,11 +27,15 @@ public class Card {
     @JoinColumn(name="brand_id")
     private Brand brand;
 
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
+
     @Builder
-    public Card(String text, Integer scrapCnt, Brand brand) {
+    public Card(String text, Integer scrapCnt, Brand brand, LocalDateTime createdAt) {
         this.text = text;
         this.scrapCnt = scrapCnt;
         this.brand = brand;
+        this.createdAt = createdAt;
     }
 
 }
