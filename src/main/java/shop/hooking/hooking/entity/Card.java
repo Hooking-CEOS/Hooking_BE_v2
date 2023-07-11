@@ -20,22 +20,17 @@ public class Card {
     @NotNull
     private String text;
 
-    @Column(name = "scrap_cnt")
-    private Integer scrapCnt; // scrap 테이블에서 횟수로 넘어와야함
-
-    @Column(name = "created_at")
-    @CreatedDate
-    private LocalDateTime createdAt;
+    @Column(name = "scrap_cnt", columnDefinition = "int default 0")
+    private Integer scrapCnt;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="brand_id")
     private Brand brand;
 
     @Builder
-    public Card(String text, Integer scrapCnt, LocalDateTime createdAt, Brand brand) {
+    public Card(String text, Integer scrapCnt, Brand brand) {
         this.text = text;
         this.scrapCnt = scrapCnt;
-        this.createdAt = createdAt;
         this.brand = brand;
     }
 
