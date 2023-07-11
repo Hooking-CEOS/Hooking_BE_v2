@@ -8,7 +8,8 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED, force = true)
+@Setter
+@NoArgsConstructor(access = AccessLevel.PUBLIC, force = true)
 @Entity
 @Table(name="card")
 public class Card {
