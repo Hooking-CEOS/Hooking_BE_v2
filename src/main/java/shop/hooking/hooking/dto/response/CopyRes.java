@@ -20,16 +20,14 @@ public class CopyRes {
     private String brandName;
     private String text;
     private Integer scrapCnt;
-    private LocalDateTime createdAt;
 
     @Builder
     @QueryProjection
-    public CopyRes(Long id, Brand brand, String text, Integer scrapCnt, LocalDateTime createdAt) {
+    public CopyRes(Long id, Brand brand, String text, Integer scrapCnt) {
         this.id = id;
         this.brandName = brand.getBrandName();
         this.text = text;
         this.scrapCnt = scrapCnt;
-        this.createdAt = createdAt;
     }
 
 
