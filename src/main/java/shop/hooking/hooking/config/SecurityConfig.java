@@ -35,7 +35,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOriginPatterns(Arrays.asList("https://hooking.shop/","https://hooking-dev.netlify.app/","https://hooking.netlify.app/","http://localhost:3000"));
+        configuration.setAllowedOriginPatterns(Arrays.asList("https://hooking.shop/","https://hooking-dev.netlify.app/","https://hooking.netlify.app/","http://localhost:3000/","http://localhost:3001/"));
         configuration.addAllowedHeader("*");
         configuration.addExposedHeader("Set-Cookie");
         configuration.addAllowedMethod("*");
