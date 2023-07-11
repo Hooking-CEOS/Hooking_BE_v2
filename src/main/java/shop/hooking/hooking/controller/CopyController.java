@@ -1,29 +1,28 @@
 package shop.hooking.hooking.controller;
 
 import lombok.RequiredArgsConstructor;
-import net.minidev.json.JSONArray;
-import net.minidev.json.JSONObject;
-import org.json.simple.parser.JSONParser;
+//import org.json.simple.parser.JSONParser;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import shop.hooking.hooking.config.BrandType;
 import shop.hooking.hooking.config.MoodType;
 import shop.hooking.hooking.dto.CardSearchCondition;
 import shop.hooking.hooking.dto.HttpRes;
 import shop.hooking.hooking.dto.request.CopyReq;
+import shop.hooking.hooking.dto.request.CrawlingData;
 import shop.hooking.hooking.dto.request.CrawlingReq;
 import shop.hooking.hooking.dto.response.CopyRes;
+import shop.hooking.hooking.entity.Brand;
 import shop.hooking.hooking.entity.Card;
 import shop.hooking.hooking.entity.User;
-import shop.hooking.hooking.exception.BadRequestException;
+import shop.hooking.hooking.repository.BrandRepository;
 import shop.hooking.hooking.repository.CardJpaRepository;
 import shop.hooking.hooking.repository.CardRepository;
-import shop.hooking.hooking.service.BrandService;
 import shop.hooking.hooking.service.CopyService;
 import shop.hooking.hooking.service.JwtTokenProvider;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 
@@ -40,6 +39,7 @@ public class CopyController {
 
     private final CardJpaRepository cardJpaRepository;
 
+    private final BrandRepository brandRepository;
 
     // 전체 카피라이팅 조회
     @GetMapping("")
@@ -106,22 +106,28 @@ public class CopyController {
     }
 
 
-//    @PostMapping("/crawling")
-//    public HttpRes<String> saveCrawling(@RequestBody CrawlingReq crawlingReq) throws IOException {
-//        JSONArray jsonArray = new JSONArray();
-//        JSONParser jsonparser = new JSONParser();
-//        for(int i=0; i<30; i++){
-//            JSONObject jsonObject = (JSONObject) jsonparser.parse(crawlingReq.getText());
-//            jsonObject.put("text",crawlingReq.getText());
-//            jsonObject.put("createdAt",crawlingReq.getCreatedAt());
-//
-//
-//            if(i==30){
-//                return new HttpRes<>("크롤링 데이터가 저장되었습니다.");
-//            }
-//        }
-//        return new HttpRes<>("데이터 저장에 실패했습니다.");
-//    }
+    @PostMapping("/crawling")
+    public HttpRes<String> saveCrawling(@RequestBody CrawlingReq crawlingReq) {
+        List<CrawlingData> dataList = crawlingReq.getData();
+        Card card = new Card();
+
+        for (CrawlingData data : dataList) {
+            String text = data.getText();
+            LocalDateTime createdAt = data.getCreatedAt();
+            Long brandId = data.getBrandId();
+
+            Brand brand = brandRepository.findBrandById(brandId);
+
+            // 'text'와 'createdAt' 값을 데이터베이스에 저장
+            card.setText(text);
+            card.setCreatedAt(createdAt);
+            card.setBrand(brand);
+
+            cardRepository.save(card);
+        }
+
+        return new HttpRes<>("크롤링 데이터가 저장되었습니다.");
+    }
 
     //카피라이팅 필터
     @GetMapping("/filter")
