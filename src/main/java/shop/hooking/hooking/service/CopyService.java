@@ -114,7 +114,8 @@ public class CopyService {
         Brand brand = card.getBrand();
         String text = card.getText();
         Integer scrapCnt = length;
-        return new CopyRes(id, brand,text,scrapCnt);
+        LocalDateTime createdAt = card.getCreatedAt();
+        return new CopyRes(id, brand,text,scrapCnt,createdAt);
     }
 
     @Transactional
@@ -127,7 +128,8 @@ public class CopyService {
         Brand brand = scrap.getCard().getBrand();
         String text = scrap.getCard().getText();
         Integer scrapCnt = length;
-        return new CopyRes(id, brand,text,scrapCnt);
+        LocalDateTime createdAt = scrap.getCard().getCreatedAt();
+        return new CopyRes(id, brand,text,scrapCnt,createdAt);
     }
 
 
