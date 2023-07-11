@@ -109,7 +109,6 @@ public class CopyController {
     @PostMapping("/crawling")
     public HttpRes<String> saveCrawling(@RequestBody CrawlingReq crawlingReq) {
         List<CrawlingData> dataList = crawlingReq.getData();
-        Card card = new Card();
 
         for (CrawlingData data : dataList) {
             String text = data.getText();
@@ -117,6 +116,8 @@ public class CopyController {
             Long brandId = data.getBrandId();
 
             Brand brand = brandRepository.findBrandById(brandId);
+
+            Card card = new Card();
 
             // 'text'와 'createdAt' 값을 데이터베이스에 저장
             card.setText(text);
