@@ -65,7 +65,8 @@ public class CardJpaRepository {
                         card.id,
                         card.brand,
                         card.text,
-                        card.scrapCnt))
+                        card.scrapCnt,
+                        card.createdAt))
                 .from(card)
                 .leftJoin(card.brand, brand) // card, brand 조인
                 .leftJoin(have) // brand, have 조인
