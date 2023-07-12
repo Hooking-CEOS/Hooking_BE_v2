@@ -50,7 +50,6 @@ public class CopyController {
 
 
     // 카피라이팅 검색 조회
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @GetMapping("/search")
     public HttpRes<List<CopyRes>> copySearchList(@RequestParam(name = "keyword") String q) {
         if (q.isEmpty()) {
@@ -90,7 +89,6 @@ public class CopyController {
 
 
     // 카피라이팅 스크랩
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @CrossOrigin(origins = "https://hooking.shop, https://hooking-dev.netlify.app/, https://hooking.netlify.app/, http://localhost:3000/, http://localhost:3001/")
     @PostMapping("/scrap")
     public HttpRes<String> copyScrap(HttpServletRequest httpRequest, @RequestBody CopyReq copyReq) throws IOException {
@@ -118,6 +116,7 @@ public class CopyController {
 
             Brand brand = brandRepository.findBrandById(brandId);
             Card card = new Card();
+
 
             // 'text'와 'createdAt' 값을 데이터베이스에 저장
             card.setText(text);
