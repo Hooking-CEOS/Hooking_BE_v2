@@ -51,7 +51,6 @@ public class CopyController {
 
 
     // 카피라이팅 검색 조회
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @GetMapping("/search")
     public HttpRes<List<CopyRes>> copySearchList(@RequestParam(name = "keyword") String q) {
         if (q.isEmpty()) {
