@@ -90,7 +90,6 @@ public class CopyController {
 
 
     // 카피라이팅 스크랩
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @CrossOrigin(origins = "https://hooking.shop, https://hooking-dev.netlify.app/, https://hooking.netlify.app/, http://localhost:3000/, http://localhost:3001/")
     @PostMapping("/scrap")
     public HttpRes<String> copyScrap(HttpServletRequest httpRequest, @RequestBody CopyReq copyReq) throws IOException {
