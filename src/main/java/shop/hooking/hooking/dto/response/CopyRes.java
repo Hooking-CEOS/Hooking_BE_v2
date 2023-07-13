@@ -23,8 +23,6 @@ public class CopyRes {
     private Integer scrapCnt;
     private LocalDateTime createdAt;
 
-    private String type;
-
     private List<Integer> index;
 
 
