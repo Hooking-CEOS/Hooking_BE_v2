@@ -70,6 +70,8 @@ public class CopyService {
 
     @Transactional
     public List<CopyRes> selectMoodByQuery(String q){
+        String type = "mood";
+
         Mood mood = moodRepository.findByMoodNameContaining(q);
         List<Have> haves = haveRepository.findByMoodId(mood.getId());
 
@@ -84,9 +86,12 @@ public class CopyService {
 
             for (Card card : cards) {
                 CopyRes copyRes = createCopyRes(card);
+                copyRes.setType(type); // type을 mood로
                 copyResList.add(copyRes); // 리스트 형태로 반환
             }
         }
+
+
         return copyResList;
     }
 
