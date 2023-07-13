@@ -14,6 +14,7 @@ public class HttpRes<T> {
     private T data;
 
 
+
     //오류일 경우
     public HttpRes(int code, String message) {
         this.code = code;
@@ -26,6 +27,7 @@ public class HttpRes<T> {
         this.code = 200;
         this.message = "요청에 성공하였습니다";
         this.data = data;
+
     }
 
 

@@ -27,6 +27,7 @@ public class CopyRes {
 
     private List<Integer> index;
 
+
     @Builder
     @QueryProjection
     public CopyRes(Long id, Brand brand, String text, Integer scrapCnt,LocalDateTime createdAt) {

@@ -44,6 +44,8 @@ public class CopyService {
 
     @Transactional
     public List<CopyRes> selectCopyByQuery(String q) {
+        String type = "copy";
+
         List<Card> cards = cardRepository.findByTextContaining(q);
         List<CopyRes> copyResList = new ArrayList<>();
 
@@ -57,6 +59,8 @@ public class CopyService {
 
     @Transactional
     public List<CopyRes> selectBrandByQuery(String q){
+        String type = "brand";
+
         Brand brand = brandRepository.findBrandByBrandNameContaining(q);
         List<Card> cards = cardRepository.findCardsByBrandId(brand.getId());
         List<CopyRes> copyResList = new ArrayList<>();
@@ -86,7 +90,6 @@ public class CopyService {
 
             for (Card card : cards) {
                 CopyRes copyRes = createCopyRes(card);
-                copyRes.setType(type); // type을 mood로
                 copyResList.add(copyRes); // 리스트 형태로 반환
             }
         }

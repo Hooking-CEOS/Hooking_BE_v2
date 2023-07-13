@@ -11,6 +11,8 @@ import shop.hooking.hooking.dto.request.CopyReq;
 import shop.hooking.hooking.dto.request.CrawlingData;
 import shop.hooking.hooking.dto.request.CrawlingReq;
 import shop.hooking.hooking.dto.response.CopyRes;
+import shop.hooking.hooking.dto.response.CopySearchResponse;
+import shop.hooking.hooking.dto.response.CopySearchResult;
 import shop.hooking.hooking.entity.Brand;
 import shop.hooking.hooking.entity.Card;
 import shop.hooking.hooking.entity.User;
@@ -50,31 +52,52 @@ public class CopyController {
     }
 
 
-    // 카피라이팅 검색 조회
     @GetMapping("/search")
-    public HttpRes<List<CopyRes>> copySearchList(@RequestParam(name = "keyword") String q) {
+    public CopySearchResponse copySearchList(@RequestParam(name = "keyword") String q) {
+        CopySearchResponse response = new CopySearchResponse();
+        List<CopySearchResult> results = new ArrayList<>();
+
         if (q.isEmpty()) {
-            return new HttpRes<>(HttpStatus.BAD_REQUEST.value(), "검색 결과를 찾을 수 없습니다.");
+            response.setCode(HttpStatus.BAD_REQUEST.value());
+            response.setMessage("검색 결과를 찾을 수 없습니다.");
+            response.setData(results);
+            return response;
         }
+
 
         MoodType moodType = MoodType.fromKeyword(q);
         if (moodType != null) {
             List<CopyRes> copyRes = copyService.selectMoodByQuery(q);
             Collections.shuffle(copyRes);
-            return new HttpRes<>(copyRes);
-        } else if (BrandType.containsKeyword(q)) {
+            CopySearchResult result = new CopySearchResult();
+            result.setType("mood");
+            result.setData(copyRes);
+            results.add(result);
+        }
+
+        if (BrandType.containsKeyword(q)) {
             List<CopyRes> copyRes = copyService.selectBrandByQuery(q);
             Collections.shuffle(copyRes);
-            return new HttpRes<>(copyRes);
-        } else {
-            List<CopyRes> copyRes = copyService.selectCopyByQuery(q);
-            if (copyRes.isEmpty()) {
-                return new HttpRes<>(HttpStatus.BAD_REQUEST.value(), "검색 결과를 찾을 수 없습니다.");
-            }
-            Collections.shuffle(copyRes);
-            setIndicesForCopyRes(copyRes, q);
-            return new HttpRes<>(copyRes);
+            CopySearchResult result = new CopySearchResult();
+            result.setType("brand");
+            result.setData(copyRes);
+            results.add(result);
         }
+
+        List<CopyRes> copyRes = copyService.selectCopyByQuery(q);
+        Collections.shuffle(copyRes);
+        if (!copyRes.isEmpty()) {
+            CopySearchResult result = new CopySearchResult();
+            setIndicesForCopyRes(copyRes,q);
+            result.setType("copy");
+            result.setData(copyRes);
+            results.add(result);
+        }
+
+        response.setCode(HttpStatus.OK.value());
+        response.setMessage("요청에 성공하였습니다.");
+        response.setData(results);
+        return response;
     }
 
     private void setIndicesForCopyRes(List<CopyRes> copyResList, String keyword) {
@@ -89,6 +112,8 @@ public class CopyController {
             copyRes.setIndex(indices);
         }
     }
+
+
 
 
 
