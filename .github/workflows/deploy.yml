@@ -1,0 +1,46 @@
+name: Deploy to cloudtype
+on:
+  push:
+    branches:
+      - main
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Connect deploy key
+        uses: cloudtype-github-actions/connect@v1
+        with:
+          token: ${{ secrets.CLOUDTYPE_TOKEN }}
+          ghtoken: ${{ secrets.GHP_TOKEN }}
+      - name: Deploy
+        uses: cloudtype-github-actions/deploy@v1
+        with:
+          token: ${{ secrets.CLOUDTYPE_TOKEN }}
+          project: jiwonkim08/hooking-be
+          stage: main
+          yaml: |
+            name: hooking-be
+            app: java@11
+            options:
+              ports: 8080
+              env:
+                - name: DB_USERNAME
+                  value: ${{ secrets.DB_USERNAME }}
+                - name: DB_TABLE
+                  value: ${{ secrets.DB_TABLE }}
+                - name: DB_PASSWORD
+                  value: ${{ secrets.DB_PASSWORD }}
+                - name: KAKAO_CLIENT_ID
+                  value: ${{ secrets.KAKAO_CLIENT_ID }}
+                - name: KAKAO_CLIENT_SECRET
+                  value: ${{ secrets.KAKAO_CLIENT_SECRET }}
+                - name: KAKAO_REDIRECT_URL
+                  value: http://localhost:8080/login/oauth2/code/kakao
+                - name: SECRET_KEY
+                  value: ${{ secrets.SECRET_KEY }}
+            context:
+              git:
+                url: git@github.com:${{ github.repository }}.git
+                ref: ${{ github.ref }}
