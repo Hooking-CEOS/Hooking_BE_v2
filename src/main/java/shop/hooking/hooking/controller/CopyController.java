@@ -1,7 +1,6 @@
 package shop.hooking.hooking.controller;
 
 import lombok.RequiredArgsConstructor;
-//import org.json.simple.parser.JSONParser;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import shop.hooking.hooking.config.BrandType;
@@ -104,9 +103,11 @@ public class CopyController {
     }
 
 
+
     @PostMapping("/crawling")
     public HttpRes<String> saveCrawling(@RequestBody CrawlingReq crawlingReq) {
         List<CrawlingData> dataList = crawlingReq.getData();
+
 
         for (CrawlingData data : dataList) {
             String text = data.getText();
@@ -116,6 +117,7 @@ public class CopyController {
             Brand brand = brandRepository.findBrandById(brandId);
 
             Card card = new Card();
+
 
             // 'text'와 'createdAt' 값을 데이터베이스에 저장
             card.setText(text);
@@ -127,6 +129,7 @@ public class CopyController {
 
         return new HttpRes<>("크롤링 데이터가 저장되었습니다.");
     }
+
 
     //카피라이팅 필터
     @GetMapping("/filter")
