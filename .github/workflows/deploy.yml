@@ -27,19 +27,20 @@ jobs:
               ports: 8080
               env:
                 - name: DB_USERNAME
-                  value: admin
+
+                  value: ${{ secrets.DB_USERNAME }}
                 - name: DB_TABLE
-                  value: hooking
+                  value: ${{ secrets.DB_TABLE }}
                 - name: DB_PASSWORD
-                  value: Foutune719$
+                  value: ${{ secrets.DB_PASSWORD }}
                 - name: KAKAO_CLIENT_ID
-                  value: c7b510aee22fe2531b27cbec5dbd93ea
+                  value: ${{ secrets.KAKAO_CLIENT_ID }}
                 - name: KAKAO_CLIENT_SECRET
-                  value: 4BzzWqXQROUxaVg01WIw5HbtWPRPs6YL
+                  value: ${{ secrets.KAKAO_CLIENT_SECRET }}
                 - name: KAKAO_REDIRECT_URL
                   value: http://localhost:8080/login/oauth2/code/kakao
                 - name: SECRET_KEY
-                  value: yexxi2118#
+                  value: ${{ secrets.SECRET_KEY }}
             context:
               git:
                 url: git@github.com:${{ github.repository }}.git
