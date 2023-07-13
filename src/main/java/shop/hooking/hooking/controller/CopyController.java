@@ -67,23 +67,24 @@ public class CopyController {
 
         MoodType moodType = MoodType.fromKeyword(q);
         if (moodType != null) { // 무드 키워드에 속한다
-            List<CopyRes> copyRes = copyService.selectMoodByQuery(q);
-            Collections.shuffle(copyRes);
+            List<CopyRes> moodCopyRes = copyService.selectMoodByQuery(q);
+            Collections.shuffle(moodCopyRes);
 
-            CopySearchResult result = new CopySearchResult();
-            result.setType("mood");
-            result.setData(copyRes);
-            results.add(result);
+            CopySearchResult moodResult = new CopySearchResult();
+            moodResult.setType("mood");
+            moodResult.setData(moodCopyRes);
+            results.add(moodResult);
 
-            List<CopyRes> copyResOne = copyService.selectCopyByQuery(q);
-            if(!copyResOne.isEmpty()){
-                result.setType("copy");
-                result.setData(copyRes);
-                results.add(result);
+            List<CopyRes> copyCopyRes = copyService.selectCopyByQuery(q);
+            if (!copyCopyRes.isEmpty()) {
+                CopySearchResult copyResult = new CopySearchResult();
+                copyResult.setType("copy");
+                copyResult.setData(copyCopyRes);
+                results.add(copyResult);
             }
         }
 
-        if (BrandType.containsKeyword(q)) { // 브랜드에 속한다
+        else if (BrandType.containsKeyword(q)) { // 브랜드에 속한다
             List<CopyRes> copyRes = copyService.selectBrandByQuery(q);
             Collections.shuffle(copyRes);
             CopySearchResult result = new CopySearchResult();
@@ -92,16 +93,17 @@ public class CopyController {
             results.add(result);
         }
 
-        List<CopyRes> copyRes = copyService.selectCopyByQuery(q);
-        Collections.shuffle(copyRes);
-        if (!copyRes.isEmpty()) {
-            CopySearchResult result = new CopySearchResult();
-            setIndicesForCopyRes(copyRes,q);
-            result.setType("copy");
-            result.setData(copyRes);
-            results.add(result);
+        else{
+            List<CopyRes> copyRes = copyService.selectCopyByQuery(q);
+            Collections.shuffle(copyRes);
+            if (!copyRes.isEmpty()) {
+                CopySearchResult result = new CopySearchResult();
+                setIndicesForCopyRes(copyRes,q);
+                result.setType("copy");
+                result.setData(copyRes);
+                results.add(result);
+            }
         }
-
         response.setCode(HttpStatus.OK.value());
         response.setMessage("요청에 성공하였습니다.");
         response.setData(results);
