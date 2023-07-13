@@ -4,7 +4,6 @@ package shop.hooking.hooking.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import shop.hooking.hooking.dto.response.ReviewRes;
-import shop.hooking.hooking.entity.Review;
 import shop.hooking.hooking.entity.User;
 import shop.hooking.hooking.repository.ReviewRepository;
 

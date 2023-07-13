@@ -2,7 +2,6 @@ package shop.hooking.hooking.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import shop.hooking.hooking.entity.Review;
 import shop.hooking.hooking.entity.User;
 
 import java.util.List;
