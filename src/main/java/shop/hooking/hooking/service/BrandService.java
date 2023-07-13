@@ -22,8 +22,6 @@ public class BrandService {
 
     private final BrandRepository brandRepository;
 
-    private final FollowRepository followRepository;
-
     private final CardRepository cardRepository;
 
     private final HaveRepository haveRepository;
@@ -96,20 +94,20 @@ public class BrandService {
         return brandDetailDto;
     }
 
-    public boolean followBrand(Long brandId, User user){
-
-        Brand brand = brandRepository.findBrandById(brandId);
-
-        if(followRepository.existsByBrandAndUser(brand, user)){
-            return false;
-        }
-
-        Follow follow =Follow.builder()
-                .brand(brand)
-                .user(user)
-                .build();
-        followRepository.save(follow); // 데이터베이스에 저장
-
-        return true;
-    }
+//    public boolean followBrand(Long brandId, User user){
+//
+//        Brand brand = brandRepository.findBrandById(brandId);
+//
+//        if(followRepository.existsByBrandAndUser(brand, user)){
+//            return false;
+//        }
+//
+//        Follow follow =Follow.builder()
+//                .brand(brand)
+//                .user(user)
+//                .build();
+//        followRepository.save(follow); // 데이터베이스에 저장
+//
+//        return true;
+//    }
 }

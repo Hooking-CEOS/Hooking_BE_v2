@@ -11,7 +11,6 @@ import shop.hooking.hooking.exception.BadRequestException;
 import shop.hooking.hooking.repository.UserRepository;
 import shop.hooking.hooking.service.JwtTokenProvider;
 import shop.hooking.hooking.service.OAuthUserService;
-import shop.hooking.hooking.service.ReviewService;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
