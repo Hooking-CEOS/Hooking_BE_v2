@@ -19,6 +19,7 @@ public class Card {
     private Long id;
 
     @NotNull
+    @Column(columnDefinition = "TEXT")
     private String text;
 
     @Column(name = "scrap_cnt", columnDefinition = "int default 0")
