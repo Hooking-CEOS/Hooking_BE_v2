@@ -22,6 +22,7 @@ import shop.hooking.hooking.service.JwtTokenProvider;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -53,9 +54,8 @@ public class CopyController {
     @GetMapping("/search")
     public HttpRes<List<CopyRes>> copySearchList(@RequestParam(name = "keyword") String q) {
         if (q.isEmpty()) {
-            return new HttpRes<>(HttpStatus.BAD_REQUEST.value(),"검색 결과를 찾을 수 없습니다.");
+            return new HttpRes<>(HttpStatus.BAD_REQUEST.value(), "검색 결과를 찾을 수 없습니다.");
         }
-
 
         MoodType moodType = MoodType.fromKeyword(q);
         if (moodType != null) {
@@ -68,13 +68,28 @@ public class CopyController {
             return new HttpRes<>(copyRes);
         } else {
             List<CopyRes> copyRes = copyService.selectCopyByQuery(q);
-            if (copyRes.isEmpty()){
-                return new HttpRes<>(HttpStatus.BAD_REQUEST.value(),"검색 결과를 찾을 수 없습니다.");
+            if (copyRes.isEmpty()) {
+                return new HttpRes<>(HttpStatus.BAD_REQUEST.value(), "검색 결과를 찾을 수 없습니다.");
             }
             Collections.shuffle(copyRes);
+            setIndicesForCopyRes(copyRes, q);
             return new HttpRes<>(copyRes);
         }
     }
+
+    private void setIndicesForCopyRes(List<CopyRes> copyResList, String keyword) {
+        for (CopyRes copyRes : copyResList) {
+            String lowercaseText = copyRes.getText().toLowerCase(); // 소문자로 변환
+            int index = lowercaseText.indexOf(keyword.toLowerCase()); // 첫번째 키워드의 위치 인덱스를 찾은 후,
+            List<Integer> indices = new ArrayList<>();
+            while (index != -1) { // index가 -1이 아닐 때까지
+                indices.add(index);
+                index = lowercaseText.indexOf(keyword.toLowerCase(), index + 1); // 키워드 위치 인덱스를 indices에 추가
+            }
+            copyRes.setIndex(indices);
+        }
+    }
+
 
 
 

@@ -10,6 +10,7 @@ import shop.hooking.hooking.entity.Brand;
 
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 
 @Getter
@@ -24,7 +25,7 @@ public class CopyRes {
 
     private String type;
 
-    private Integer index;
+    private List<Integer> index;
 
     @Builder
     @QueryProjection
