@@ -78,6 +78,7 @@ public class CopyController {
             List<CopyRes> copyCopyRes = copyService.selectCopyByQuery(q);
             if (!copyCopyRes.isEmpty()) {
                 CopySearchResult copyResult = new CopySearchResult();
+                setIndicesForCopyRes(copyCopyRes,q);
                 copyResult.setType("copy");
                 copyResult.setData(copyCopyRes);
                 results.add(copyResult);
