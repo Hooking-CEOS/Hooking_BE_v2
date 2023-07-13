@@ -64,6 +64,7 @@ public class CopyController {
             return response;
         }
 
+
         MoodType moodType = MoodType.fromKeyword(q);
         if (moodType != null) { // 무드 키워드에 속한다
             List<CopyRes> copyRes = copyService.selectMoodByQuery(q);
@@ -95,6 +96,7 @@ public class CopyController {
         Collections.shuffle(copyRes);
         if (!copyRes.isEmpty()) {
             CopySearchResult result = new CopySearchResult();
+            setIndicesForCopyRes(copyRes,q);
             result.setType("copy");
             result.setData(copyRes);
             results.add(result);
@@ -105,6 +107,20 @@ public class CopyController {
         response.setData(results);
         return response;
     }
+
+    private void setIndicesForCopyRes(List<CopyRes> copyResList, String keyword) {
+        for (CopyRes copyRes : copyResList) {
+            String lowercaseText = copyRes.getText().toLowerCase(); // 소문자로 변환
+            int index = lowercaseText.indexOf(keyword.toLowerCase()); // 첫번째 키워드의 위치 인덱스를 찾은 후,
+            List<Integer> indices = new ArrayList<>();
+            while (index != -1) { // index가 -1이 아닐 때까지
+                indices.add(index);
+                index = lowercaseText.indexOf(keyword.toLowerCase(), index + 1); // 키워드 위치 인덱스를 indices에 추가
+            }
+            copyRes.setIndex(indices);
+        }
+    }
+
 
 
 
