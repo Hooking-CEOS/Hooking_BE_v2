@@ -27,6 +27,7 @@ jobs:
               ports: 8080
               env:
                 - name: DB_USERNAME
+
                   value: ${{ secrets.DB_USERNAME }}
                 - name: DB_TABLE
                   value: ${{ secrets.DB_TABLE }}

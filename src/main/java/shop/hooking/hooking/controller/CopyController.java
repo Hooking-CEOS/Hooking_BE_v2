@@ -24,7 +24,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
-//
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/copy")
@@ -37,8 +37,8 @@ public class CopyController {
     private final CardRepository cardRepository;
 
     private final CardJpaRepository cardJpaRepository;
-    private final BrandRepository brandRepository;
 
+    private final BrandRepository brandRepository;
 
     // 전체 카피라이팅 조회
     @GetMapping("")
@@ -115,6 +115,7 @@ public class CopyController {
             Long brandId = data.getBrandId();
 
             Brand brand = brandRepository.findBrandById(brandId);
+
             Card card = new Card();
 
 
