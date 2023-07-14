@@ -45,10 +45,14 @@ public class CopyController {
 
     // 전체 카피라이팅 조회
     @GetMapping("")
-    public HttpRes<List<CopyRes>> copyList(){
+    public HttpRes<List<CopyRes>> copyList() {
         List<CopyRes> copyRes = copyService.getCopyList();
         Collections.shuffle(copyRes);
-        return new HttpRes<>(copyRes);
+
+        int endIndex = Math.min(30, copyRes.size()); // 최대 30개까지만 반환
+        List<CopyRes> limitedCopyRes = copyRes.subList(0, endIndex);
+
+        return new HttpRes<>(limitedCopyRes);
     }
 
 
@@ -64,7 +68,6 @@ public class CopyController {
             return response;
         }
 
-
         MoodType moodType = MoodType.fromKeyword(q);
         if (moodType != null) { // 무드 키워드에 속한다
             List<CopyRes> moodCopyRes = copyService.selectMoodByQuery(q);
@@ -72,44 +75,58 @@ public class CopyController {
 
             CopySearchResult moodResult = new CopySearchResult();
             moodResult.setType("mood");
-            moodResult.setData(moodCopyRes);
+
+            int endIndex = Math.min(30, moodCopyRes.size()); // 최대 30개까지만 반환
+            List<CopyRes> limitedMoodCopyRes = moodCopyRes.subList(0, endIndex);
+            moodResult.setData(limitedMoodCopyRes);
+
             results.add(moodResult);
 
             List<CopyRes> copyCopyRes = copyService.selectCopyByQuery(q);
             if (!copyCopyRes.isEmpty()) {
                 CopySearchResult copyResult = new CopySearchResult();
-                setIndicesForCopyRes(copyCopyRes,q);
+                setIndicesForCopyRes(copyCopyRes, q);
                 copyResult.setType("copy");
-                copyResult.setData(copyCopyRes);
+
+                int copyEndIndex = Math.min(30, copyCopyRes.size()); // 최대 30개까지만 반환
+                List<CopyRes> limitedCopyCopyRes = copyCopyRes.subList(0, copyEndIndex);
+                copyResult.setData(limitedCopyCopyRes);
+
                 results.add(copyResult);
             }
-        }
-
-        else if (BrandType.containsKeyword(q)) { // 브랜드에 속한다
+        } else if (BrandType.containsKeyword(q)) { // 브랜드에 속한다
             List<CopyRes> copyRes = copyService.selectBrandByQuery(q);
             Collections.shuffle(copyRes);
             CopySearchResult result = new CopySearchResult();
             result.setType("brand");
-            result.setData(copyRes);
-            results.add(result);
-        }
 
-        else{
+            int endIndex = Math.min(30, copyRes.size()); // 최대 30개까지만 반환
+            List<CopyRes> limitedCopyRes = copyRes.subList(0, endIndex);
+            result.setData(limitedCopyRes);
+
+            results.add(result);
+        } else {
             List<CopyRes> copyRes = copyService.selectCopyByQuery(q);
             Collections.shuffle(copyRes);
             if (!copyRes.isEmpty()) {
                 CopySearchResult result = new CopySearchResult();
-                setIndicesForCopyRes(copyRes,q);
+                setIndicesForCopyRes(copyRes, q);
                 result.setType("copy");
-                result.setData(copyRes);
+
+                int endIndex = Math.min(30, copyRes.size()); // 최대 30개까지만 반환
+                List<CopyRes> limitedCopyRes = copyRes.subList(0, endIndex);
+                result.setData(limitedCopyRes);
+
                 results.add(result);
             }
         }
+
         response.setCode(HttpStatus.OK.value());
         response.setMessage("요청에 성공하였습니다.");
         response.setData(results);
         return response;
     }
+
 
     private void setIndicesForCopyRes(List<CopyRes> copyResList, String keyword) {
         for (CopyRes copyRes : copyResList) {
@@ -132,11 +149,16 @@ public class CopyController {
 
     // 스크랩한 카피라이팅 조회
     @GetMapping("/scrap")
-    public HttpRes<List<CopyRes>> copyScrapList(HttpServletRequest httpRequest){
+    public HttpRes<List<CopyRes>> copyScrapList(HttpServletRequest httpRequest) {
         User user = jwtTokenProvider.getUserInfoByToken(httpRequest);
         List<CopyRes> copyRes = copyService.getCopyScrapList(user);
-        return new HttpRes<>(copyRes);
+
+        int endIndex = Math.min(30, copyRes.size()); // 최대 30개까지만 반환
+        List<CopyRes> limitedCopyRes = copyRes.subList(0, endIndex);
+
+        return new HttpRes<>(limitedCopyRes);
     }
+
 
 
     // 카피라이팅 스크랩
@@ -187,7 +209,11 @@ public class CopyController {
     public HttpRes<List<CopyRes>> searchFilterCard(CardSearchCondition condition) {
         List<CopyRes> results = cardJpaRepository.search(condition);
         Collections.shuffle(results);
-        return new HttpRes<>(results);
+
+        int endIndex = Math.min(30, results.size()); // 최대 30개까지만 반환
+        List<CopyRes> limitedResults = results.subList(0, endIndex);
+
+        return new HttpRes<>(limitedResults);
     }
 
 }
