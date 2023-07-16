@@ -45,10 +45,14 @@ public class CopyController {
 
     // 전체 카피라이팅 조회
     @GetMapping("")
-    public HttpRes<List<CopyRes>> copyList(){
+    public HttpRes<List<CopyRes>> copyList() {
         List<CopyRes> copyRes = copyService.getCopyList();
         Collections.shuffle(copyRes);
-        return new HttpRes<>(copyRes);
+
+        int endIndex = Math.min(30, copyRes.size()); // 최대 30개까지만 반환
+        List<CopyRes> limitedCopyRes = copyRes.subList(0, endIndex);
+
+        return new HttpRes<>(limitedCopyRes);
     }
 
 
@@ -57,49 +61,53 @@ public class CopyController {
         CopySearchResponse response = new CopySearchResponse();
         List<CopySearchResult> results = new ArrayList<>();
 
-        if (q.isEmpty()) {
+        if (q.isEmpty()) { //검색 결과가 없다면
             response.setCode(HttpStatus.BAD_REQUEST.value());
             response.setMessage("검색 결과를 찾을 수 없습니다.");
             response.setData(results);
             return response;
         }
 
-
         MoodType moodType = MoodType.fromKeyword(q);
-        if (moodType != null) { // 무드 키워드에 속한다
-            List<CopyRes> copyRes = copyService.selectMoodByQuery(q);
-            Collections.shuffle(copyRes);
+        List<CopyRes> moodCopyRes = new ArrayList<>();
+        List<CopyRes> textCopyRes = new ArrayList<>();
+        List<CopyRes> brandCopyRes = new ArrayList<>();
 
-            CopySearchResult result = new CopySearchResult();
-            result.setType("mood");
-            result.setData(copyRes);
-            results.add(result);
+        textCopyRes = copyService.selectCopyByQuery(q);
 
-            List<CopyRes> copyResOne = copyService.selectCopyByQuery(q);
-            if(!copyResOne.isEmpty()){
-                result.setType("copy");
-                result.setData(copyRes);
-                results.add(result);
+        if (moodType != null) { // 무드 키워드가 있다면
+            moodCopyRes = copyService.selectMoodByQuery(q);
+            Collections.shuffle(moodCopyRes);
+            CopySearchResult moodResult = createCopySearchResult(moodCopyRes);
+            moodResult.setType("mood");
+            results.add(moodResult);
+
+            if(!textCopyRes.isEmpty()){
+                Collections.shuffle(textCopyRes);
+                CopySearchResult copyResult = createCopySearchResult(textCopyRes);
+                copyResult.setType("copy");
+                setIndicesForCopyRes(textCopyRes, q);
+                results.add(copyResult);
             }
+        } else if (BrandType.containsKeyword(q)) { // 브랜드에 키워드가 있다면
+            brandCopyRes = copyService.selectBrandByQuery(q);
+            Collections.shuffle(brandCopyRes);
+            CopySearchResult brandResult = createCopySearchResult(brandCopyRes);
+            brandResult.setType("brand");
+            results.add(brandResult);
+        } else if (!textCopyRes.isEmpty()){ // text만 있다면
+            Collections.shuffle(textCopyRes);
+            CopySearchResult copyResult = createCopySearchResult(textCopyRes);
+            copyResult.setType("copy");
+            setIndicesForCopyRes(textCopyRes, q);
+            results.add(copyResult);
         }
 
-        if (BrandType.containsKeyword(q)) { // 브랜드에 속한다
-            List<CopyRes> copyRes = copyService.selectBrandByQuery(q);
-            Collections.shuffle(copyRes);
-            CopySearchResult result = new CopySearchResult();
-            result.setType("brand");
-            result.setData(copyRes);
-            results.add(result);
-        }
-
-        List<CopyRes> copyRes = copyService.selectCopyByQuery(q);
-        Collections.shuffle(copyRes);
-        if (!copyRes.isEmpty()) {
-            CopySearchResult result = new CopySearchResult();
-            setIndicesForCopyRes(copyRes,q);
-            result.setType("copy");
-            result.setData(copyRes);
-            results.add(result);
+        if (results.isEmpty()) { //검색 결과가 없다면
+            response.setCode(HttpStatus.BAD_REQUEST.value());
+            response.setMessage("검색 결과를 찾을 수 없습니다.");
+            response.setData(results);
+            return response;
         }
 
         response.setCode(HttpStatus.OK.value());
@@ -107,6 +115,15 @@ public class CopyController {
         response.setData(results);
         return response;
     }
+
+    private CopySearchResult createCopySearchResult(List<CopyRes> copyResList) {
+        CopySearchResult result = new CopySearchResult();
+        int endIndex = Math.min(30, copyResList.size()); // 최대 30개까지만 반환
+        List<CopyRes> limitedCopyRes = copyResList.subList(0, endIndex);
+        result.setData(limitedCopyRes);
+        return result;
+    }
+
 
     private void setIndicesForCopyRes(List<CopyRes> copyResList, String keyword) {
         for (CopyRes copyRes : copyResList) {
@@ -129,11 +146,16 @@ public class CopyController {
 
     // 스크랩한 카피라이팅 조회
     @GetMapping("/scrap")
-    public HttpRes<List<CopyRes>> copyScrapList(HttpServletRequest httpRequest){
+    public HttpRes<List<CopyRes>> copyScrapList(HttpServletRequest httpRequest) {
         User user = jwtTokenProvider.getUserInfoByToken(httpRequest);
         List<CopyRes> copyRes = copyService.getCopyScrapList(user);
-        return new HttpRes<>(copyRes);
+
+        int endIndex = Math.min(30, copyRes.size()); // 최대 30개까지만 반환
+        List<CopyRes> limitedCopyRes = copyRes.subList(0, endIndex);
+
+        return new HttpRes<>(limitedCopyRes);
     }
+
 
 
     // 카피라이팅 스크랩
@@ -184,7 +206,11 @@ public class CopyController {
     public HttpRes<List<CopyRes>> searchFilterCard(CardSearchCondition condition) {
         List<CopyRes> results = cardJpaRepository.search(condition);
         Collections.shuffle(results);
-        return new HttpRes<>(results);
+
+        int endIndex = Math.min(30, results.size()); // 최대 30개까지만 반환
+        List<CopyRes> limitedResults = results.subList(0, endIndex);
+
+        return new HttpRes<>(limitedResults);
     }
 
 }
