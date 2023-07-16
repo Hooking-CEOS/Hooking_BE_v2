@@ -66,16 +66,24 @@ public class CopyController {
 
 
         MoodType moodType = MoodType.fromKeyword(q);
-        if (moodType != null) {
+        if (moodType != null) { // 무드 키워드에 속한다
             List<CopyRes> copyRes = copyService.selectMoodByQuery(q);
             Collections.shuffle(copyRes);
+
             CopySearchResult result = new CopySearchResult();
             result.setType("mood");
             result.setData(copyRes);
             results.add(result);
+
+            List<CopyRes> copyResOne = copyService.selectCopyByQuery(q);
+            if(!copyResOne.isEmpty()){
+                result.setType("copy");
+                result.setData(copyRes);
+                results.add(result);
+            }
         }
 
-        if (BrandType.containsKeyword(q)) {
+        if (BrandType.containsKeyword(q)) { // 브랜드에 속한다
             List<CopyRes> copyRes = copyService.selectBrandByQuery(q);
             Collections.shuffle(copyRes);
             CopySearchResult result = new CopySearchResult();

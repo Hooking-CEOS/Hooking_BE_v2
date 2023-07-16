@@ -21,7 +21,6 @@ public class CardJpaRepository {
 
     private final JPAQueryFactory queryFactory;
 
-
     public CardJpaRepository(EntityManager em) {
         this.em = em;
         this.queryFactory = new JPAQueryFactory(em);
@@ -70,7 +69,7 @@ public class CardJpaRepository {
                 .from(card)
                 .leftJoin(card.brand, brand) // card, brand 조인
                 .leftJoin(have) // brand, have 조인
-                .on(have.brand.eq(brand)) // 조인 조건 설정
+                .on(have.brand.eq(brand))
                 .join(have.mood, mood) // have와 mood 조인
                 .where(
                         productEq(products),
