@@ -47,14 +47,16 @@ public class CopyController {
     @GetMapping("")
     public HttpRes<List<CopyRes>> copyList() {
         List<CopyRes> copyRes = copyService.getCopyList();
-        Collections.shuffle(copyRes);
-
-        int endIndex = Math.min(30, copyRes.size()); // 최대 30개까지만 반환
-        List<CopyRes> limitedCopyRes = copyRes.subList(0, endIndex);
+        List<CopyRes> limitedCopyRes = getLimitedCopyRes(copyRes,30);
 
         return new HttpRes<>(limitedCopyRes);
     }
 
+    private List<CopyRes> getLimitedCopyRes(List<CopyRes> copyResList, int limit){
+        Collections.shuffle(copyResList);
+        int endIndex = Math.min(limit, copyResList.size());
+        return copyResList.subList(0,endIndex);
+    }
 
     @GetMapping("/search")
     public CopySearchResponse copySearchList(@RequestParam(name = "keyword") String q) {
@@ -205,10 +207,7 @@ public class CopyController {
     @GetMapping("/filter")
     public HttpRes<List<CopyRes>> searchFilterCard(CardSearchCondition condition) {
         List<CopyRes> results = cardJpaRepository.search(condition);
-        Collections.shuffle(results);
-
-        int endIndex = Math.min(30, results.size()); // 최대 30개까지만 반환
-        List<CopyRes> limitedResults = results.subList(0, endIndex);
+        List<CopyRes> limitedResults = getLimitedCopyRes(results,30);
 
         return new HttpRes<>(limitedResults);
     }
