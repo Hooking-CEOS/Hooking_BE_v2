@@ -61,7 +61,7 @@ public class CopyController {
         CopySearchResponse response = new CopySearchResponse();
         List<CopySearchResult> results = new ArrayList<>();
 
-        if (q.isEmpty()) {
+        if (q.isEmpty()) { //검색 결과가 없다면
             response.setCode(HttpStatus.BAD_REQUEST.value());
             response.setMessage("검색 결과를 찾을 수 없습니다.");
             response.setData(results);
@@ -69,62 +69,59 @@ public class CopyController {
         }
 
         MoodType moodType = MoodType.fromKeyword(q);
-        if (moodType != null) { // 무드 키워드에 속한다
-            List<CopyRes> moodCopyRes = copyService.selectMoodByQuery(q);
+        List<CopyRes> moodCopyRes = new ArrayList<>();
+        List<CopyRes> textCopyRes = new ArrayList<>();
+        List<CopyRes> brandCopyRes = new ArrayList<>();
+
+        textCopyRes = copyService.selectCopyByQuery(q);
+
+        if (moodType != null) { // 무드 키워드가 있다면
+            moodCopyRes = copyService.selectMoodByQuery(q);
             Collections.shuffle(moodCopyRes);
-
-            CopySearchResult moodResult = new CopySearchResult();
+            CopySearchResult moodResult = createCopySearchResult(moodCopyRes);
             moodResult.setType("mood");
-
-            int endIndex = Math.min(30, moodCopyRes.size()); // 최대 30개까지만 반환
-            List<CopyRes> limitedMoodCopyRes = moodCopyRes.subList(0, endIndex);
-            moodResult.setData(limitedMoodCopyRes);
-
             results.add(moodResult);
 
-            List<CopyRes> copyCopyRes = copyService.selectCopyByQuery(q);
-            if (!copyCopyRes.isEmpty()) {
-                CopySearchResult copyResult = new CopySearchResult();
-                setIndicesForCopyRes(copyCopyRes, q);
+            if(!textCopyRes.isEmpty()){
+                Collections.shuffle(textCopyRes);
+                CopySearchResult copyResult = createCopySearchResult(textCopyRes);
                 copyResult.setType("copy");
-
-                int copyEndIndex = Math.min(30, copyCopyRes.size()); // 최대 30개까지만 반환
-                List<CopyRes> limitedCopyCopyRes = copyCopyRes.subList(0, copyEndIndex);
-                copyResult.setData(limitedCopyCopyRes);
-
+                setIndicesForCopyRes(textCopyRes, q);
                 results.add(copyResult);
             }
-        } else if (BrandType.containsKeyword(q)) { // 브랜드에 속한다
-            List<CopyRes> copyRes = copyService.selectBrandByQuery(q);
-            Collections.shuffle(copyRes);
-            CopySearchResult result = new CopySearchResult();
-            result.setType("brand");
+        } else if (BrandType.containsKeyword(q)) { // 브랜드에 키워드가 있다면
+            brandCopyRes = copyService.selectBrandByQuery(q);
+            Collections.shuffle(brandCopyRes);
+            CopySearchResult brandResult = createCopySearchResult(brandCopyRes);
+            brandResult.setType("brand");
+            results.add(brandResult);
+        } else if (!textCopyRes.isEmpty()){ // text만 있다면
+            Collections.shuffle(textCopyRes);
+            CopySearchResult copyResult = createCopySearchResult(textCopyRes);
+            copyResult.setType("copy");
+            setIndicesForCopyRes(textCopyRes, q);
+            results.add(copyResult);
+        }
 
-            int endIndex = Math.min(30, copyRes.size()); // 최대 30개까지만 반환
-            List<CopyRes> limitedCopyRes = copyRes.subList(0, endIndex);
-            result.setData(limitedCopyRes);
-
-            results.add(result);
-        } else {
-            List<CopyRes> copyRes = copyService.selectCopyByQuery(q);
-            Collections.shuffle(copyRes);
-            if (!copyRes.isEmpty()) {
-                CopySearchResult result = new CopySearchResult();
-                setIndicesForCopyRes(copyRes, q);
-                result.setType("copy");
-
-                int endIndex = Math.min(30, copyRes.size()); // 최대 30개까지만 반환
-                List<CopyRes> limitedCopyRes = copyRes.subList(0, endIndex);
-                result.setData(limitedCopyRes);
-
-                results.add(result);
-            }
+        if (results.isEmpty()) { //검색 결과가 없다면
+            response.setCode(HttpStatus.BAD_REQUEST.value());
+            response.setMessage("검색 결과를 찾을 수 없습니다.");
+            response.setData(results);
+            return response;
         }
 
         response.setCode(HttpStatus.OK.value());
         response.setMessage("요청에 성공하였습니다.");
         response.setData(results);
         return response;
+    }
+
+    private CopySearchResult createCopySearchResult(List<CopyRes> copyResList) {
+        CopySearchResult result = new CopySearchResult();
+        int endIndex = Math.min(30, copyResList.size()); // 최대 30개까지만 반환
+        List<CopyRes> limitedCopyRes = copyResList.subList(0, endIndex);
+        result.setData(limitedCopyRes);
+        return result;
     }
 
 

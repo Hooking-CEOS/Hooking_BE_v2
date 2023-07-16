@@ -50,7 +50,6 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         log.info("{}", token);
 
         targetUrl = UriComponentsBuilder.fromUriString("https://hooking.shop/kakaologin")
-
                 .queryParam("token", token)
                 .queryParam("firstLogin", firstLogin)
                 .build().toUriString();

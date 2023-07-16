@@ -22,7 +22,7 @@ public class Card {
     @Column(columnDefinition = "TEXT")
     private String text;
 
-    @Column(name = "scrap_cnt", columnDefinition = "int default 0")
+    @Column(name = "scrap_cnt", columnDefinition = "integer default 0")
     private Integer scrapCnt;
 
     @ManyToOne(fetch = FetchType.LAZY)
