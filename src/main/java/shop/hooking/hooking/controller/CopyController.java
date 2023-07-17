@@ -183,8 +183,10 @@ public class CopyController {
 
         for (CrawlingData data : dataList) {
             String text = data.getText();
+            String url = data.getUrl();
             LocalDateTime createdAt = data.getCreatedAt();
             Long brandId = data.getBrandId();
+
 
             Brand brand = brandRepository.findBrandById(brandId);
 
@@ -195,6 +197,7 @@ public class CopyController {
             card.setText(text);
             card.setCreatedAt(createdAt);
             card.setBrand(brand);
+            card.setUrl(url);
 
             cardRepository.save(card);
         }
