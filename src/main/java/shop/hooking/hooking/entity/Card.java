@@ -2,6 +2,7 @@ package shop.hooking.hooking.entity;
 
 import com.sun.istack.NotNull;
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
@@ -22,7 +23,11 @@ public class Card {
     @Column(columnDefinition = "TEXT")
     private String text;
 
-    @Column(name = "scrap_cnt", columnDefinition = "integer default 0")
+    @Column(name = "url")
+    private String url;
+
+    @Column(name = "scrap_cnt")
+    @ColumnDefault("0")
     private Integer scrapCnt;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -33,11 +38,12 @@ public class Card {
     private LocalDateTime createdAt;
 
     @Builder
-    public Card(String text, Integer scrapCnt, Brand brand, LocalDateTime createdAt) {
+    public Card(String text, Integer scrapCnt, Brand brand, LocalDateTime createdAt,String url) {
         this.text = text;
         this.scrapCnt = scrapCnt;
         this.brand = brand;
         this.createdAt = createdAt;
+        this.url=url;
     }
 
 }

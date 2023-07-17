@@ -11,5 +11,6 @@ public class CrawlingData {
     private String text;
     private LocalDateTime createdAt;
     private Long brandId;
+    private String url;
 
 }
