@@ -50,6 +50,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         String token = jwtTokenProvider.createJwtAccessToken(oAuth2User.getAttribute("id").toString(), role); // 토큰발행
         log.info("{}", token);
 
+
         // JSON 형태의 응답 데이터 생성
         Map<String, Object> responseData = new HashMap<>();
         responseData.put("token", token);
@@ -59,6 +60,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
         response.getWriter().write(new ObjectMapper().writeValueAsString(responseData));
+
     }
 
 
