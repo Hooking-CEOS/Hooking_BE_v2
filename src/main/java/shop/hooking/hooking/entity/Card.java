@@ -3,6 +3,7 @@ package shop.hooking.hooking.entity;
 import com.sun.istack.NotNull;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.DynamicInsert;
 import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
@@ -12,6 +13,7 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor(access = AccessLevel.PUBLIC, force = true)
 @Entity
+@DynamicInsert
 @Table(name="card")
 public class Card {
 
