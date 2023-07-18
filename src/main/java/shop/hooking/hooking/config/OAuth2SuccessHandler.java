@@ -1,5 +1,6 @@
 package shop.hooking.hooking.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
@@ -37,8 +38,8 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication)
             throws IOException, ServletException {
-        OAuth2User oAuth2User = (OAuth2User)authentication.getPrincipal();
-        User user = userRepository.findMemberByKakaoId(oAuth2User.getAttribute("id")); //해당 id를 디비에서 조회
+        OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
+        User user = userRepository.findMemberByKakaoId(oAuth2User.getAttribute("id")); // 해당 id를 디비에서 조회
         String role = user.getRole();
         Boolean firstLogin = oAuth2User.getAttribute("firstLogin");
 
@@ -46,15 +47,22 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         String targetUrl;
         log.info("토큰 발행 시작");
 
-        String token = jwtTokenProvider.createJwtAccessToken(oAuth2User.getAttribute("id").toString(), role); //토큰발행
+        String token = jwtTokenProvider.createJwtAccessToken(oAuth2User.getAttribute("id").toString(), role); // 토큰발행
         log.info("{}", token);
-        //배포url, 로컬url -> 커스텀파라미터
-        targetUrl = UriComponentsBuilder.fromUriString("http://localhost:3000/oath-processor")
-                .queryParam("token", token)
-                .queryParam("firstLogin", firstLogin)
-                .build().toUriString();
-        getRedirectStrategy().sendRedirect(request, response, targetUrl);
+
+
+        // JSON 형태의 응답 데이터 생성
+        Map<String, Object> responseData = new HashMap<>();
+        responseData.put("token", token);
+        responseData.put("firstLogin", firstLogin);
+
+        // Response Body에 데이터를 담아 전달
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+        response.getWriter().write(new ObjectMapper().writeValueAsString(responseData));
+
     }
+
 
 }
 
