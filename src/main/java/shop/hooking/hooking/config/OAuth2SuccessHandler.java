@@ -56,6 +56,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
                 .build().toUriString();
         //response body로 줌
         getRedirectStrategy().sendRedirect(request, response, targetUrl);
+
     }
 
 }
