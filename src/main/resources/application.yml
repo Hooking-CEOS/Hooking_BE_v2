@@ -13,7 +13,7 @@ spring:
             client-secret: ${KAKAO_CLIENT_SECRET}
             client-name: Kakao
             redirect-uri: ${KAKAO_REDIRECT_URL}
-            scope: profile_nickname, profile_image, account_email
+            scope: profile_nickname, profile_image, account_email, account_gender
             authorization-grant-type: authorization_code
             client-authentication-method: POST
         provider:
