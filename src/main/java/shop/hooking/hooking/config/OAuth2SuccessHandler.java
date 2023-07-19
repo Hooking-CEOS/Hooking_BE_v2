@@ -37,8 +37,8 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication)
             throws IOException, ServletException {
-        OAuth2User oAuth2User = (OAuth2User)authentication.getPrincipal();
-        User user = userRepository.findMemberByKakaoId(oAuth2User.getAttribute("id")); //해당 id를 디비에서 조회
+        OAuth2User oAuth2User = (OAuth2User)authentication.getPrincipal(); // 카카오로부터 받은 유저 정보
+        User user = userRepository.findMemberByKakaoId(oAuth2User.getAttribute("id")); // 해당 id를 디비에서 조회
         String role = user.getRole();
         Boolean firstLogin = oAuth2User.getAttribute("firstLogin");
 
@@ -53,6 +53,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
                 .queryParam("token", token)
                 .queryParam("firstLogin", firstLogin)
                 .build().toUriString();
+        //response body로 줌
         getRedirectStrategy().sendRedirect(request, response, targetUrl);
     }
 

@@ -147,6 +147,7 @@ public class CopyController {
 
 
     // 스크랩한 카피라이팅 조회
+    @CrossOrigin(origins = "https://hooking.shop, https://hooking-dev.netlify.app/, https://hooking.netlify.app/, http://localhost:3000/, http://localhost:3001/")
     @GetMapping("/scrap")
     public HttpRes<List<CopyRes>> copyScrapList(HttpServletRequest httpRequest) {
         User user = jwtTokenProvider.getUserInfoByToken(httpRequest);
