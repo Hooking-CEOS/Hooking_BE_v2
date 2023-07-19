@@ -73,4 +73,3 @@ public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
     return http.addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class).build();
 }
 }
-
