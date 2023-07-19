@@ -1,5 +1,6 @@
 package shop.hooking.hooking.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
@@ -55,6 +56,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
                 .build().toUriString();
         //response body로 줌
         getRedirectStrategy().sendRedirect(request, response, targetUrl);
+
     }
 
 }

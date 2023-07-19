@@ -5,17 +5,19 @@ import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
+
 import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
-@DynamicInsert
+
 @DynamicUpdate
 @Getter
 @Setter
 @NoArgsConstructor(access = AccessLevel.PUBLIC, force = true)
 @Entity
+@DynamicInsert
 @Table(name="card")
 public class Card {
 
