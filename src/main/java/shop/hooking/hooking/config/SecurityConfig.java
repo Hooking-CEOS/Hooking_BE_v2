@@ -59,6 +59,7 @@ public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
 
             .antMatchers("**/oauth2/**","/kakaologin","/copy", "/copy/search","/copy/filter","/copy/crawling", "/brand", "/brand/{brand_id}"
+
                     ).permitAll()
 
             .anyRequest().authenticated()
