@@ -89,6 +89,7 @@ public class CopyController {
                 Collections.shuffle(textCopyRes);
                 CopySearchResult copyResult = createCopySearchResult(textCopyRes);
                 copyResult.setType("copy");
+                copyResult.setKeyword(q);
                 setIndicesForCopyRes(textCopyRes, q);
                 results.add(copyResult);
             }
