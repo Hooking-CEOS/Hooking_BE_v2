@@ -82,6 +82,7 @@ public class CopyController {
             Collections.shuffle(moodCopyRes);
             CopySearchResult moodResult = createCopySearchResult(moodCopyRes);
             moodResult.setType("mood");
+            moodResult.setKeyword(q);
             results.add(moodResult);
 
             if(!textCopyRes.isEmpty()){
@@ -96,11 +97,13 @@ public class CopyController {
             Collections.shuffle(brandCopyRes);
             CopySearchResult brandResult = createCopySearchResult(brandCopyRes);
             brandResult.setType("brand");
+            brandResult.setKeyword(q);
             results.add(brandResult);
         } else if (!textCopyRes.isEmpty()){ // text만 있다면
             Collections.shuffle(textCopyRes);
             CopySearchResult copyResult = createCopySearchResult(textCopyRes);
             copyResult.setType("copy");
+            copyResult.setKeyword(q);
             setIndicesForCopyRes(textCopyRes, q);
             results.add(copyResult);
         }
