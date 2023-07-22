@@ -61,7 +61,7 @@ public class CopyController {
     }
 
     private List<CopyRes> getLimitedCopyRes(List<CopyRes> copyResList, int limit){
-//        Collections.shuffle(copyResList);
+        Collections.shuffle(copyResList);
         int endIndex = Math.min(limit, copyResList.size());
         return copyResList.subList(0,endIndex);
     }
