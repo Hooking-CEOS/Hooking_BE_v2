@@ -24,9 +24,7 @@ import shop.hooking.hooking.service.JwtTokenProvider;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -46,10 +44,7 @@ public class CopyController {
     // 전체 카피라이팅 조회
     @GetMapping("")
     public HttpRes<List<CopyRes>> copyList() {
-        List<CopyRes> copyRes = copyService.getCopyList();
-        List<CopyRes> limitedCopyRes = getLimitedCopyRes(copyRes,30);
 
-        return new HttpRes<>(limitedCopyRes);
     }
 
     private List<CopyRes> getLimitedCopyRes(List<CopyRes> copyResList, int limit){
