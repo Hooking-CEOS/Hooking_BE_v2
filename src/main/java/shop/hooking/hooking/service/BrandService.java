@@ -30,13 +30,12 @@ public class BrandService {
 
     public List<BrandRes.BrandDto> getBrandList(){
         List<BrandRes.BrandDto> brandDtoList = new ArrayList<>();
-        List<Brand> brands = brandRepository.findAll();// 데이터베이스에서 모든 브랜드 기본정보 가져옴
-        //무드 테이블에서 분위기 3개
-        //카드 테이블에서 카피라이팅 본문만 랜덤 1개 -> 완료
+        List<Brand> brands = brandRepository.findAll();
+
         for( Brand brand : brands){
             Long brandId = brand.getId();
             List<Card> cards = cardRepository.findCardsByBrandId(brandId);
-            Card randomCard = cards.get(0); // 임의로 첫번재 카드 본문 가져오게 만듦
+            Card randomCard = cards.get(0);
 
             List<Have> haves = haveRepository.findByBrandId(brandId);
 
@@ -59,13 +58,9 @@ public class BrandService {
 
 
     public BrandRes.BrandDetailDto getOneBrand(Long id) {
-        //무드 테이블에서 분위기 3개
-        //카드 테이블에서 카피라이팅 본문 랜덤 3개
-        //카드 테이블에서 카피라이팅 전체 가져오기
+        Brand brand = brandRepository.findBrandById(id);
 
-        Brand brand = brandRepository.findBrandById(id);// brand 엔티티에서 4개(아이디, 이름, 한줄소개, 링크)만 가져옴
-
-        List<Card> cards = cardRepository.findCardsByBrandId(brand.getId()); //카드 리스트 가져옴
+        List<Card> cards = cardRepository.findCardsByBrandId(brand.getId());
 
         List<String> cardTexts = new ArrayList<>();
         int maxCardCount = Math.min(cards.size(), 3);
