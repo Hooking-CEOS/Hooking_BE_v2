@@ -24,9 +24,7 @@ import shop.hooking.hooking.service.JwtTokenProvider;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -59,10 +57,11 @@ public class CopyController {
 
 
         return new HttpRes<>(tempCopyRes);
+
     }
 
     private List<CopyRes> getLimitedCopyRes(List<CopyRes> copyResList, int limit){
-//        Collections.shuffle(copyResList);
+        Collections.shuffle(copyResList);
         int endIndex = Math.min(limit, copyResList.size());
         return copyResList.subList(0,endIndex);
     }
