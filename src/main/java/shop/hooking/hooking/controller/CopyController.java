@@ -46,8 +46,14 @@ public class CopyController {
     // 전체 카피라이팅 조회
     @GetMapping("")
     public HttpRes<List<CopyRes>> copyList() {
-        List<CopyRes> copyRes = copyService.getCopyList();
-        List<CopyRes> limitedCopyRes = getLimitedCopyRes(copyRes,30);
+        Long[] brandIds = {2L, 17L, 4L, 28L, 3L, 21L, 25L, 24L, 15L};
+
+        List<CopyRes> limitedCopyRes = new ArrayList<>();
+
+        for (Long brandId : brandIds) {
+            List<CopyRes> copyRes = copyService.getCopyList(brandId);
+            limitedCopyRes.addAll(getLimitedCopyRes(copyRes, 30));
+        }
 
         return new HttpRes<>(limitedCopyRes);
     }
