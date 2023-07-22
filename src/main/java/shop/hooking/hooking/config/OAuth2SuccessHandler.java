@@ -50,7 +50,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         String token = jwtTokenProvider.createJwtAccessToken(oAuth2User.getAttribute("id").toString(), role); //토큰발행
         log.info("{}", token);
         //배포url, 로컬url -> 커스텀파라미터
-        targetUrl = UriComponentsBuilder.fromUriString("https://hooking-dev.netlify.app/")
+        targetUrl = UriComponentsBuilder.fromUriString("https://hooking-dev.netlify.app/oath-processor/")
                 .queryParam("token", token)
                 .queryParam("firstLogin", firstLogin)
                 .build().toUriString();
