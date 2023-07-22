@@ -46,16 +46,20 @@ public class CopyController {
     // 전체 카피라이팅 조회
     @GetMapping("")
     public HttpRes<List<CopyRes>> copyList() {
-        Long[] brandIds = {2L, 17L, 4L, 28L, 3L, 21L, 25L, 24L, 15L};
+        Long[] brandIds = {2L, 3L, 4L, 12L, 15L, 17L, 21L, 24L, 25L, 28L};
 
         List<CopyRes> limitedCopyRes = new ArrayList<>();
+        List<CopyRes> tempCopyRes = new ArrayList<>();
 
         for (Long brandId : brandIds) {
             List<CopyRes> copyRes = copyService.getCopyList(brandId);
-            limitedCopyRes.addAll(getLimitedCopyRes(copyRes, 30));
+            tempCopyRes.addAll(copyRes);
         }
+        Collections.shuffle(tempCopyRes);
+        tempCopyRes = getLimitedCopyRes(tempCopyRes,30);
 
-        return new HttpRes<>(limitedCopyRes);
+
+        return new HttpRes<>(tempCopyRes);
     }
 
     private List<CopyRes> getLimitedCopyRes(List<CopyRes> copyResList, int limit){
