@@ -30,13 +30,13 @@ public class CopyService {
 
 
     @Transactional
-    public List<CopyRes> getCopyList() {
-        List<Card> cards = cardRepository.findAll(); //카피 다가져옴
+    public List<CopyRes> getCopyList(Long brandId) {
+        List<Card> cards = cardRepository.findTop5ByBrandIdOrderByCreatedAtDesc(brandId);
         List<CopyRes> copyResList = new ArrayList<>();
 
         for (Card card : cards) {
-            CopyRes copyRes = createCopyRes(card); //하나씩 card 객체 생성
-            copyResList.add(copyRes); //하나씩 cardRes를 List에 add
+            CopyRes copyRes = createCopyRes(card);
+            copyResList.add(copyRes);
         }
 
         return copyResList;

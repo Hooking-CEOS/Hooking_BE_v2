@@ -10,6 +10,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 public class CopySearchResult {
+    private String keyword;
     private String type;
     private List<CopyRes> data;
 

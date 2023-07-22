@@ -44,6 +44,20 @@ public class CopyController {
     // 전체 카피라이팅 조회
     @GetMapping("")
     public HttpRes<List<CopyRes>> copyList() {
+        Long[] brandIds = {2L, 3L, 4L, 12L, 15L, 17L, 21L, 24L, 25L, 28L};
+
+        List<CopyRes> limitedCopyRes = new ArrayList<>();
+        List<CopyRes> tempCopyRes = new ArrayList<>();
+
+        for (Long brandId : brandIds) {
+            List<CopyRes> copyRes = copyService.getCopyList(brandId);
+            tempCopyRes.addAll(copyRes);
+        }
+        Collections.shuffle(tempCopyRes);
+        tempCopyRes = getLimitedCopyRes(tempCopyRes,30);
+
+
+        return new HttpRes<>(tempCopyRes);
 
     }
 
@@ -77,12 +91,14 @@ public class CopyController {
             Collections.shuffle(moodCopyRes);
             CopySearchResult moodResult = createCopySearchResult(moodCopyRes);
             moodResult.setType("mood");
+            moodResult.setKeyword(q);
             results.add(moodResult);
 
             if(!textCopyRes.isEmpty()){
                 Collections.shuffle(textCopyRes);
                 CopySearchResult copyResult = createCopySearchResult(textCopyRes);
                 copyResult.setType("copy");
+                copyResult.setKeyword(q);
                 setIndicesForCopyRes(textCopyRes, q);
                 results.add(copyResult);
             }
@@ -91,11 +107,13 @@ public class CopyController {
             Collections.shuffle(brandCopyRes);
             CopySearchResult brandResult = createCopySearchResult(brandCopyRes);
             brandResult.setType("brand");
+            brandResult.setKeyword(q);
             results.add(brandResult);
         } else if (!textCopyRes.isEmpty()){ // text만 있다면
             Collections.shuffle(textCopyRes);
             CopySearchResult copyResult = createCopySearchResult(textCopyRes);
             copyResult.setType("copy");
+            copyResult.setKeyword(q);
             setIndicesForCopyRes(textCopyRes, q);
             results.add(copyResult);
         }
