@@ -83,14 +83,14 @@ public class CopyService {
 
         List<Brand> brands = new ArrayList<>();
         for (Have have : haves) {
-            brands.add(have.getBrand()); // 브랜드 다 가져오고
+            brands.add(have.getBrand());
         }
         for ( Brand brand : brands){
-            List<Card> cards = cardRepository.findCardsByBrandId(brand.getId()); // 카드 다 가져오고
+            List<Card> cards = cardRepository.findCardsByBrandId(brand.getId());
 
             for (Card card : cards) {
                 CopyRes copyRes = createCopyRes(card);
-                copyResList.add(copyRes); // 리스트 형태로 반환
+                copyResList.add(copyRes);
             }
         }
 
@@ -116,7 +116,7 @@ public class CopyService {
     public CopyRes createCopyRes(Card card) {
         Long id = card.getId(); // id로 넘어옴
 
-        List<Scrap> scraps = scrapRepository.findByCardId(id); // 스크랩 객체들 모두 불러옴
+        List<Scrap> scraps = scrapRepository.findByCardId(id);
         int length = scraps.size();
 
         Brand brand = card.getBrand();
@@ -128,9 +128,9 @@ public class CopyService {
 
     @Transactional
     public CopyRes createScrapRes(Scrap scrap) {
-        Long id = scrap.getCard().getId(); // cardId
+        Long id = scrap.getCard().getId();
 
-        List<Scrap> scraps = scrapRepository.findByCardId(id); // 스크랩 객체들 모두 불러옴
+        List<Scrap> scraps = scrapRepository.findByCardId(id);
         int length = scraps.size();
 
         Brand brand = scrap.getCard().getBrand();
@@ -156,8 +156,5 @@ public class CopyService {
 
         return true;
     }
-
-
-
 
 }

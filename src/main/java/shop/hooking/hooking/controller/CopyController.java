@@ -48,7 +48,6 @@ public class CopyController {
     public HttpRes<List<CopyRes>> copyList() {
         Long[] brandIds = {2L, 3L, 4L, 12L, 15L, 17L, 21L, 24L, 25L, 28L};
 
-        List<CopyRes> limitedCopyRes = new ArrayList<>();
         List<CopyRes> tempCopyRes = new ArrayList<>();
 
         for (Long brandId : brandIds) {
@@ -87,7 +86,7 @@ public class CopyController {
 
         textCopyRes = copyService.selectCopyByQuery(q);
 
-        if (moodType != null) { // 무드 키워드가 있다면
+        if (moodType != null) {
             moodCopyRes = copyService.selectMoodByQuery(q);
             Collections.shuffle(moodCopyRes);
             CopySearchResult moodResult = createCopySearchResult(moodCopyRes);
@@ -103,14 +102,14 @@ public class CopyController {
                 setIndicesForCopyRes(textCopyRes, q);
                 results.add(copyResult);
             }
-        } else if (BrandType.containsKeyword(q)) { // 브랜드에 키워드가 있다면
+        } else if (BrandType.containsKeyword(q)) {
             brandCopyRes = copyService.selectBrandByQuery(q);
             Collections.shuffle(brandCopyRes);
             CopySearchResult brandResult = createCopySearchResult(brandCopyRes);
             brandResult.setType("brand");
             brandResult.setKeyword(q);
             results.add(brandResult);
-        } else if (!textCopyRes.isEmpty()){ // text만 있다면
+        } else if (!textCopyRes.isEmpty()){
             Collections.shuffle(textCopyRes);
             CopySearchResult copyResult = createCopySearchResult(textCopyRes);
             copyResult.setType("copy");
@@ -119,7 +118,7 @@ public class CopyController {
             results.add(copyResult);
         }
 
-        if (results.isEmpty()) { //검색 결과가 없다면
+        if (results.isEmpty()) {
             response.setCode(HttpStatus.BAD_REQUEST.value());
             response.setMessage("검색 결과를 찾을 수 없습니다.");
             response.setData(results);
@@ -134,7 +133,7 @@ public class CopyController {
 
     private CopySearchResult createCopySearchResult(List<CopyRes> copyResList) {
         CopySearchResult result = new CopySearchResult();
-        int endIndex = Math.min(30, copyResList.size()); // 최대 30개까지만 반환
+        int endIndex = Math.min(30, copyResList.size());
         List<CopyRes> limitedCopyRes = copyResList.subList(0, endIndex);
         result.setData(limitedCopyRes);
         return result;
@@ -143,45 +142,37 @@ public class CopyController {
 
     private void setIndicesForCopyRes(List<CopyRes> copyResList, String keyword) {
         for (CopyRes copyRes : copyResList) {
-            String lowercaseText = copyRes.getText().toLowerCase(); // 소문자로 변환
-            int index = lowercaseText.indexOf(keyword.toLowerCase()); // 첫번째 키워드의 위치 인덱스를 찾은 후,
+            String lowercaseText = copyRes.getText().toLowerCase();
+            int index = lowercaseText.indexOf(keyword.toLowerCase());
             List<Integer> indices = new ArrayList<>();
-            while (index != -1) { // index가 -1이 아닐 때까지
+            while (index != -1) {
                 indices.add(index);
-                index = lowercaseText.indexOf(keyword.toLowerCase(), index + 1); // 키워드 위치 인덱스를 indices에 추가
+                index = lowercaseText.indexOf(keyword.toLowerCase(), index + 1);
             }
             copyRes.setIndex(indices);
         }
     }
 
 
-
-
-
-
-
-    // 스크랩한 카피라이팅 조회
     @CrossOrigin(origins = "https://hooking.shop, https://hooking-dev.netlify.app/, https://hooking.netlify.app/, http://localhost:3000/, http://localhost:3001/")
     @GetMapping("/scrap")
     public HttpRes<List<CopyRes>> copyScrapList(HttpServletRequest httpRequest) {
         User user = jwtTokenProvider.getUserInfoByToken(httpRequest);
         List<CopyRes> copyRes = copyService.getCopyScrapList(user);
 
-        int endIndex = Math.min(30, copyRes.size()); // 최대 30개까지만 반환
+        int endIndex = Math.min(30, copyRes.size());
         List<CopyRes> limitedCopyRes = copyRes.subList(0, endIndex);
 
         return new HttpRes<>(limitedCopyRes);
     }
 
 
-
-    // 카피라이팅 스크랩
     @CrossOrigin(origins = "https://hooking.shop, https://hooking-dev.netlify.app/, https://hooking.netlify.app/, http://localhost:3000/, http://localhost:3001/")
     @PostMapping("/scrap")
     public HttpRes<String> copyScrap(HttpServletRequest httpRequest, @RequestBody CopyReq copyReq) throws IOException {
         User user = jwtTokenProvider.getUserInfoByToken(httpRequest);
         Card card = cardRepository.findCardById(copyReq.getCardId());
-        boolean isScrap = copyService.saveCopy(user, card); // 스크랩됐으면->true, 안됐으면->false
+        boolean isScrap = copyService.saveCopy(user, card);
         if(isScrap){
             return new HttpRes<>("스크랩을 완료하였습니다.");
         }
@@ -207,8 +198,6 @@ public class CopyController {
 
             Card card = new Card();
 
-
-            // 'text'와 'createdAt' 값을 데이터베이스에 저장
             card.setText(text);
             card.setCreatedAt(createdAt);
             card.setBrand(brand);
@@ -221,7 +210,6 @@ public class CopyController {
     }
 
 
-    //카피라이팅 필터
     @GetMapping("/filter")
     public HttpRes<List<CopyRes>> searchFilterCard(CardSearchCondition condition) {
         List<CopyRes> results = cardJpaRepository.search(condition);
