@@ -36,6 +36,14 @@ public class CopyRes {
         this.createdAt = createdAt;
     }
 
+    public CopyRes(Long id, Brand brand, String text, LocalDateTime createdAt) {
+        this.id = id;
+        this.brandName = brand.getBrandName();
+        this.text = text;
+        this.scrapCnt = 0;
+        this.createdAt = createdAt;
+    }
+
 
 }
 
