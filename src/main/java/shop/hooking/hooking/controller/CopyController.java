@@ -54,25 +54,15 @@ public class CopyController {
         }
         Collections.shuffle(tempCopyRes);
         tempCopyRes = getLimitedCopyRes(tempCopyRes,30);
-        String token = httpRequest.getHeader("X-AUTH-TOKEN");
-        if(token == null){
-            for(CopyRes copyRes : tempCopyRes){
-                copyRes.setScrapCnt(0);
-            }
-        }
+        setScrapCntWhenTokenNotProvided(httpRequest, tempCopyRes);
 
         return new HttpRes<>(tempCopyRes);
 
     }
 
-    private List<CopyRes> getLimitedCopyRes(List<CopyRes> copyResList, int limit){
-        Collections.shuffle(copyResList);
-        int endIndex = Math.min(limit, copyResList.size());
-        return copyResList.subList(0,endIndex);
-    }
 
     @GetMapping("/search")
-    public CopySearchResponse copySearchList(@RequestParam(name = "keyword") String q) {
+    public CopySearchResponse copySearchList(HttpServletRequest httpRequest,@RequestParam(name = "keyword") String q) {
         CopySearchResponse response = new CopySearchResponse();
         List<CopySearchResult> results = new ArrayList<>();
 
@@ -92,6 +82,7 @@ public class CopyController {
 
         if (moodType != null) {
             moodCopyRes = copyService.selectMoodByQuery(q);
+            setScrapCntWhenTokenNotProvided(httpRequest, moodCopyRes);
             Collections.shuffle(moodCopyRes);
             CopySearchResult moodResult = createCopySearchResult(moodCopyRes);
             moodResult.setType("mood");
@@ -99,6 +90,7 @@ public class CopyController {
             results.add(moodResult);
 
             if(!textCopyRes.isEmpty()){
+                setScrapCntWhenTokenNotProvided(httpRequest, textCopyRes);
                 Collections.shuffle(textCopyRes);
                 CopySearchResult copyResult = createCopySearchResult(textCopyRes);
                 copyResult.setType("copy");
@@ -108,12 +100,14 @@ public class CopyController {
             }
         } else if (BrandType.containsKeyword(q)) {
             brandCopyRes = copyService.selectBrandByQuery(q);
+            setScrapCntWhenTokenNotProvided(httpRequest, brandCopyRes);
             Collections.shuffle(brandCopyRes);
             CopySearchResult brandResult = createCopySearchResult(brandCopyRes);
             brandResult.setType("brand");
             brandResult.setKeyword(q);
             results.add(brandResult);
         } else if (!textCopyRes.isEmpty()){
+            setScrapCntWhenTokenNotProvided(httpRequest, textCopyRes);
             Collections.shuffle(textCopyRes);
             CopySearchResult copyResult = createCopySearchResult(textCopyRes);
             copyResult.setType("copy");
@@ -135,27 +129,6 @@ public class CopyController {
         return response;
     }
 
-    private CopySearchResult createCopySearchResult(List<CopyRes> copyResList) {
-        CopySearchResult result = new CopySearchResult();
-        int endIndex = Math.min(30, copyResList.size());
-        List<CopyRes> limitedCopyRes = copyResList.subList(0, endIndex);
-        result.setData(limitedCopyRes);
-        return result;
-    }
-
-
-    private void setIndicesForCopyRes(List<CopyRes> copyResList, String keyword) {
-        for (CopyRes copyRes : copyResList) {
-            String lowercaseText = copyRes.getText().toLowerCase();
-            int index = lowercaseText.indexOf(keyword.toLowerCase());
-            List<Integer> indices = new ArrayList<>();
-            while (index != -1) {
-                indices.add(index);
-                index = lowercaseText.indexOf(keyword.toLowerCase(), index + 1);
-            }
-            copyRes.setIndex(indices);
-        }
-    }
 
 
     @CrossOrigin(origins = "https://hooking.shop, https://hooking-dev.netlify.app/, https://hooking.netlify.app/, http://localhost:3000/, http://localhost:3001/")
@@ -221,11 +194,49 @@ public class CopyController {
 
 
     @GetMapping("/filter")
-    public HttpRes<List<CopyRes>> searchFilterCard(CardSearchCondition condition) {
+    public HttpRes<List<CopyRes>> searchFilterCard(HttpServletRequest httpRequest,CardSearchCondition condition) {
         List<CopyRes> results = cardJpaRepository.search(condition);
         List<CopyRes> limitedResults = getLimitedCopyRes(results,30);
-
+        setScrapCntWhenTokenNotProvided(httpRequest, limitedResults);
         return new HttpRes<>(limitedResults);
     }
+
+    private void setScrapCntWhenTokenNotProvided(HttpServletRequest httpRequest, List<CopyRes> copyResList) {
+        String token = httpRequest.getHeader("X-AUTH-TOKEN");
+        if (token == null) {
+            for (CopyRes copyRes : copyResList) {
+                copyRes.setScrapCnt(0);
+            }
+        }
+    }
+
+    private CopySearchResult createCopySearchResult(List<CopyRes> copyResList) {
+        CopySearchResult result = new CopySearchResult();
+        int endIndex = Math.min(30, copyResList.size());
+        List<CopyRes> limitedCopyRes = copyResList.subList(0, endIndex);
+        result.setData(limitedCopyRes);
+        return result;
+    }
+
+
+    private void setIndicesForCopyRes(List<CopyRes> copyResList, String keyword) {
+        for (CopyRes copyRes : copyResList) {
+            String lowercaseText = copyRes.getText().toLowerCase();
+            int index = lowercaseText.indexOf(keyword.toLowerCase());
+            List<Integer> indices = new ArrayList<>();
+            while (index != -1) {
+                indices.add(index);
+                index = lowercaseText.indexOf(keyword.toLowerCase(), index + 1);
+            }
+            copyRes.setIndex(indices);
+        }
+    }
+
+    private List<CopyRes> getLimitedCopyRes(List<CopyRes> copyResList, int limit){
+        Collections.shuffle(copyResList);
+        int endIndex = Math.min(limit, copyResList.size());
+        return copyResList.subList(0,endIndex);
+    }
+
 
 }
