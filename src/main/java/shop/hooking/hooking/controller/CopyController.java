@@ -21,11 +21,14 @@ import shop.hooking.hooking.repository.CardJpaRepository;
 import shop.hooking.hooking.repository.CardRepository;
 import shop.hooking.hooking.service.CopyService;
 import shop.hooking.hooking.service.JwtTokenProvider;
+import springfox.documentation.annotations.Cacheable;
+
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.*;
 
+@Cacheable("copyListCache")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/copy")
@@ -61,6 +64,7 @@ public class CopyController {
     }
 
 
+    @Cacheable("copySearchCache")
     @GetMapping("/search")
     public CopySearchResponse copySearchList(HttpServletRequest httpRequest,@RequestParam(name = "keyword") String q) {
         CopySearchResponse response = new CopySearchResponse();
