@@ -24,9 +24,7 @@ import shop.hooking.hooking.service.JwtTokenProvider;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -45,7 +43,7 @@ public class CopyController {
 
     // 전체 카피라이팅 조회
     @GetMapping("")
-    public HttpRes<List<CopyRes>> copyList() {
+    public HttpRes<List<CopyRes>> copyList(HttpServletRequest httpRequest) {
         Long[] brandIds = {2L, 3L, 4L, 12L, 15L, 17L, 21L, 24L, 25L, 28L};
 
         List<CopyRes> tempCopyRes = new ArrayList<>();
@@ -56,9 +54,15 @@ public class CopyController {
         }
         Collections.shuffle(tempCopyRes);
         tempCopyRes = getLimitedCopyRes(tempCopyRes,30);
-
+        String token = httpRequest.getHeader("X-AUTH-TOKEN");
+        if(token == null){
+            for(CopyRes copyRes : tempCopyRes){
+                copyRes.setScrapCnt(0);
+            }
+        }
 
         return new HttpRes<>(tempCopyRes);
+
     }
 
     private List<CopyRes> getLimitedCopyRes(List<CopyRes> copyResList, int limit){
@@ -158,10 +162,16 @@ public class CopyController {
     @GetMapping("/scrap")
     public HttpRes<List<CopyRes>> copyScrapList(HttpServletRequest httpRequest) {
         User user = jwtTokenProvider.getUserInfoByToken(httpRequest);
+
         List<CopyRes> copyRes = copyService.getCopyScrapList(user);
 
         int endIndex = Math.min(30, copyRes.size());
         List<CopyRes> limitedCopyRes = copyRes.subList(0, endIndex);
+
+//        if(user == null){
+//            List<CopyRes> notLoginCopyRes = copyRes.subList(0, endIndex);
+//            return new HttpRes<>(notLoginCopyRes);
+//        }
 
         return new HttpRes<>(limitedCopyRes);
     }
