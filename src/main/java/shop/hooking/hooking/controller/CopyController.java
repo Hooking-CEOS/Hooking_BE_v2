@@ -47,6 +47,7 @@ public class CopyController {
 
 
     // 전체 카피라이팅 조회
+    // 페이지네이션 구현
     @GetMapping("/{index}") //copy/0=> 0-30 copy/1=>0~30 copy/2=>60~90 copy/9 => 270~300
     public HttpRes<List<CopyRes>> copyList(HttpServletRequest httpRequest,@PathVariable int index) {
         Long[] brandIds = {2L, 3L, 4L, 12L, 15L, 17L, 21L, 24L, 25L, 28L};
@@ -54,13 +55,14 @@ public class CopyController {
         List<CopyRes> tempCopyRes = new ArrayList<>();
 
         for (Long brandId : brandIds) {
-            List<CopyRes> copyRes = copyService.getCopyList(brandId);
+            List<CopyRes> copyRes = copyService.getCopyList(brandId); //10개씩 -> 100개
             tempCopyRes.addAll(copyRes);
         }
-        Collections.shuffle(tempCopyRes);
+
+        Collections.shuffle(tempCopyRes); //섞임
 
         // 요청한 index에 따라 30개의 다른 결과를 생성
-        int startIndex = index * 30;
+        int startIndex = index * 30; //인덱싱
         List<CopyRes> resultCopyRes = getLimitedCopyResByIndex(tempCopyRes, startIndex);
 
         setScrapCntWhenTokenNotProvided(httpRequest,resultCopyRes);
