@@ -2,6 +2,7 @@ package shop.hooking.hooking.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -38,7 +39,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication)
             throws IOException, ServletException {
-        OAuth2User oAuth2User = (OAuth2User)authentication.getPrincipal(); // 카카오로부터 받은 유저 정보
+        OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal(); // 카카오로부터 받은 유저 정보
         User user = userRepository.findMemberByKakaoId(oAuth2User.getAttribute("id")); // 해당 id를 디비에서 조회
         String role = user.getRole();
         Boolean firstLogin = oAuth2User.getAttribute("firstLogin");
@@ -46,18 +47,31 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         log.info("OAuth2User = {}", oAuth2User);
         String targetUrl;
         log.info("토큰 발행 시작");
-//        "https://hooking-dev.netlify.app/oath-processor/"
         String token = jwtTokenProvider.createJwtAccessToken(oAuth2User.getAttribute("id").toString(), role); //토큰발행
         log.info("{}", token);
-        //배포url, 로컬url -> 커스텀파라미터
-        targetUrl = UriComponentsBuilder.fromUriString("http://localhost:3000/oath-processor")
+
+        String referer = request.getHeader("Referer");
+        String host = request.getHeader("Host");
+
+        // Referer와 Host에 따라서 targetUrl 설정
+        if (referer != null && referer.startsWith(deploymentUrl) && host.equals("hooking.shop")) {
+            targetUrl = deploymentProcessorUrl; // 배포 환경
+        } else if (referer != null && referer.startsWith("http://localhost:3000/") && host.equals("hooking.shop")) {
+            targetUrl = "http://localhost:3000/oath-processor"; // 로컬 환경
+        } else {
+            // 기본적으로 로컬 개발 환경으로 설정
+            targetUrl = "http://localhost:3000/oath-processor"; // 로컬 환경
+        }
+
+        // 쿼리 파라미터를 추가하여 targetUrl 생성
+        targetUrl = UriComponentsBuilder.fromUriString(targetUrl)
                 .queryParam("token", token)
                 .queryParam("firstLogin", firstLogin)
                 .build().toUriString();
-        //response body로 줌
+
+        // response body로 보냄
         getRedirectStrategy().sendRedirect(request, response, targetUrl);
-
     }
-
 }
+
 

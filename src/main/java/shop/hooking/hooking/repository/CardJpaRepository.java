@@ -69,7 +69,7 @@ public class CardJpaRepository {
                         card.createdAt))
                 .from(card)
                 .leftJoin(card.brand, brand) // card, brand 조인
-                .leftJoin(have) // brand, have 조인
+                .leftJoin(have) // brand, have 조인 -> brandid가 같은 행을 조인
                 .on(have.brand.eq(brand))
                 .join(have.mood, mood) // have와 mood 조인
                 .where(
@@ -81,52 +81,6 @@ public class CardJpaRepository {
                 .fetch();
     }
 
-
-
-    private BooleanExpression moodEq(String[] moods) {
-        BooleanExpression moodExpression = null;
-        if (moods != null ) {
-            for (String mood : moods) {
-                BooleanExpression condition = QMood.mood.moodName.eq(mood);
-                moodExpression = (moodExpression != null) ? moodExpression.or(condition) : condition;
-            }
-        }
-        return moodExpression;
-    }
-
-    private BooleanExpression productEq(String[] products) {
-        BooleanExpression productExpression = null;
-        if (products != null ) {
-            for (String product : products) {
-                BooleanExpression condition = brand.brandProduct.eq(product);
-                productExpression = (productExpression != null) ? productExpression.or(condition) : condition;
-            }
-        }
-        return productExpression;
-    }
-
-
-    private BooleanExpression ageEq(String[] ages) {
-        BooleanExpression ageExpression = null;
-        if (ages != null ) {
-            for (String age : ages) {
-                BooleanExpression condition = brand.brandAge.eq(age);
-                ageExpression = (ageExpression != null) ? ageExpression.or(condition) : condition;
-            }
-        }
-        return ageExpression;
-    }
-
-    private BooleanExpression priceEq(String[] prices) {
-        BooleanExpression priceExpression = null;
-        if (prices != null ) {
-            for (String price : prices) {
-                BooleanExpression condition = brand.brandPrice.eq(price);
-                priceExpression = (priceExpression != null) ? priceExpression.or(condition) : condition;
-            }
-        }
-        return priceExpression;
-    }
 
 
     public List<CopyRes> searchMood(String q){
@@ -177,6 +131,52 @@ public class CardJpaRepository {
                 .leftJoin(card.brand, brand)
                 .where(brandContainsQ)
                 .fetch();
+    }
+
+
+    private BooleanExpression moodEq(String[] moods) {
+        BooleanExpression moodExpression = null;
+        if (moods != null ) {
+            for (String mood : moods) {
+                BooleanExpression condition = QMood.mood.moodName.eq(mood);
+                moodExpression = (moodExpression != null) ? moodExpression.or(condition) : condition;
+            }
+        }
+        return moodExpression;
+    }
+
+    private BooleanExpression productEq(String[] products) {
+        BooleanExpression productExpression = null;
+        if (products != null ) {
+            for (String product : products) {
+                BooleanExpression condition = brand.brandProduct.eq(product);
+                productExpression = (productExpression != null) ? productExpression.or(condition) : condition;
+            }
+        }
+        return productExpression;
+    }
+
+
+    private BooleanExpression ageEq(String[] ages) {
+        BooleanExpression ageExpression = null;
+        if (ages != null ) {
+            for (String age : ages) {
+                BooleanExpression condition = brand.brandAge.eq(age);
+                ageExpression = (ageExpression != null) ? ageExpression.or(condition) : condition;
+            }
+        }
+        return ageExpression;
+    }
+
+    private BooleanExpression priceEq(String[] prices) {
+        BooleanExpression priceExpression = null;
+        if (prices != null ) {
+            for (String price : prices) {
+                BooleanExpression condition = brand.brandPrice.eq(price);
+                priceExpression = (priceExpression != null) ? priceExpression.or(condition) : condition;
+            }
+        }
+        return priceExpression;
     }
 
 }
