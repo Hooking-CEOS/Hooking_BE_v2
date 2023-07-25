@@ -2,8 +2,9 @@ package shop.hooking.hooking.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
-import lombok.Value;
+
 import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
@@ -16,7 +17,7 @@ import shop.hooking.hooking.entity.User;
 import shop.hooking.hooking.repository.UserRepository;
 import shop.hooking.hooking.service.JwtTokenProvider;
 import shop.hooking.hooking.service.OAuthUserService;
-
+import org.springframework.beans.factory.annotation.Value;
 import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -36,6 +37,12 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
     private OAuthUserService oAuthUserService;
 
+    @Value("${app.deployment.url}")
+    private String requestUrl;
+
+    @Value("${app.deployment.processor.url}")
+    private String redirectUrl;
+
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication)
             throws IOException, ServletException {
@@ -54,11 +61,15 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         String host = request.getHeader("Host");
 
         // Referer와 Host에 따라서 targetUrl 설정
-        if (referer != null && referer.startsWith(deploymentUrl) && host.equals("hooking.shop")) {
-            targetUrl = deploymentProcessorUrl; // 배포 환경
+        if (referer != null && referer.startsWith(requestUrl) && host.equals("hooking.shop")) {
+            targetUrl = redirectUrl; // 배포 환경
         } else if (referer != null && referer.startsWith("http://localhost:3000/") && host.equals("hooking.shop")) {
             targetUrl = "http://localhost:3000/oath-processor"; // 로컬 환경
-        } else {
+        } else if (referer != null && referer.startsWith("https://hooking.me/") && host.equals("hooking.shop")) {
+            targetUrl = "https://hooking.me/oath-processor"; // 로컬 환경
+        }
+
+        else {
             // 기본적으로 로컬 개발 환경으로 설정
             targetUrl = "http://localhost:3000/oath-processor"; // 로컬 환경
         }

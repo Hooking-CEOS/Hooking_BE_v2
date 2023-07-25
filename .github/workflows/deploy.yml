@@ -41,6 +41,7 @@ jobs:
                   value: https://hooking.shop/login/oauth2/code/kakao
                 - name: SECRET_KEY
                   value: ${{ secrets.SECRET_KEY }}
+                
             context:
               git:
                 url: git@github.com:${{ github.repository }}.git
