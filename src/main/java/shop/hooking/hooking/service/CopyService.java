@@ -31,7 +31,7 @@ public class CopyService {
 
     @Transactional
     public List<CopyRes> getCopyList(Long brandId) {
-        List<Card> cards = cardRepository.findTop5ByBrandIdOrderByCreatedAtDesc(brandId);
+        List<Card> cards = cardRepository.findTop10ByBrandIdOrderByCreatedAtDesc(brandId);
         List<CopyRes> copyResList = new ArrayList<>();
 
         for (Card card : cards) {
