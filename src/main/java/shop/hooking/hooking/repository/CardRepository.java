@@ -30,5 +30,4 @@ public interface CardRepository extends JpaRepository<Card, Long>{
     List<Card> findByTextContaining(String q);
 
 
-    List<Card> findTop10ByBrandIdOrderByCreatedAtDesc(Long brandId);
 }

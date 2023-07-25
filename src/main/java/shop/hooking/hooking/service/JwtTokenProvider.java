@@ -26,7 +26,7 @@ import java.util.Date;
 public class JwtTokenProvider {
     private final UserRepository userRepository;
 
-    @Value("yexxi2118#")
+    @Value("${spring.jwt.secretKey}")
     private String SECRET_KEY;
 
     private final long ACCESS_TOKEN_VALID_TIME = 24 * 60 * 60 * 1000L; //5시간

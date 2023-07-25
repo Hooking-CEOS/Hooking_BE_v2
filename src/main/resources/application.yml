@@ -40,6 +40,11 @@ spring:
     pathmatch:
       matching-strategy: ant_path_matcher
 
+app:
+  deployment:
+    url: ${request_URL}
+    processor:
+      url: ${redirect_URL}
 
 
 redis:
