@@ -2,8 +2,9 @@ package shop.hooking.hooking.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
+
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
@@ -16,7 +17,7 @@ import shop.hooking.hooking.entity.User;
 import shop.hooking.hooking.repository.UserRepository;
 import shop.hooking.hooking.service.JwtTokenProvider;
 import shop.hooking.hooking.service.OAuthUserService;
-
+import org.springframework.beans.factory.annotation.Value;
 import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -64,7 +65,11 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
             targetUrl = redirectUrl; // 배포 환경
         } else if (referer != null && referer.startsWith("http://localhost:3000/") && host.equals("hooking.shop")) {
             targetUrl = "http://localhost:3000/oath-processor"; // 로컬 환경
-        } else {
+        } else if (referer != null && referer.startsWith("https://hooking.me/") && host.equals("hooking.shop")) {
+            targetUrl = "https://hooking.me/oath-processor"; // 로컬 환경
+        }
+
+        else {
             // 기본적으로 로컬 개발 환경으로 설정
             targetUrl = "http://localhost:3000/oath-processor"; // 로컬 환경
         }
@@ -79,4 +84,5 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         getRedirectStrategy().sendRedirect(request, response, targetUrl);
     }
 }
+
 

@@ -29,5 +29,4 @@ public interface CardRepository extends JpaRepository<Card, Long>{
 
     List<Card> findByTextContaining(String q);
 
-
 }
