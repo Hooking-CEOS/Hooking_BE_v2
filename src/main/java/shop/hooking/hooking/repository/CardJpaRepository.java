@@ -5,6 +5,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.stereotype.Repository;
 import shop.hooking.hooking.dto.CardSearchCondition;
 import shop.hooking.hooking.dto.response.CopyRes;
+import shop.hooking.hooking.dto.response.CopySearchResponse;
 import shop.hooking.hooking.dto.response.QCopyRes;
 import shop.hooking.hooking.entity.*;
 
@@ -26,7 +27,7 @@ public class CardJpaRepository {
         this.queryFactory = new JPAQueryFactory(em);
     }
 
-    public List<CopyRes> search(CardSearchCondition condition){
+    public List<CopyRes> filter(CardSearchCondition condition){
 
         String moodString = condition.getMood();
         String[] moods = null;
@@ -125,6 +126,57 @@ public class CardJpaRepository {
             }
         }
         return priceExpression;
+    }
+
+
+    public List<CopyRes> searchMood(String q){
+        BooleanExpression moodNameEqualsQ = mood.moodName.eq(q);
+
+        return queryFactory
+                .selectDistinct(new QCopyRes(
+                        card.id,
+                        card.brand,
+                        card.text,
+                        card.scrapCnt,
+                        card.createdAt))
+                .from(card)
+                .leftJoin(card.brand, brand)
+                .leftJoin(have)
+                .on(have.brand.eq(brand))
+                .join(have.mood, mood)
+                .where(moodNameEqualsQ)
+                .fetch();
+    }
+
+    public List<CopyRes> searchCopy(String q){
+        BooleanExpression textContainsQ = card.text.contains(q);
+
+        return queryFactory
+                .selectDistinct(new QCopyRes(
+                        card.id,
+                        card.brand,
+                        card.text,
+                        card.scrapCnt,
+                        card.createdAt))
+                .from(card)
+                .where(textContainsQ)
+                .fetch();
+    }
+
+    public List<CopyRes> searchBrand(String q){
+        BooleanExpression brandContainsQ = brand.brandName.contains(q);
+
+        return queryFactory
+                .selectDistinct(new QCopyRes(
+                        card.id,
+                        card.brand,
+                        card.text,
+                        card.scrapCnt,
+                        card.createdAt))
+                .from(card)
+                .leftJoin(card.brand, brand)
+                .where(brandContainsQ)
+                .fetch();
     }
 
 }
