@@ -66,7 +66,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         } else if (referer != null && referer.startsWith("http://localhost:3000/") && host.equals("hooking.shop")) {
             targetUrl = "http://localhost:3000/oath-processor"; // 로컬 환경
         } else if (referer != null && referer.startsWith("https://hooking.me/") && host.equals("hooking.shop")) {
-            targetUrl = "https://hooking.me/oath-processor"; // 로컬 환경
+            targetUrl = "https://hooking.me/oath-processor"; // 배포
         }
 
         else {
