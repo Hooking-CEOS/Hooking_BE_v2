@@ -42,9 +42,9 @@ jobs:
                 - name: SECRET_KEY
                   value: ${{ secrets.SECRET_KEY }}
                 - name: request_URL
-                  value: ${{ secrets.request_URL}}
+                  value: ${{ secrets.REQUEST_URL}}
                 - name: redirect_URL
-                  value: ${{ secrets.redirect_URL}}
+                  value: ${{ secrets.REDIRECT_URL}}
             context:
               git:
                 url: git@github.com:${{ github.repository }}.git
