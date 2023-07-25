@@ -28,6 +28,8 @@ public class BrandService {
 
     private final MoodRepository moodRepository;
 
+    private final ScrapRepository scrapRepository;
+
     public List<BrandRes.BrandDto> getBrandList(){
         List<BrandRes.BrandDto> brandDtoList = new ArrayList<>();
         List<Brand> brands = brandRepository.findAll();
@@ -61,6 +63,15 @@ public class BrandService {
         Brand brand = brandRepository.findBrandById(id);
 
         List<Card> cards = cardRepository.findCardsByBrandId(brand.getId());
+
+        for(Card card : cards){
+            Long cardId = card.getId();
+
+            List<Scrap> scraps  = scrapRepository.findByCardId(cardId);
+            int length = scraps.size();
+            card.setScrapCnt(length);
+
+        }
 
         List<String> cardTexts = new ArrayList<>();
         int maxCardCount = Math.min(cards.size(), 3);
