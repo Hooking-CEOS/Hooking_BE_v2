@@ -44,9 +44,11 @@ public class CopyController {
 
     private final BrandRepository brandRepository;
 
+
+
     // 전체 카피라이팅 조회
-    @GetMapping("")
-    public HttpRes<List<CopyRes>> copyList(HttpServletRequest httpRequest) {
+    @GetMapping("/{index}")
+    public HttpRes<List<CopyRes>> copyList(HttpServletRequest httpRequest,@PathVariable int index) {
         Long[] brandIds = {2L, 3L, 4L, 12L, 15L, 17L, 21L, 24L, 25L, 28L};
 
         List<CopyRes> tempCopyRes = new ArrayList<>();
@@ -56,11 +58,20 @@ public class CopyController {
             tempCopyRes.addAll(copyRes);
         }
         Collections.shuffle(tempCopyRes);
-        tempCopyRes = getLimitedCopyRes(tempCopyRes,30);
-        setScrapCntWhenTokenNotProvided(httpRequest, tempCopyRes);
 
-        return new HttpRes<>(tempCopyRes);
+        // 요청한 index에 따라 30개의 다른 결과를 생성
+        int startIndex = index * 30;
+        List<CopyRes> resultCopyRes = getLimitedCopyResByIndex(tempCopyRes, startIndex);
 
+        setScrapCntWhenTokenNotProvided(httpRequest,resultCopyRes);
+
+        return new HttpRes<>(resultCopyRes);
+
+    }
+
+    private List<CopyRes> getLimitedCopyResByIndex(List<CopyRes> copyResList, int startIndex) {
+        int endIndex = Math.min(startIndex + 30, copyResList.size());
+        return copyResList.subList(startIndex, endIndex);
     }
 
 
