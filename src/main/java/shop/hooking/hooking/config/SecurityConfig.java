@@ -58,7 +58,7 @@ public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
             .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
 
 
-            .antMatchers("**/oath-processor/**","/kakaologin","/copy", "/copy/search","/copy/filter","/copy/crawling", "/brand", "/brand/{brand_id}"
+            .antMatchers("**/oath-processor/**","/kakaologin","/copy/{index}", "/copy/search","/copy/filter","/copy/crawling", "/brand", "/brand/{brand_id}"
 
                     ).permitAll()
 

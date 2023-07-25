@@ -93,10 +93,10 @@ public class CopyController {
         List<CopyRes> textCopyRes = new ArrayList<>();
         List<CopyRes> brandCopyRes = new ArrayList<>();
 
-        textCopyRes = copyService.selectCopyByQuery(q);
+        textCopyRes = cardJpaRepository.searchCopy(q);
 
         if (moodType != null) {
-            moodCopyRes = copyService.selectMoodByQuery(q);
+            moodCopyRes = cardJpaRepository.searchMood(q);
             setScrapCntWhenTokenNotProvided(httpRequest, moodCopyRes);
             Collections.shuffle(moodCopyRes);
             CopySearchResult moodResult = createCopySearchResult(moodCopyRes);
@@ -114,7 +114,7 @@ public class CopyController {
                 results.add(copyResult);
             }
         } else if (BrandType.containsKeyword(q)) {
-            brandCopyRes = copyService.selectBrandByQuery(q);
+            brandCopyRes = cardJpaRepository.searchBrand(q);
             setScrapCntWhenTokenNotProvided(httpRequest, brandCopyRes);
             Collections.shuffle(brandCopyRes);
             CopySearchResult brandResult = createCopySearchResult(brandCopyRes);
@@ -210,7 +210,7 @@ public class CopyController {
 
     @GetMapping("/filter")
     public HttpRes<List<CopyRes>> searchFilterCard(HttpServletRequest httpRequest,CardSearchCondition condition) {
-        List<CopyRes> results = cardJpaRepository.search(condition);
+        List<CopyRes> results = cardJpaRepository.filter(condition);
         List<CopyRes> limitedResults = getLimitedCopyRes(results,30);
         setScrapCntWhenTokenNotProvided(httpRequest, limitedResults);
         return new HttpRes<>(limitedResults);
