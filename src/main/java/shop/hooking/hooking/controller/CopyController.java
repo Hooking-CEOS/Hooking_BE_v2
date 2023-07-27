@@ -82,6 +82,10 @@ public class CopyController {
     public ResponseEntity<CopySearchResponse> copySearchList(HttpServletRequest httpRequest,
                                                              @RequestParam(name = "keyword") String q,
                                                              @PathVariable int index) {
+
+        int startIndex = index * 30;
+
+
         CopySearchResponse response = new CopySearchResponse();
         List<CopySearchResult> results = new ArrayList<>();
 
@@ -105,19 +109,21 @@ public class CopyController {
             moodCopyRes = cardJpaRepository.searchMood(q);
             setScrapCntWhenTokenNotProvided(httpRequest, moodCopyRes);
             Collections.shuffle(moodCopyRes);
-            CopySearchResult moodResult = createCopySearchResult(moodCopyRes);
+            CopySearchResult moodResult = new CopySearchResult();
             moodResult.setType("mood");
             moodResult.setKeyword(q); // 현재는 전체 카드 수가 나옴
             moodResult.setTotalNum(moodCopyRes.size());
+            moodResult.setData(getLimitedCopyResByIndex(moodCopyRes,index));
             results.add(moodResult);
 
             if (!textCopyRes.isEmpty()) {
                 setScrapCntWhenTokenNotProvided(httpRequest, textCopyRes);
                 Collections.shuffle(textCopyRes);
-                CopySearchResult copyResult = createCopySearchResult(textCopyRes);
+                CopySearchResult copyResult = new CopySearchResult();
                 copyResult.setType("copy");
                 copyResult.setKeyword(q);
                 copyResult.setTotalNum(textCopyRes.size());
+                copyResult.setData(getLimitedCopyResByIndex(textCopyRes,index));
                 setIndicesForCopyRes(textCopyRes, q);
                 results.add(copyResult);
             }
@@ -125,18 +131,20 @@ public class CopyController {
             brandCopyRes = cardJpaRepository.searchBrand(q);
             setScrapCntWhenTokenNotProvided(httpRequest, brandCopyRes);
             Collections.shuffle(brandCopyRes);
-            CopySearchResult brandResult = createCopySearchResult(brandCopyRes);
+            CopySearchResult brandResult = new CopySearchResult();
             brandResult.setType("brand");
             brandResult.setKeyword(q);
             brandResult.setTotalNum(brandCopyRes.size());
+            brandResult.setData(getLimitedCopyResByIndex(brandCopyRes,index));
             results.add(brandResult);
         } else if (!textCopyRes.isEmpty()) {
             setScrapCntWhenTokenNotProvided(httpRequest, textCopyRes);
             Collections.shuffle(textCopyRes);
-            CopySearchResult copyResult = createCopySearchResult(textCopyRes);
+            CopySearchResult copyResult = new CopySearchResult();
             copyResult.setType("copy");
             copyResult.setKeyword(q);
             copyResult.setTotalNum(textCopyRes.size());
+            copyResult.setData(getLimitedCopyResByIndex(textCopyRes,index));
             setIndicesForCopyRes(textCopyRes, q);
             results.add(copyResult);
         }
@@ -150,26 +158,18 @@ public class CopyController {
                     .body(response);
         }
 
-        // 요청한 index에 따라 30개씩 다른 결과를 생성
-        int startIndex = index * 30;
-        List<CopySearchResult> resultCopyRes = getLimitedCopyResByIndex2(results, startIndex);
-
         response.setCode(HttpStatus.OK.value());
         response.setMessage("요청에 성공하였습니다.");
-        response.setData(resultCopyRes);
+        response.setData(results);
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(response);
+
     }
 
 
 
     private List<CopyRes> getLimitedCopyResByIndex(List<CopyRes> copyResList, int startIndex) {
-        int endIndex = Math.min(startIndex + 30, copyResList.size());
-        return copyResList.subList(startIndex, endIndex);
-    }
-
-    private List<CopySearchResult> getLimitedCopyResByIndex2(List<CopySearchResult> copyResList, int startIndex) {
         int endIndex = Math.min(startIndex + 30, copyResList.size());
         return copyResList.subList(startIndex, endIndex);
     }
