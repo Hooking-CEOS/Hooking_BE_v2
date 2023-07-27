@@ -37,8 +37,9 @@ public class BrandController {
     }
 
     // 해당 브랜드 상세정보 조회
+
     @PostMapping("/{brand_id}/{index}")
-    public HttpRes<BrandRes.BrandDetailDto> showOneBrand(@PathVariable Long brand_id, @PathVariable int index){
+    public HttpRes<BrandRes.BrandDetailDto> showOneBrand(HttpServletRequest httpRequest,@PathVariable Long brand_id, @PathVariable int index){
         BrandRes.BrandDetailDto brandDetailDto = brandService.getOneBrand(brand_id); // List<card> 가 전체 반환됨
 
         // 전체 card 리스트를 가져옴
@@ -53,8 +54,21 @@ public class BrandController {
 
         brandDetailDto.setCard(resultCards);
 
+
+        // 로그인이 안되어있을 경우 scrapCnt를 0으로 설정
+        if (jwtTokenProvider.getUserInfoByToken(httpRequest) == null) {
+            setScrapCntWhenTokenNotProvided(brandDetailDto.getCard());
+        }
+
         return new HttpRes<>(brandDetailDto);
     }
+    private void setScrapCntWhenTokenNotProvided(List<Card> cardList) {
+        for (Card card : cardList) {
+            card.setScrapCnt(0);
+        }
+    }
+
+
 
     // startIndex부터 30개의 카드를 잘라서 반환하는 메서드
     private List<Card> getLimitedCardsByIndex(List<Card> cards, int startIndex) {
