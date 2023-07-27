@@ -173,6 +173,10 @@ public class CopyController {
 
         List<CopyRes> copyRes = copyService.getCopyScrapList(user);
 
+        if (copyRes.isEmpty()) {
+            return new HttpRes<>(400,"스크랩한 내용이 없습니다.");
+        }
+
         int startIndex = index * 30; //인덱싱
         List<CopyRes> resultCopyRes = getLimitedCopyResByIndex(copyRes, startIndex);
 
@@ -189,6 +193,7 @@ public class CopyController {
         if(isScrap){
             return new HttpRes<>("스크랩을 완료하였습니다.");
         }
+
 
         return new HttpRes<>(HttpStatus.BAD_REQUEST.value(),"중복 스크랩이 불가능합니다.");
     }
