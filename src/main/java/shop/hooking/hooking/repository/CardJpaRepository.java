@@ -5,7 +5,6 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.stereotype.Repository;
 import shop.hooking.hooking.dto.CardSearchCondition;
 import shop.hooking.hooking.dto.response.CopyRes;
-import shop.hooking.hooking.dto.response.CopySearchResponse;
 import shop.hooking.hooking.dto.response.QCopyRes;
 import shop.hooking.hooking.entity.*;
 
