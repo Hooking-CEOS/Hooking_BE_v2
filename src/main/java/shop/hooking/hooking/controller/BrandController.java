@@ -37,9 +37,23 @@ public class BrandController {
     }
 
     // 해당 브랜드 상세정보 조회
-    @PostMapping("/{brand_id}")
-    public HttpRes<BrandRes.BrandDetailDto> showOneBrand(HttpServletRequest httpRequest, @PathVariable Long brand_id){
-        BrandRes.BrandDetailDto brandDetailDto = brandService.getOneBrand(brand_id);
+
+    @PostMapping("/{brand_id}/{index}")
+    public HttpRes<BrandRes.BrandDetailDto> showOneBrand(HttpServletRequest httpRequest,@PathVariable Long brand_id, @PathVariable int index){
+        BrandRes.BrandDetailDto brandDetailDto = brandService.getOneBrand(brand_id); // List<card> 가 전체 반환됨
+
+        // 전체 card 리스트를 가져옴
+        List<Card> cards = brandDetailDto.getCard();
+
+        // index와 30을 곱하여 startIndex 계산
+        int startIndex = index * 30;
+
+        // startIndex부터 30개씩의 카드를 잘라서 resultCards 리스트에 저장
+        List<Card> resultCards = getLimitedCardsByIndex(cards, startIndex);
+        System.out.println(resultCards.size());
+
+        brandDetailDto.setCard(resultCards);
+
 
         // 로그인이 안되어있을 경우 scrapCnt를 0으로 설정
         if (jwtTokenProvider.getUserInfoByToken(httpRequest) == null) {
@@ -48,13 +62,19 @@ public class BrandController {
 
         return new HttpRes<>(brandDetailDto);
     }
-
     private void setScrapCntWhenTokenNotProvided(List<Card> cardList) {
         for (Card card : cardList) {
             card.setScrapCnt(0);
         }
     }
 
+
+
+    // startIndex부터 30개의 카드를 잘라서 반환하는 메서드
+    private List<Card> getLimitedCardsByIndex(List<Card> cards, int startIndex) {
+        int endIndex = Math.min(startIndex + 30, cards.size());
+        return cards.subList(startIndex, endIndex);
+    }
 
 //    // 해당 브랜드 팔로우
 //    @CrossOrigin(origins = "https://hooking.shop, https://hooking-dev.netlify.app/, https://hooking.netlify.app/, http://localhost:3000, http://localhost:3001")

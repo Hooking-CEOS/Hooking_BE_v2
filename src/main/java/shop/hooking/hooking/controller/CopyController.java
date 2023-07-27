@@ -101,7 +101,8 @@ public class CopyController {
             Collections.shuffle(moodCopyRes);
             CopySearchResult moodResult = createCopySearchResult(moodCopyRes);
             moodResult.setType("mood");
-            moodResult.setKeyword(q);
+            moodResult.setKeyword(q); // 현재는 전체 카드 수가 나옴
+            moodResult.setTotalNum(moodCopyRes.size());
             results.add(moodResult);
 
             if (!textCopyRes.isEmpty()) {
@@ -110,6 +111,7 @@ public class CopyController {
                 CopySearchResult copyResult = createCopySearchResult(textCopyRes);
                 copyResult.setType("copy");
                 copyResult.setKeyword(q);
+                copyResult.setTotalNum(textCopyRes.size());
                 setIndicesForCopyRes(textCopyRes, q);
                 results.add(copyResult);
             }
@@ -120,6 +122,7 @@ public class CopyController {
             CopySearchResult brandResult = createCopySearchResult(brandCopyRes);
             brandResult.setType("brand");
             brandResult.setKeyword(q);
+            brandResult.setTotalNum(brandCopyRes.size());
             results.add(brandResult);
         } else if (!textCopyRes.isEmpty()) {
             setScrapCntWhenTokenNotProvided(httpRequest, textCopyRes);
@@ -127,6 +130,7 @@ public class CopyController {
             CopySearchResult copyResult = createCopySearchResult(textCopyRes);
             copyResult.setType("copy");
             copyResult.setKeyword(q);
+            copyResult.setTotalNum(textCopyRes.size());
             setIndicesForCopyRes(textCopyRes, q);
             results.add(copyResult);
         }
