@@ -4,7 +4,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import shop.hooking.hooking.dto.HttpRes;
 import shop.hooking.hooking.dto.response.BrandRes;
+import shop.hooking.hooking.dto.response.CopyRes;
 import shop.hooking.hooking.dto.response.ReviewRes;
+import shop.hooking.hooking.entity.Card;
 import shop.hooking.hooking.entity.User;
 import shop.hooking.hooking.exception.BadRequestException;
 import shop.hooking.hooking.repository.UserRepository;
@@ -35,11 +37,29 @@ public class BrandController {
     }
 
     // 해당 브랜드 상세정보 조회
-    @PostMapping("/{brand_id}")
-    public HttpRes<BrandRes.BrandDetailDto> showOneBrand(@PathVariable Long brand_id){
-        BrandRes.BrandDetailDto brandDetailDto = brandService.getOneBrand(brand_id);
+    @PostMapping("/{brand_id}/{index}")
+    public HttpRes<BrandRes.BrandDetailDto> showOneBrand(@PathVariable Long brand_id, @PathVariable int index){
+        BrandRes.BrandDetailDto brandDetailDto = brandService.getOneBrand(brand_id); // List<card> 가 전체 반환됨
+
+        // 전체 card 리스트를 가져옴
+        List<Card> cards = brandDetailDto.getCard();
+
+        // index와 30을 곱하여 startIndex 계산
+        int startIndex = index * 30;
+
+        // startIndex부터 30개씩의 카드를 잘라서 resultCards 리스트에 저장
+        List<Card> resultCards = getLimitedCardsByIndex(cards, startIndex);
+        System.out.println(resultCards.size());
+
+        brandDetailDto.setCard(resultCards);
 
         return new HttpRes<>(brandDetailDto);
+    }
+
+    // startIndex부터 30개의 카드를 잘라서 반환하는 메서드
+    private List<Card> getLimitedCardsByIndex(List<Card> cards, int startIndex) {
+        int endIndex = Math.min(startIndex + 30, cards.size());
+        return cards.subList(startIndex, endIndex);
     }
 
 //    // 해당 브랜드 팔로우
