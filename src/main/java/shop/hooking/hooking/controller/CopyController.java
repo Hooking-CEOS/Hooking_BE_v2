@@ -288,5 +288,20 @@ public class CopyController {
         return copyResList.subList(0,endIndex);
     }
 
+    @PostMapping ("/scrap/cancel")
+    public ResponseEntity<String> cancelScrap(HttpServletRequest httpRequest, @RequestBody CopyReq copyReq){
+        User user = jwtTokenProvider.getUserInfoByToken(httpRequest);
+        Long cardId = copyReq.getCardId();
+        Card card = cardRepository.findCardById(cardId);
+        boolean is_canceled = copyService.cancelScrap(user, card);
+        if(is_canceled){
+            return ResponseEntity.status(HttpStatus.OK).body("삭제되었습니다.");
+        }
+        else{
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("스크랩 정보가 유효하지 않습니다. ");
+        }
+
+    }
+
 
 }

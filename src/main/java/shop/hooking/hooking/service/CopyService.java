@@ -157,4 +157,16 @@ public class CopyService {
         return true;
     }
 
+    @Transactional
+    public boolean cancelScrap(User user, Card card) {
+        Scrap scrap = scrapRepository.findByUserAndCard(user, card);
+
+        if (scrap != null) {
+            scrap.setDeleteYn(1);
+            return true;
+        }
+
+        return false;
+    }
+
 }

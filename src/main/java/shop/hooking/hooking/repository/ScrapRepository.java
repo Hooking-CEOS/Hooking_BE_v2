@@ -20,4 +20,6 @@ public interface ScrapRepository extends JpaRepository<Scrap, Long> {
 
     boolean existsByUserAndCard(User user, Card card); // 유저와 카드로 존재 여부 확인하기
 
+    Scrap findByUserAndCard(User user, Card card);
+
 }
