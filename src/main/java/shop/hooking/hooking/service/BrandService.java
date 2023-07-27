@@ -2,6 +2,7 @@ package shop.hooking.hooking.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import shop.hooking.hooking.dto.CardSearchCondition;
 import shop.hooking.hooking.dto.response.BrandRes;
 import shop.hooking.hooking.dto.response.CopyRes;
 import shop.hooking.hooking.dto.response.ReviewRes;
@@ -64,14 +65,8 @@ public class BrandService {
 
         List<Card> cards = cardRepository.findCardsByBrandId(brand.getId());
 
-        for(Card card : cards){
-            Long cardId = card.getId();
+        cards.forEach(card -> card.setScrapCnt((int) scrapRepository.findByCardId(card.getId()).stream().count()));
 
-            List<Scrap> scraps  = scrapRepository.findByCardId(cardId);
-            int length = scraps.size();
-            card.setScrapCnt(length);
-
-        }
 
         List<String> cardTexts = new ArrayList<>();
         int maxCardCount = Math.min(cards.size(), 3);
@@ -98,6 +93,14 @@ public class BrandService {
                 .build();
 
         return brandDetailDto;
+    }
+
+    public int countScrapCnt(Card card){
+            Long cardId = card.getId();
+
+            List<Scrap> scraps  = scrapRepository.findByCardId(cardId);
+            int length = scraps.size();
+            return length;
     }
 
 //    public boolean followBrand(Long brandId, User user){
