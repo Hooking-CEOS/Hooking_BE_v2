@@ -34,18 +34,17 @@ public class BrandController {
     // 전체 브랜드 기본정보 조회
     @CrossOrigin(origins = "https://hooking.shop, https://hooking-dev.netlify.app/, https://hooking.netlify.app/, http://localhost:3000/, http://localhost:3001/")
     @GetMapping("")
-    public ResponseEntity<List<BrandRes.BrandDto>> showAllBrand(){
+    public ResponseEntity<HttpRes<List<BrandRes.BrandDto>>> showAllBrand(){
         List<BrandRes.BrandDto> brandDtoList = brandService.getBrandList();
 
-        return ResponseEntity.status(HttpStatus.OK.value())
-                .body(brandDtoList);
+        return ResponseEntity.ok(new HttpRes<>(brandDtoList));
     }
 
     // 해당 브랜드 상세정보 조회
 
     @CrossOrigin(origins = "https://hooking.shop, https://hooking-dev.netlify.app/, https://hooking.netlify.app/, http://localhost:3000/, http://localhost:3001/")
     @PostMapping("/{brand_id}/{index}")
-    public ResponseEntity<BrandRes.BrandDetailDto> showOneBrand(HttpServletRequest httpRequest, @PathVariable Long brand_id, @PathVariable int index){
+    public ResponseEntity<HttpRes<BrandRes.BrandDetailDto>> showOneBrand(HttpServletRequest httpRequest, @PathVariable Long brand_id, @PathVariable int index){
         BrandRes.BrandDetailDto brandDetailDto = brandService.getOneBrand(brand_id); // List<card> 가 전체 반환됨
 
         // 전체 card 리스트를 가져옴
@@ -61,7 +60,8 @@ public class BrandController {
 
 
         if (resultCards.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+            String errorMessage = "카드가 없습니다.";
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new HttpRes<>(HttpStatus.BAD_REQUEST.value(), errorMessage));
         }
 
         brandDetailDto.setCard(resultCards);
@@ -72,8 +72,7 @@ public class BrandController {
             setScrapCntWhenTokenNotProvided(brandDetailDto.getCard());
         }
 
-        return ResponseEntity.status(HttpStatus.OK.value())
-                .body(brandDetailDto);
+        return ResponseEntity.ok(new HttpRes<>(brandDetailDto));
     }
 
 

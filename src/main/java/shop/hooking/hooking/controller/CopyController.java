@@ -12,6 +12,7 @@ import shop.hooking.hooking.dto.request.CopyReq;
 import shop.hooking.hooking.dto.request.CrawlingData;
 import shop.hooking.hooking.dto.request.CrawlingReq;
 import shop.hooking.hooking.dto.response.CopyRes;
+import shop.hooking.hooking.dto.response.CopySearchResponse;
 import shop.hooking.hooking.dto.response.CopySearchResult;
 import shop.hooking.hooking.entity.Brand;
 import shop.hooking.hooking.entity.Card;
@@ -78,16 +79,18 @@ public class CopyController {
 
 
     @GetMapping("/search/{index}")
-    public ResponseEntity<List<CopySearchResult>> copySearchList(HttpServletRequest httpRequest,
+    public ResponseEntity<CopySearchResponse> copySearchList(HttpServletRequest httpRequest,
                                                              @RequestParam(name = "keyword") String q,
                                                              @PathVariable int index) {
-
+        CopySearchResponse response = new CopySearchResponse();
         List<CopySearchResult> results = new ArrayList<>();
 
         if (q.isEmpty()) { // 검색 결과가 없다면
+            response.setCode(HttpStatus.BAD_REQUEST.value());
+            response.setMessage("검색 결과를 찾을 수 없습니다.");
+            response.setData(results);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(results);
-
+                    .body(response);
         }
 
         // 검색 결과 처리 로직...
@@ -139,21 +142,26 @@ public class CopyController {
         }
 
         if (results.isEmpty()) {
+            String errorMessage = "검색 결과를 찾을 수 없습니다.";
+            response.setCode(HttpStatus.BAD_REQUEST.value());
+            response.setMessage(errorMessage);
+            response.setData(results);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(results);
-
+                    .body(response);
         }
 
         // 요청한 index에 따라 30개씩 다른 결과를 생성
         int startIndex = index * 30;
-        List<CopySearchResult> results1 = getLimitedCopyResByIndex2(results, startIndex);
+        List<CopySearchResult> resultCopyRes = getLimitedCopyResByIndex2(results, startIndex);
 
-        //response.setData(resultCopyRes);
+        response.setCode(HttpStatus.OK.value());
+        response.setMessage("요청에 성공하였습니다.");
+        response.setData(resultCopyRes);
 
         return ResponseEntity.status(HttpStatus.OK)
-                .body(results1);
-
+                .body(response);
     }
+
 
 
     private List<CopyRes> getLimitedCopyResByIndex(List<CopyRes> copyResList, int startIndex) {
