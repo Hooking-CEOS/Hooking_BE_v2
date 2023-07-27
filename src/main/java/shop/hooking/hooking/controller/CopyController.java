@@ -12,7 +12,6 @@ import shop.hooking.hooking.dto.request.CopyReq;
 import shop.hooking.hooking.dto.request.CrawlingData;
 import shop.hooking.hooking.dto.request.CrawlingReq;
 import shop.hooking.hooking.dto.response.CopyRes;
-import shop.hooking.hooking.dto.response.CopySearchResponse;
 import shop.hooking.hooking.dto.response.CopySearchResult;
 import shop.hooking.hooking.entity.Brand;
 import shop.hooking.hooking.entity.Card;
@@ -79,18 +78,16 @@ public class CopyController {
 
 
     @GetMapping("/search/{index}")
-    public ResponseEntity<CopySearchResponse> copySearchList(HttpServletRequest httpRequest,
+    public ResponseEntity<List<CopySearchResult>> copySearchList(HttpServletRequest httpRequest,
                                                              @RequestParam(name = "keyword") String q,
                                                              @PathVariable int index) {
-        CopySearchResponse response = new CopySearchResponse();
+
         List<CopySearchResult> results = new ArrayList<>();
 
         if (q.isEmpty()) { // 검색 결과가 없다면
-            response.setCode(HttpStatus.BAD_REQUEST.value());
-            response.setMessage("검색 결과를 찾을 수 없습니다.");
-            response.setData(results);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(response);
+                    .body(results);
+
         }
 
         // 검색 결과 처리 로직...
@@ -142,24 +139,20 @@ public class CopyController {
         }
 
         if (results.isEmpty()) {
-            String errorMessage = "검색 결과를 찾을 수 없습니다.";
-            response.setCode(HttpStatus.BAD_REQUEST.value());
-            response.setMessage(errorMessage);
-            response.setData(results);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(response);
+                    .body(results);
+
         }
 
         // 요청한 index에 따라 30개씩 다른 결과를 생성
         int startIndex = index * 30;
-        List<CopySearchResult> resultCopyRes = getLimitedCopyResByIndex2(results, startIndex);
+        List<CopySearchResult> results1 = getLimitedCopyResByIndex2(results, startIndex);
 
-        response.setCode(HttpStatus.OK.value());
-        response.setMessage("요청에 성공하였습니다.");
-        response.setData(resultCopyRes);
+        //response.setData(resultCopyRes);
 
         return ResponseEntity.status(HttpStatus.OK)
-                .body(response);
+                .body(results1);
+
     }
 
 
@@ -239,12 +232,15 @@ public class CopyController {
 
 
     @GetMapping("/filter/{index}")
-    public HttpRes<List<CopyRes>> searchFilterCard(HttpServletRequest httpRequest,@PathVariable int index,CardSearchCondition condition) {
+    public ResponseEntity<List<CopyRes>> searchFilterCard(HttpServletRequest httpRequest,@PathVariable int index,CardSearchCondition condition) {
         List<CopyRes> results = cardJpaRepository.filter(condition);
         int startIndex = index * 30; //인덱싱
         List<CopyRes> resultCopyRes = getLimitedCopyResByIndex(results, startIndex);
         setScrapCntWhenTokenNotProvided(httpRequest, resultCopyRes);
-        return new HttpRes<>(resultCopyRes);
+        if(resultCopyRes.isEmpty()){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(resultCopyRes);
     }
 
     private void setScrapCntWhenTokenNotProvided(HttpServletRequest httpRequest, List<CopyRes> copyResList) {
