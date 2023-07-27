@@ -55,9 +55,9 @@ public class BrandController {
         // index와 30을 곱하여 startIndex 계산
         int startIndex = index * 30;
 
-
         // startIndex부터 30개씩의 카드를 잘라서 resultCards 리스트에 저장
         List<Card> resultCards = getLimitedCardsByIndex(cards, startIndex);
+
 
 
         if (resultCards.isEmpty()) {
@@ -67,7 +67,7 @@ public class BrandController {
         brandDetailDto.setCard(resultCards);
 
 
-        // 로그인이 안되어있을 경우 scrapCnt를 0으로 설정
+         //로그인이 안되어있을 경우 scrapCnt를 0으로 설정
         if (jwtTokenProvider.getUserInfoByToken(httpRequest) == null) {
             setScrapCntWhenTokenNotProvided(brandDetailDto.getCard());
         }
@@ -75,6 +75,7 @@ public class BrandController {
         return ResponseEntity.status(HttpStatus.OK.value())
                 .body(brandDetailDto);
     }
+
 
     private void setScrapCntWhenTokenNotProvided(List<Card> cardList) {
         for (Card card : cardList) {

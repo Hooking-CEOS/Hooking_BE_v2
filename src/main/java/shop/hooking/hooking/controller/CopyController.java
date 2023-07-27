@@ -82,15 +82,13 @@ public class CopyController {
     public ResponseEntity<List<CopySearchResult>> copySearchList(HttpServletRequest httpRequest,
                                                              @RequestParam(name = "keyword") String q,
                                                              @PathVariable int index) {
-        //CopySearchResponse response = new CopySearchResponse();
-        CopySearchResult result = new CopySearchResult();
 
         List<CopySearchResult> results = new ArrayList<>();
 
         if (q.isEmpty()) { // 검색 결과가 없다면
-            //response.setData(results);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(results);
+
         }
 
         // 검색 결과 처리 로직...
@@ -142,9 +140,9 @@ public class CopyController {
         }
 
         if (results.isEmpty()) {
-            //response.setData(results);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(results);
+
         }
 
         // 요청한 index에 따라 30개씩 다른 결과를 생성
@@ -155,6 +153,7 @@ public class CopyController {
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(results1);
+
     }
 
 
