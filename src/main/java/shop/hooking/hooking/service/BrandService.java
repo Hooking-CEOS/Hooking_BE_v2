@@ -95,14 +95,6 @@ public class BrandService {
         return brandDetailDto;
     }
 
-    public int countScrapCnt(Card card){
-            Long cardId = card.getId();
-
-            List<Scrap> scraps  = scrapRepository.findByCardId(cardId);
-            int length = scraps.size();
-            return length;
-    }
-
 //    public boolean followBrand(Long brandId, User user){
 //
 //        Brand brand = brandRepository.findBrandById(brandId);
