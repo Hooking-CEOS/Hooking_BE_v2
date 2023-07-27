@@ -10,7 +10,10 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 public class CopySearchResponse {
+    private int code;
+    private String message;
     private List<CopySearchResult> data;
+
 
     // Constructors, getters, setters, and other methods
 }
