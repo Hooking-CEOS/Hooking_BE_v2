@@ -158,11 +158,6 @@ public class CopyController {
         int endIndex = Math.min(30, copyRes.size());
         List<CopyRes> limitedCopyRes = copyRes.subList(0, endIndex);
 
-//        if(user == null){
-//            List<CopyRes> notLoginCopyRes = copyRes.subList(0, endIndex);
-//            return new HttpRes<>(notLoginCopyRes);
-//        }
-
         return new HttpRes<>(limitedCopyRes);
     }
 

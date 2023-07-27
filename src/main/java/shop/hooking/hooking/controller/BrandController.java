@@ -4,7 +4,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import shop.hooking.hooking.dto.HttpRes;
 import shop.hooking.hooking.dto.response.BrandRes;
+import shop.hooking.hooking.dto.response.CopyRes;
 import shop.hooking.hooking.dto.response.ReviewRes;
+import shop.hooking.hooking.entity.Card;
 import shop.hooking.hooking.entity.User;
 import shop.hooking.hooking.exception.BadRequestException;
 import shop.hooking.hooking.repository.UserRepository;
@@ -36,11 +38,23 @@ public class BrandController {
 
     // 해당 브랜드 상세정보 조회
     @PostMapping("/{brand_id}")
-    public HttpRes<BrandRes.BrandDetailDto> showOneBrand(@PathVariable Long brand_id){
+    public HttpRes<BrandRes.BrandDetailDto> showOneBrand(HttpServletRequest httpRequest, @PathVariable Long brand_id){
         BrandRes.BrandDetailDto brandDetailDto = brandService.getOneBrand(brand_id);
+
+        // 로그인이 안되어있을 경우 scrapCnt를 0으로 설정
+        if (jwtTokenProvider.getUserInfoByToken(httpRequest) == null) {
+            setScrapCntWhenTokenNotProvided(brandDetailDto.getCard());
+        }
 
         return new HttpRes<>(brandDetailDto);
     }
+
+    private void setScrapCntWhenTokenNotProvided(List<Card> cardList) {
+        for (Card card : cardList) {
+            card.setScrapCnt(0);
+        }
+    }
+
 
 //    // 해당 브랜드 팔로우
 //    @CrossOrigin(origins = "https://hooking.shop, https://hooking-dev.netlify.app/, https://hooking.netlify.app/, http://localhost:3000, http://localhost:3001")

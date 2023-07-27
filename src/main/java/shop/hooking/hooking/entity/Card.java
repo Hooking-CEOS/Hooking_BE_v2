@@ -10,6 +10,8 @@ import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 
 @DynamicUpdate
@@ -42,8 +44,12 @@ public class Card {
     @JoinColumn(name="brand_id")
     private Brand brand;
 
+
     @Column(name = "created_at")
     private LocalDateTime createdAt;
+
+    @OneToMany(mappedBy = "card", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Scrap> scraps = new ArrayList<>();
 
     @PrePersist
     public void prePersist() {
