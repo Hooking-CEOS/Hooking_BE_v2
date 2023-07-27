@@ -1,19 +1,19 @@
 package shop.hooking.hooking.entity;
 
 
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.hibernate.annotations.Where;
 import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Getter
+@Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Table(name="scrap")
+@Where(clause = "delete_yn = 0")
 public class Scrap {
 
     @Id
@@ -31,6 +31,9 @@ public class Scrap {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="card_id")
     private Card card;
+
+    @Column(name = "delete_yn")
+    private int deleteYn;
 
     @PrePersist
     public void prePersist() {
