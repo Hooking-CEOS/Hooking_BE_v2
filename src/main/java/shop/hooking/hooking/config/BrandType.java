@@ -46,6 +46,8 @@ public enum BrandType {
                 return true;
             }
         }
+
+
         return false;
     }
 }

@@ -97,6 +97,10 @@ public class CopyController {
                     .body(response);
         }
 
+        if(q.equals("애프터블로우")){
+            q="애프터 블로우";
+        }
+
         // 검색 결과 처리 로직...
         MoodType moodType = MoodType.fromKeyword(q);
         List<CopyRes> moodCopyRes = new ArrayList<>();
