@@ -12,6 +12,7 @@ import shop.hooking.hooking.dto.request.CopyReq;
 import shop.hooking.hooking.dto.request.CrawlingData;
 import shop.hooking.hooking.dto.request.CrawlingReq;
 import shop.hooking.hooking.dto.response.CopyRes;
+import shop.hooking.hooking.dto.response.CopySearchResponse;
 import shop.hooking.hooking.dto.response.CopySearchResult;
 import shop.hooking.hooking.entity.Brand;
 import shop.hooking.hooking.entity.Card;
@@ -49,7 +50,7 @@ public class CopyController {
     // 전체 카피라이팅 조회
     // 페이지네이션 구현
     @GetMapping("/{index}") //copy/0=> 0-30 copy/1=>0~30 copy/2=>60~90 copy/9 => 270~300
-    public ResponseEntity<List<CopyRes>> copyList(HttpServletRequest httpRequest, @PathVariable int index) {
+    public ResponseEntity<HttpRes<List<CopyRes>>> copyList(HttpServletRequest httpRequest, @PathVariable int index) {
         Long[] brandIds = {2L, 3L, 4L, 12L, 15L, 17L, 21L, 24L, 25L, 28L};
 
         List<CopyRes> tempCopyRes = new ArrayList<>();
@@ -72,23 +73,28 @@ public class CopyController {
 
         setScrapCntWhenTokenNotProvided(httpRequest, resultCopyRes);
 
-        return ResponseEntity.status(HttpStatus.OK).body(resultCopyRes);
+        return ResponseEntity.ok(new HttpRes<>(resultCopyRes));
     }
 
 
 
     @GetMapping("/search/{index}")
-    public ResponseEntity<List<CopySearchResult>> copySearchList(HttpServletRequest httpRequest,
+    public ResponseEntity<CopySearchResponse> copySearchList(HttpServletRequest httpRequest,
                                                              @RequestParam(name = "keyword") String q,
                                                              @PathVariable int index) {
+
         int startIndex = index * 30;
 
+
+        CopySearchResponse response = new CopySearchResponse();
         List<CopySearchResult> results = new ArrayList<>();
 
         if (q.isEmpty()) { // 검색 결과가 없다면
+            response.setCode(HttpStatus.BAD_REQUEST.value());
+            response.setMessage("검색 결과를 찾을 수 없습니다.");
+            response.setData(results);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(results);
-
+                    .body(response);
         }
 
         // 검색 결과 처리 로직...
@@ -144,15 +150,23 @@ public class CopyController {
         }
 
         if (results.isEmpty()) {
+            String errorMessage = "검색 결과를 찾을 수 없습니다.";
+            response.setCode(HttpStatus.BAD_REQUEST.value());
+            response.setMessage(errorMessage);
+            response.setData(results);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(results);
-
+                    .body(response);
         }
 
+        response.setCode(HttpStatus.OK.value());
+        response.setMessage("요청에 성공하였습니다.");
+        response.setData(results);
+
         return ResponseEntity.status(HttpStatus.OK)
-                .body(results);
+                .body(response);
 
     }
+
 
 
     private List<CopyRes> getLimitedCopyResByIndex(List<CopyRes> copyResList, int startIndex) {
@@ -165,31 +179,35 @@ public class CopyController {
 
     @CrossOrigin(origins = "https://hooking.shop, https://hooking-dev.netlify.app/, https://hooking.netlify.app/, http://localhost:3000/, http://localhost:3001/")
     @GetMapping("/scrap/{index}")
-    public ResponseEntity<List<CopyRes>> copyScrapList(HttpServletRequest httpRequest, @PathVariable int index) {
+    public ResponseEntity<HttpRes<List<CopyRes>>> copyScrapList(HttpServletRequest httpRequest, @PathVariable int index) {
         User user = jwtTokenProvider.getUserInfoByToken(httpRequest);
         List<CopyRes> copyRes = copyService.getCopyScrapList(user);
 
         int startIndex = index * 30;
         List<CopyRes> resultCopyRes = getLimitedCopyResByIndex(copyRes, startIndex);
 
-        return ResponseEntity.ok(resultCopyRes);
+        return ResponseEntity.ok(new HttpRes<>(resultCopyRes));
     }
 
 
 
     @CrossOrigin(origins = "https://hooking.shop, https://hooking-dev.netlify.app/, https://hooking.netlify.app/, http://localhost:3000/, http://localhost:3001/")
     @PostMapping("/scrap")
-    public ResponseEntity<String> copyScrap(HttpServletRequest httpRequest, @RequestBody CopyReq copyReq) throws IOException {
+    public ResponseEntity<HttpRes<String>> copyScrap(HttpServletRequest httpRequest, @RequestBody CopyReq copyReq) throws IOException {
         User user = jwtTokenProvider.getUserInfoByToken(httpRequest);
         Card card = cardRepository.findCardById(copyReq.getCardId());
         boolean isScrap = copyService.saveCopy(user, card);
 
         if (isScrap) {
-            return ResponseEntity.ok("스크랩을 완료하였습니다.");
+            return ResponseEntity.ok(new HttpRes<>("스크랩을 완료하였습니다."));
         } else {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("중복 스크랩이 불가능합니다.");
+            String errorMessage = "중복 스크랩이 불가능합니다.";
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new HttpRes<>(HttpStatus.BAD_REQUEST.value(), errorMessage));
         }
     }
+
+
+
 
 
 
