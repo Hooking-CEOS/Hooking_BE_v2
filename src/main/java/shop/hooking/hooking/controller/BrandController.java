@@ -1,6 +1,8 @@
 package shop.hooking.hooking.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import shop.hooking.hooking.dto.HttpRes;
 import shop.hooking.hooking.dto.response.BrandRes;
@@ -14,6 +16,7 @@ import shop.hooking.hooking.service.BrandService;
 import shop.hooking.hooking.service.JwtTokenProvider;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -29,27 +32,37 @@ public class BrandController {
 
 
     // 전체 브랜드 기본정보 조회
+    @CrossOrigin(origins = "https://hooking.shop, https://hooking-dev.netlify.app/, https://hooking.netlify.app/, http://localhost:3000/, http://localhost:3001/")
     @GetMapping("")
-    public HttpRes<List<BrandRes.BrandDto>> showAllBrand(){
+    public ResponseEntity<List<BrandRes.BrandDto>> showAllBrand(){
         List<BrandRes.BrandDto> brandDtoList = brandService.getBrandList();
 
-        return new HttpRes<>(brandDtoList);
+        return ResponseEntity.status(HttpStatus.OK.value())
+                .body(brandDtoList);
     }
 
     // 해당 브랜드 상세정보 조회
 
+    @CrossOrigin(origins = "https://hooking.shop, https://hooking-dev.netlify.app/, https://hooking.netlify.app/, http://localhost:3000/, http://localhost:3001/")
     @PostMapping("/{brand_id}/{index}")
-    public HttpRes<BrandRes.BrandDetailDto> showOneBrand(HttpServletRequest httpRequest,@PathVariable Long brand_id, @PathVariable int index){
+    public ResponseEntity<BrandRes.BrandDetailDto> showOneBrand(HttpServletRequest httpRequest, @PathVariable Long brand_id, @PathVariable int index){
         BrandRes.BrandDetailDto brandDetailDto = brandService.getOneBrand(brand_id); // List<card> 가 전체 반환됨
 
         // 전체 card 리스트를 가져옴
         List<Card> cards = brandDetailDto.getCard();
+
 
         // index와 30을 곱하여 startIndex 계산
         int startIndex = index * 30;
 
         // startIndex부터 30개씩의 카드를 잘라서 resultCards 리스트에 저장
         List<Card> resultCards = getLimitedCardsByIndex(cards, startIndex);
+
+
+
+        if (resultCards.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
 
         brandDetailDto.setCard(resultCards);
 
@@ -59,7 +72,8 @@ public class BrandController {
             setScrapCntWhenTokenNotProvided(brandDetailDto.getCard());
         }
 
-        return new HttpRes<>(brandDetailDto);
+        return ResponseEntity.status(HttpStatus.OK.value())
+                .body(brandDetailDto);
     }
 
 
