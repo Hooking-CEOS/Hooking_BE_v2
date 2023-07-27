@@ -2,6 +2,7 @@ package shop.hooking.hooking.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import shop.hooking.hooking.config.BrandType;
 import shop.hooking.hooking.config.MoodType;
@@ -49,7 +50,7 @@ public class CopyController {
     // 전체 카피라이팅 조회
     // 페이지네이션 구현
     @GetMapping("/{index}") //copy/0=> 0-30 copy/1=>0~30 copy/2=>60~90 copy/9 => 270~300
-    public HttpRes<List<CopyRes>> copyList(HttpServletRequest httpRequest,@PathVariable int index) {
+    public ResponseEntity<List<CopyRes>> copyList(HttpServletRequest httpRequest, @PathVariable int index) {
         Long[] brandIds = {2L, 3L, 4L, 12L, 15L, 17L, 21L, 24L, 25L, 28L};
 
         List<CopyRes> tempCopyRes = new ArrayList<>();
@@ -61,33 +62,38 @@ public class CopyController {
 
         Collections.shuffle(tempCopyRes); //섞임
 
+        if (tempCopyRes.isEmpty()) {
+            String errorMessage = "검색 결과를 찾을 수 없습니다.";
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
+
         // 요청한 index에 따라 30개의 다른 결과를 생성
         int startIndex = index * 30; //인덱싱
         List<CopyRes> resultCopyRes = getLimitedCopyResByIndex(tempCopyRes, startIndex);
 
-        setScrapCntWhenTokenNotProvided(httpRequest,resultCopyRes);
+        setScrapCntWhenTokenNotProvided(httpRequest, resultCopyRes);
 
-        return new HttpRes<>(resultCopyRes);
-
+        return ResponseEntity.status(HttpStatus.OK).body(resultCopyRes);
     }
 
 
 
-    @Cacheable("copySearchCache")
     @GetMapping("/search/{index}")
-    public CopySearchResponse copySearchList(HttpServletRequest httpRequest,
-                                             @RequestParam(name = "keyword") String q,
-                                             @PathVariable int index) {
-        CopySearchResponse response = new CopySearchResponse();
+    public ResponseEntity<List<CopySearchResult>> copySearchList(HttpServletRequest httpRequest,
+                                                             @RequestParam(name = "keyword") String q,
+                                                             @PathVariable int index) {
+        //CopySearchResponse response = new CopySearchResponse();
+        CopySearchResult result = new CopySearchResult();
+
         List<CopySearchResult> results = new ArrayList<>();
 
         if (q.isEmpty()) { // 검색 결과가 없다면
-            response.setCode(HttpStatus.BAD_REQUEST.value());
-            response.setMessage("검색 결과를 찾을 수 없습니다.");
-            response.setData(results);
-            return response;
+            //response.setData(results);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(results);
         }
 
+        // 검색 결과 처리 로직...
         MoodType moodType = MoodType.fromKeyword(q);
         List<CopyRes> moodCopyRes = new ArrayList<>();
         List<CopyRes> textCopyRes = new ArrayList<>();
@@ -136,22 +142,21 @@ public class CopyController {
         }
 
         if (results.isEmpty()) {
-            response.setCode(HttpStatus.BAD_REQUEST.value());
-            response.setMessage("검색 결과를 찾을 수 없습니다.");
-            response.setData(results);
-            return response;
+            //response.setData(results);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(results);
         }
 
         // 요청한 index에 따라 30개씩 다른 결과를 생성
         int startIndex = index * 30;
-        List<CopySearchResult> resultCopyRes = getLimitedCopyResByIndex2(results, startIndex);
+        List<CopySearchResult> results1 = getLimitedCopyResByIndex2(results, startIndex);
 
-        response.setCode(HttpStatus.OK.value());
-        response.setMessage("요청에 성공하였습니다.");
-        response.setData(resultCopyRes);
+        //response.setData(resultCopyRes);
 
-        return response;
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(results1);
     }
+
 
     private List<CopyRes> getLimitedCopyResByIndex(List<CopyRes> copyResList, int startIndex) {
         int endIndex = Math.min(startIndex + 30, copyResList.size());
@@ -168,34 +173,30 @@ public class CopyController {
 
     @CrossOrigin(origins = "https://hooking.shop, https://hooking-dev.netlify.app/, https://hooking.netlify.app/, http://localhost:3000/, http://localhost:3001/")
     @GetMapping("/scrap/{index}")
-    public HttpRes<List<CopyRes>> copyScrapList(HttpServletRequest httpRequest,@PathVariable int index) {
+    public ResponseEntity<List<CopyRes>> copyScrapList(HttpServletRequest httpRequest, @PathVariable int index) {
         User user = jwtTokenProvider.getUserInfoByToken(httpRequest);
-
         List<CopyRes> copyRes = copyService.getCopyScrapList(user);
 
-        if (copyRes.isEmpty()) {
-            return new HttpRes<>(400,"스크랩한 내용이 없습니다.");
-        }
-
-        int startIndex = index * 30; //인덱싱
+        int startIndex = index * 30;
         List<CopyRes> resultCopyRes = getLimitedCopyResByIndex(copyRes, startIndex);
 
-        return new HttpRes<>(resultCopyRes);
+        return ResponseEntity.ok(resultCopyRes);
     }
+
 
 
     @CrossOrigin(origins = "https://hooking.shop, https://hooking-dev.netlify.app/, https://hooking.netlify.app/, http://localhost:3000/, http://localhost:3001/")
     @PostMapping("/scrap")
-    public HttpRes<String> copyScrap(HttpServletRequest httpRequest, @RequestBody CopyReq copyReq) throws IOException {
+    public ResponseEntity<String> copyScrap(HttpServletRequest httpRequest, @RequestBody CopyReq copyReq) throws IOException {
         User user = jwtTokenProvider.getUserInfoByToken(httpRequest);
         Card card = cardRepository.findCardById(copyReq.getCardId());
         boolean isScrap = copyService.saveCopy(user, card);
-        if(isScrap){
-            return new HttpRes<>("스크랩을 완료하였습니다.");
+
+        if (isScrap) {
+            return ResponseEntity.ok("스크랩을 완료하였습니다.");
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("중복 스크랩이 불가능합니다.");
         }
-
-
-        return new HttpRes<>(HttpStatus.BAD_REQUEST.value(),"중복 스크랩이 불가능합니다.");
     }
 
 
@@ -229,12 +230,15 @@ public class CopyController {
 
 
     @GetMapping("/filter/{index}")
-    public HttpRes<List<CopyRes>> searchFilterCard(HttpServletRequest httpRequest,@PathVariable int index,CardSearchCondition condition) {
+    public ResponseEntity<List<CopyRes>> searchFilterCard(HttpServletRequest httpRequest,@PathVariable int index,CardSearchCondition condition) {
         List<CopyRes> results = cardJpaRepository.filter(condition);
         int startIndex = index * 30; //인덱싱
         List<CopyRes> resultCopyRes = getLimitedCopyResByIndex(results, startIndex);
         setScrapCntWhenTokenNotProvided(httpRequest, resultCopyRes);
-        return new HttpRes<>(resultCopyRes);
+        if(resultCopyRes.isEmpty()){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(resultCopyRes);
     }
 
     private void setScrapCntWhenTokenNotProvided(HttpServletRequest httpRequest, List<CopyRes> copyResList) {
