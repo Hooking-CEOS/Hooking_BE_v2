@@ -50,7 +50,6 @@ public class BrandController {
 
         // startIndex부터 30개씩의 카드를 잘라서 resultCards 리스트에 저장
         List<Card> resultCards = getLimitedCardsByIndex(cards, startIndex);
-        System.out.println(resultCards.size());
 
         brandDetailDto.setCard(resultCards);
 
