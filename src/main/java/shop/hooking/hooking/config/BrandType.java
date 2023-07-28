@@ -36,10 +36,6 @@ public enum BrandType {
         this.keyword = keyword;
     }
 
-    public String getKeyword() {
-        return keyword;
-    }
-
     public static boolean containsKeyword(String keyword) {
         for (BrandType brandType : BrandType.values()) {
             if (brandType.keyword.equals(keyword)) {
