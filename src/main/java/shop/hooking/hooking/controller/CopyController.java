@@ -12,7 +12,7 @@ import shop.hooking.hooking.dto.request.CopyReq;
 import shop.hooking.hooking.dto.request.CrawlingData;
 import shop.hooking.hooking.dto.request.CrawlingReq;
 import shop.hooking.hooking.dto.response.CopyRes;
-import shop.hooking.hooking.dto.response.CopySearchResponse;
+import shop.hooking.hooking.dto.response.CopySearchRes;
 import shop.hooking.hooking.dto.response.CopySearchResult;
 import shop.hooking.hooking.entity.Brand;
 import shop.hooking.hooking.entity.Card;
@@ -60,33 +60,31 @@ public class CopyController {
             tempCopyRes.addAll(copyRes);
         }
 
-        Collections.shuffle(tempCopyRes); //섞임
+        // 랜덤
+        Collections.shuffle(tempCopyRes);
 
         if (tempCopyRes.isEmpty()) {
             String errorMessage = "검색 결과를 찾을 수 없습니다.";
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
 
-        // 요청한 index에 따라 30개의 다른 결과를 생성
-        int startIndex = index * 30; //인덱싱
+        // 인덱싱
+        int startIndex = index * 30;
         List<CopyRes> resultCopyRes = getLimitedCopyResByIndex(tempCopyRes, startIndex);
-
         setScrapCntWhenTokenNotProvided(httpRequest, resultCopyRes);
-
         return ResponseEntity.ok(new HttpRes<>(resultCopyRes));
     }
 
 
 
     @GetMapping("/search/{index}")
-    public ResponseEntity<CopySearchResponse> copySearchList(HttpServletRequest httpRequest,
-                                                             @RequestParam(name = "keyword") String q,
-                                                             @PathVariable int index) {
-
-        int startIndex = index * 30;
+    public ResponseEntity<CopySearchRes> copySearchList(HttpServletRequest httpRequest,
+                                                        @RequestParam(name = "keyword") String q,
+                                                        @PathVariable int index) {
 
 
-        CopySearchResponse response = new CopySearchResponse();
+
+        CopySearchRes response = new CopySearchRes();
         List<CopySearchResult> results = new ArrayList<>();
 
         if (q.isEmpty()) { // 검색 결과가 없다면
@@ -97,9 +95,8 @@ public class CopyController {
                     .body(response);
         }
 
-        if(q.equals("애프터블로우")){
-            q="애프터 블로우";
-        }
+        q = checkKeyword(q);
+
 
         // 검색 결과 처리 로직...
         MoodType moodType = MoodType.fromKeyword(q);
@@ -113,54 +110,28 @@ public class CopyController {
             moodCopyRes = cardJpaRepository.searchMood(q);
             setScrapCntWhenTokenNotProvided(httpRequest, moodCopyRes);
             Collections.shuffle(moodCopyRes);
-            CopySearchResult moodResult = new CopySearchResult();
-            moodResult.setType("mood");
-            moodResult.setKeyword(q); // 현재는 전체 카드 수가 나옴
-            moodResult.setTotalNum(moodCopyRes.size());
-            moodResult.setData(getLimitedCopyResByIndex(moodCopyRes,index));
-            results.add(moodResult);
-
+            results.add(createCopySearchResult("mood", q, moodCopyRes, index));
             if (!textCopyRes.isEmpty()) {
                 setScrapCntWhenTokenNotProvided(httpRequest, textCopyRes);
                 Collections.shuffle(textCopyRes);
-                CopySearchResult copyResult = new CopySearchResult();
-                copyResult.setType("copy");
-                copyResult.setKeyword(q);
-                copyResult.setTotalNum(textCopyRes.size());
-                copyResult.setData(getLimitedCopyResByIndex(textCopyRes,index));
-                setIndicesForCopyRes(textCopyRes, q);
-                results.add(copyResult);
+                results.add(createCopySearchResult("copy", q, textCopyRes, index));
             }
         } else if (BrandType.containsKeyword(q)) {
             brandCopyRes = cardJpaRepository.searchBrand(q);
             setScrapCntWhenTokenNotProvided(httpRequest, brandCopyRes);
             Collections.shuffle(brandCopyRes);
-            CopySearchResult brandResult = new CopySearchResult();
-            brandResult.setType("brand");
-            brandResult.setKeyword(q);
-            brandResult.setTotalNum(brandCopyRes.size());
-            brandResult.setData(getLimitedCopyResByIndex(brandCopyRes,index));
-            results.add(brandResult);
+            results.add(createCopySearchResult("brand", q, brandCopyRes, index));
         } else if (!textCopyRes.isEmpty()) {
             setScrapCntWhenTokenNotProvided(httpRequest, textCopyRes);
             Collections.shuffle(textCopyRes);
-            CopySearchResult copyResult = new CopySearchResult();
-            copyResult.setType("copy");
-            copyResult.setKeyword(q);
-            copyResult.setTotalNum(textCopyRes.size());
-            copyResult.setData(getLimitedCopyResByIndex(textCopyRes,index));
-            setIndicesForCopyRes(textCopyRes, q);
-            results.add(copyResult);
+            results.add(createCopySearchResult("copy", q, textCopyRes, index));
         }
 
+        // 검색 결과가 없다면
         if (results.isEmpty()) {
-            String errorMessage = "검색 결과를 찾을 수 없습니다.";
-            response.setCode(HttpStatus.BAD_REQUEST.value());
-            response.setMessage(errorMessage);
-            response.setData(results);
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(response);
+            return getBadRequestResponseEntity(response, results);
         }
+
 
         response.setCode(HttpStatus.OK.value());
         response.setMessage("요청에 성공하였습니다.");
@@ -255,6 +226,14 @@ public class CopyController {
         return ResponseEntity.status(HttpStatus.OK).body(resultCopyRes);
     }
 
+    private String checkKeyword(String q) {
+        if (q.equals("애프터블로우")) {
+            q = "애프터 블로우";
+        }
+        return q;
+    }
+
+
     private void setScrapCntWhenTokenNotProvided(HttpServletRequest httpRequest, List<CopyRes> copyResList) {
         String token = httpRequest.getHeader("X-AUTH-TOKEN");
         if (token == null) {
@@ -264,13 +243,23 @@ public class CopyController {
         }
     }
 
-    private CopySearchResult createCopySearchResult(List<CopyRes> copyResList) {
+
+    private CopySearchResult createCopySearchResult(String type, String keyword, List<CopyRes> copyResList, int index) {
         CopySearchResult result = new CopySearchResult();
-        int endIndex = Math.min(30, copyResList.size());
-        List<CopyRes> limitedCopyRes = copyResList.subList(0, endIndex);
-        result.setData(limitedCopyRes);
+        result.setType(type);
+        result.setKeyword(keyword);
+        result.setTotalNum(copyResList.size());
+        result.setData(getLimitedCopyResByIndex(copyResList, index));
         return result;
     }
+
+    private ResponseEntity<CopySearchRes> getBadRequestResponseEntity(CopySearchRes response, List<CopySearchResult> results) {
+        response.setCode(HttpStatus.BAD_REQUEST.value());
+        response.setMessage("검색 결과를 찾을 수 없습니다.");
+        response.setData(results);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+    }
+
 
 
     private void setIndicesForCopyRes(List<CopyRes> copyResList, String keyword) {
