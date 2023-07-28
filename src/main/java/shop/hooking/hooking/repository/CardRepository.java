@@ -12,7 +12,7 @@ import java.util.List;
 @Repository
 public interface CardRepository extends JpaRepository<Card, Long>{
 
-    List<Card> findTop10ByBrandIdOrderByCreatedAtDesc(Long brandId);
+    List<Card> findTop6ByBrandIdOrderByCreatedAtDesc(Long brandId);
 
 
     Card findCardByBrandId(Long brandId); //  브랜드 아이디로 카피라이팅 카드 찾기

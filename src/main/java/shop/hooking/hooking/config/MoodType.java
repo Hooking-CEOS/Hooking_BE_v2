@@ -24,17 +24,14 @@ public enum MoodType {
         this.keyword = keyword;
     }
 
-    public String getKeyword() {
-        return keyword;
-    }
 
-    public static MoodType fromKeyword(String keyword) {
+    public static boolean containsKeyword(String keyword) {
         for (MoodType moodType : MoodType.values()) {
             if (moodType.keyword.equals(keyword)) {
-                return moodType;
+                return true;
             }
         }
-        return null;
+        return false;
     }
 }
 

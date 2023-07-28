@@ -9,7 +9,7 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
-public class CopySearchResponse {
+public class CopySearchRes {
     private int code;
     private String message;
     private List<CopySearchResult> data;
