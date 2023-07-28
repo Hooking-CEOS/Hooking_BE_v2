@@ -9,6 +9,7 @@ import shop.hooking.hooking.dto.response.ReviewRes;
 import shop.hooking.hooking.entity.*;
 import shop.hooking.hooking.repository.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -93,6 +94,26 @@ public class BrandService {
                 .build();
 
         return brandDetailDto;
+    }
+
+     public List<Card> getLimitedCardsByIndex(List<Card> cards, int startIndex) {
+        int endIndex = Math.min(startIndex + 30, cards.size());
+        return cards.subList(startIndex, endIndex);
+    }
+
+    public void setScrapCntWhenTokenNotProvided(List<Card> cardList) {
+        for (Card card : cardList) {
+            card.setScrapCnt(0);
+        }
+    }
+
+    public void setScrapCntWhenTokenNotProvided(HttpServletRequest httpRequest, List<Card> cardList) {
+        String token = httpRequest.getHeader("X-AUTH-TOKEN");
+        if (token == null) {
+            for (Card card : cardList) {
+                card.setScrapCnt(0);
+            }
+        }
     }
 
 //    public boolean followBrand(Long brandId, User user){
