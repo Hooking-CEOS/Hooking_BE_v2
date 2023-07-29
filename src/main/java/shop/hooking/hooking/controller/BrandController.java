@@ -41,7 +41,7 @@ public class BrandController {
     public ResponseEntity<HttpRes<BrandRes.BrandDetailDto>> showOneBrand(HttpServletRequest httpRequest, @PathVariable Long brand_id, @PathVariable int index){
         BrandRes.BrandDetailDto brandDetailDto = brandService.getOneBrand(brand_id);
         List<Card> cards = brandDetailDto.getCard();
-        int startIndex = index * 30;
+        int startIndex = index * 30; //90
         List<Card> resultCards = brandService.getLimitedCardsByIndex(cards, startIndex);
 
         if (resultCards.isEmpty()) {

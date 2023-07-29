@@ -64,7 +64,7 @@ public class BrandService {
     public BrandRes.BrandDetailDto getOneBrand(Long id) {
         Brand brand = brandRepository.findBrandById(id);
 
-        List<Card> cards = cardRepository.findCardsByBrandId(brand.getId());
+        List<Card> cards = cardRepository.findCardsByBrandId(id);
 
         cards.forEach(card -> card.setScrapCnt((int) scrapRepository.findByCardId(card.getId()).stream().count()));
 
@@ -76,7 +76,7 @@ public class BrandService {
             cardTexts.add(card.getText());
         }
 
-        List<Have> haves = haveRepository.findByBrandId(brand.getId());
+        List<Have> haves = haveRepository.findByBrandId(id);
 
         Mood moodZero = moodRepository.findMoodById(haves.get(0).getMood().getId());
         Mood moodOne = moodRepository.findMoodById(haves.get(1).getMood().getId());
@@ -84,7 +84,7 @@ public class BrandService {
 
 
         BrandRes.BrandDetailDto brandDetailDto = BrandRes.BrandDetailDto.builder()
-                .brandId(brand.getId())
+                .brandId(id)
                 .brandName(brand.getBrandName())
                 .brandIntro(brand.getBrandIntro())
                 .brandLink(brand.getBrandLink())
@@ -99,12 +99,6 @@ public class BrandService {
      public List<Card> getLimitedCardsByIndex(List<Card> cards, int startIndex) {
         int endIndex = Math.min(startIndex + 30, cards.size());
         return cards.subList(startIndex, endIndex);
-    }
-
-    public void setScrapCntWhenTokenNotProvided(List<Card> cardList) {
-        for (Card card : cardList) {
-            card.setScrapCnt(0);
-        }
     }
 
     public void setScrapCntWhenTokenNotProvided(HttpServletRequest httpRequest, List<Card> cardList) {
