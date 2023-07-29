@@ -16,10 +16,12 @@ import shop.hooking.hooking.dto.response.CopySearchRes;
 import shop.hooking.hooking.dto.response.CopySearchResult;
 import shop.hooking.hooking.entity.Brand;
 import shop.hooking.hooking.entity.Card;
+import shop.hooking.hooking.entity.Scrap;
 import shop.hooking.hooking.entity.User;
 import shop.hooking.hooking.repository.BrandRepository;
 import shop.hooking.hooking.repository.CardJpaRepository;
 import shop.hooking.hooking.repository.CardRepository;
+import shop.hooking.hooking.repository.ScrapRepository;
 import shop.hooking.hooking.service.CopyService;
 import shop.hooking.hooking.service.JwtTokenProvider;
 import springfox.documentation.annotations.Cacheable;
@@ -40,6 +42,7 @@ public class CopyController {
 
     private final CardRepository cardRepository;
 
+    private final ScrapRepository scrapRepository;
 
 
 
@@ -79,7 +82,12 @@ public class CopyController {
         List<CopyRes> copyRes = copyService.getCopyScrapList(user);
         int startIndex = index * 30;
         List<CopyRes> resultCopyRes = copyService.getLimitedCopyResByIndex(copyRes, startIndex);
-        resultCopyRes.sort((copy1, copy2) -> copy1.getCreatedAt().compareTo(copy2.getCreatedAt()));
+        for(CopyRes copyRes1 : resultCopyRes){
+            Scrap scrap = scrapRepository.findByUserAndCardId(user, copyRes1.getId());
+            copyRes1.setScrapTime(scrap.getCreatedAt());
+        }
+
+        Collections.sort(resultCopyRes);
         return ResponseEntity.ok(new HttpRes<>(resultCopyRes));
     }
 
