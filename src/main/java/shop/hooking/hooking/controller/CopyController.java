@@ -110,8 +110,7 @@ public class CopyController {
     @PostMapping ("/scrap/cancel")
     public ResponseEntity<String> cancelScrap(HttpServletRequest httpRequest, @RequestBody CopyReq copyReq){
         User user = jwtTokenProvider.getUserInfoByToken(httpRequest);
-        Long cardId = copyReq.getCardId();
-        Card card = cardRepository.findCardById(cardId);
+        Card card = cardRepository.findCardById(copyReq.getCardId());
         boolean is_canceled = copyService.cancelScrap(user, card);
         if(is_canceled){
             return ResponseEntity.status(HttpStatus.OK).body("삭제되었습니다.");
