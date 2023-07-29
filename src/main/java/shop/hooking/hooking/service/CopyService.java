@@ -50,7 +50,6 @@ public class CopyService {
 
 
     @Transactional
-
     public void saveCrawlingData(List<CrawlingData> dataList) {
         for (CrawlingData data : dataList) {
             String text = data.getText();
@@ -103,7 +102,6 @@ public class CopyService {
             results.add(createCopySearchResult("copy", q, textCopyRes, index));
         }
 
-        // 검색 결과가 없다면
         if (q.isEmpty() || results.isEmpty()) {
             response.setCode(HttpStatus.BAD_REQUEST.value());
             response.setMessage("검색 결과를 찾을 수 없습니다.");
@@ -111,7 +109,6 @@ public class CopyService {
             return response;
         }
 
-        // 검색 결과가 있다면
         response.setCode(HttpStatus.OK.value());
         response.setMessage("요청에 성공하였습니다.");
         response.setData(results);
@@ -155,8 +152,6 @@ public class CopyService {
         }
         return tempCopyRes;
     }
-
-
 
     public void setScrapCntWhenTokenNotProvided(HttpServletRequest httpRequest, List<CopyRes> copyResList) {
         String token = httpRequest.getHeader("X-AUTH-TOKEN");

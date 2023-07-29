@@ -12,9 +12,11 @@ import shop.hooking.hooking.dto.request.CrawlingReq;
 import shop.hooking.hooking.dto.response.CopyRes;
 import shop.hooking.hooking.dto.response.CopySearchRes;
 import shop.hooking.hooking.entity.Card;
+import shop.hooking.hooking.entity.Scrap;
 import shop.hooking.hooking.entity.User;
 import shop.hooking.hooking.repository.CardJpaRepository;
 import shop.hooking.hooking.repository.CardRepository;
+import shop.hooking.hooking.repository.ScrapRepository;
 import shop.hooking.hooking.service.CopyService;
 import shop.hooking.hooking.service.JwtTokenProvider;
 import springfox.documentation.annotations.Cacheable;
@@ -37,8 +39,10 @@ public class CopyController {
 
     private final CardJpaRepository cardJpaRepository;
 
+    private final ScrapRepository scrapRepository;
+
     @GetMapping("/{index}")
-    public ResponseEntity<HttpRes<List<CopyRes>>> copyList(HttpServletRequest httpRequest, @PathVariable int index) {
+    public ResponseEntity<HttpRes<List<CopyRes>>> getCopyList(HttpServletRequest httpRequest, @PathVariable int index) {
         List<CopyRes> tempCopyRes = copyService.getCopyResFromBrands();
         Collections.shuffle(tempCopyRes);
         int startIndex = index * 30;
@@ -49,7 +53,7 @@ public class CopyController {
     }
 
     @GetMapping("/search/{index}")
-    public ResponseEntity<CopySearchRes> copySearchList(HttpServletRequest httpRequest,
+    public ResponseEntity<CopySearchRes> getSearchList(HttpServletRequest httpRequest,
                                                         @RequestParam(name = "keyword") String q,
                                                         @PathVariable int index) {
         CopySearchRes response = copyService.copySearchList(httpRequest, q, index);
@@ -62,18 +66,26 @@ public class CopyController {
 
     @CrossOrigin(origins = "https://hooking.shop, https://hooking-dev.netlify.app/, https://hooking.netlify.app/, http://localhost:3000/, http://localhost:3001/")
     @GetMapping("/scrap/{index}")
-    public ResponseEntity<HttpRes<List<CopyRes>>> copyScrapList(HttpServletRequest httpRequest, @PathVariable int index) {
+    public ResponseEntity<HttpRes<List<CopyRes>>> getScrapList(HttpServletRequest httpRequest, @PathVariable int index) {
         User user = jwtTokenProvider.getUserInfoByToken(httpRequest);
         List<CopyRes> copyRes = copyService.getCopyScrapList(user);
         int startIndex = index * 30;
         List<CopyRes> resultCopyRes = copyService.getLimitedCopyResByIndex(copyRes, startIndex);
+
+        for(CopyRes copyRes1 : resultCopyRes){
+            Scrap scrap = scrapRepository.findByUserAndCardId(user, copyRes1.getId());
+            copyRes1.setScrapTime(scrap.getCreatedAt());
+        }
+
+        Collections.sort(resultCopyRes);
+
 
         return ResponseEntity.ok(new HttpRes<>(resultCopyRes));
     }
 
     @CrossOrigin(origins = "https://hooking.shop, https://hooking-dev.netlify.app/, https://hooking.netlify.app/, http://localhost:3000/, http://localhost:3001/")
     @PostMapping("/scrap")
-    public ResponseEntity<HttpRes<String>> copyScrap(HttpServletRequest httpRequest, @RequestBody CopyReq copyReq) throws IOException {
+    public ResponseEntity<HttpRes<String>> copyScrap(HttpServletRequest httpRequest, @RequestBody CopyReq copyReq) {
         User user = jwtTokenProvider.getUserInfoByToken(httpRequest);
         Card card = cardRepository.findCardById(copyReq.getCardId());
         boolean isScrap = copyService.saveCopy(user, card);
