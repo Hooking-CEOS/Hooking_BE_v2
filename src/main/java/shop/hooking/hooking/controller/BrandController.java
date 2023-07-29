@@ -40,9 +40,12 @@ public class BrandController {
     @PostMapping("/{brand_id}/{index}")
     public ResponseEntity<HttpRes<BrandRes.BrandDetailDto>> showOneBrand(HttpServletRequest httpRequest, @PathVariable Long brand_id, @PathVariable int index){
         BrandRes.BrandDetailDto brandDetailDto = brandService.getOneBrand(brand_id);
+
+
         List<BrandRes.cardDto> cards = brandDetailDto.getCard();
         int startIndex = index * 30;
         List<BrandRes.cardDto> resultCards = brandService.getLimitedCardsByIndex(cards, startIndex);
+
 
         if (resultCards.isEmpty()) {
             String errorMessage = "카드가 없습니다.";

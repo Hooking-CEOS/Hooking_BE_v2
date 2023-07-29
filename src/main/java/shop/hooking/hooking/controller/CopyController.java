@@ -84,7 +84,7 @@ public class CopyController {
         List<CopyRes> copyRes = copyService.getCopyScrapList(user);
         int startIndex = index * 30;
         List<CopyRes> resultCopyRes = copyService.getLimitedCopyResByIndex(copyRes, startIndex);
-
+        resultCopyRes.sort((copy1, copy2) -> copy1.getCreatedAt().compareTo(copy2.getCreatedAt()));
         return ResponseEntity.ok(new HttpRes<>(resultCopyRes));
     }
 
