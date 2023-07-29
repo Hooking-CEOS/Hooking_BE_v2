@@ -268,12 +268,6 @@ public class CopyService {
         return q;
     }
 
-    public ResponseEntity<CopySearchRes> getBadRequestResponseEntity(CopySearchRes response, List<CopySearchResult> results) {
-        response.setCode(HttpStatus.BAD_REQUEST.value());
-        response.setMessage("검색 결과를 찾을 수 없습니다.");
-        response.setData(results);
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
-    }
 
     @Transactional
     public CopyRes createScrapRes(Scrap scrap) {
