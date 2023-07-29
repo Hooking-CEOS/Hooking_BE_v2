@@ -55,7 +55,7 @@ public class BrandController {
 
         brandDetailDto.setCard(resultCards);
         brandService.setScrapCntWhenTokenNotProvided(httpRequest, resultCards);
-        brandService.setIsScrapWithUser(user, resultCards);
+        brandService.setIsScrapWithUser1(user, resultCards);
 
         return ResponseEntity.ok(new HttpRes<>(brandDetailDto));
     }

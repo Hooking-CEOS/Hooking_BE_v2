@@ -22,10 +22,9 @@ public class CopyRes implements Comparable<CopyRes>{
     private String text;
     private Integer scrapCnt;
     private LocalDateTime createdAt;
-
     private List<Integer> index;
-
     private LocalDateTime scrapTime;
+    private Integer isScrap;
 
     private int isScrap;
 
@@ -37,6 +36,7 @@ public class CopyRes implements Comparable<CopyRes>{
         this.text = text;
         this.scrapCnt = scrapCnt;
         this.createdAt = createdAt;
+
     }
 
     public CopyRes(Long id, Brand brand, String text, LocalDateTime createdAt) {
@@ -47,6 +47,7 @@ public class CopyRes implements Comparable<CopyRes>{
         this.createdAt = createdAt;
     }
 
+    //왜안됨..?
     @Override
     public int compareTo(CopyRes other) {
         return other.scrapTime.compareTo(this.scrapTime); // 역순으로 정렬

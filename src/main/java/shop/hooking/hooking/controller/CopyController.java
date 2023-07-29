@@ -54,7 +54,7 @@ public class CopyController {
         User user = jwtTokenProvider.getUserInfoByToken(httpRequest);
         int limit = 30;
         List<CopyRes> resultCopyRes = copyService.getCopyListFromBrandsAndSetScrapCnt(httpRequest,index,limit);
-        copyService.setIsScrapWithUser(user, resultCopyRes);
+        copyService.setIsScrapWithUser2(user, resultCopyRes);
         return ResponseEntity.ok(new HttpRes<>(resultCopyRes));
 
     }
@@ -70,7 +70,7 @@ public class CopyController {
         List<CopySearchResult> copySearchResults = response.getData();
         for(CopySearchResult copySearchResult : copySearchResults){
             List<CopyRes> copyRes = copySearchResult.getData();
-            copyService.setIsScrapWithUser(user, copyRes);
+            copyService.setIsScrapWithUser2(user, copyRes);
         }
         if (response.getCode() == HttpStatus.BAD_REQUEST.value()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
@@ -92,6 +92,7 @@ public class CopyController {
         for(CopyRes copyRes1 : resultCopyRes){
             Scrap scrap = scrapRepository.findByUserAndCardId(user, copyRes1.getId());
             copyRes1.setScrapTime(scrap.getCreatedAt());
+
         }
 
         Collections.sort(resultCopyRes);
@@ -131,10 +132,12 @@ public class CopyController {
     // 카피라이팅 필터링
     @GetMapping("/filter/{index}")
     public ResponseEntity<List<CopyRes>> searchFilterCard(HttpServletRequest httpRequest, @PathVariable int index, CardSearchCondition condition) {
+        User user = jwtTokenProvider.getUserInfoByToken(httpRequest);
         List<CopyRes> resultCopyRes = copyService.searchFilterCard(httpRequest, index, condition);
         if (resultCopyRes.isEmpty()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
+        copyService.setIsScrapWithUser2(user,resultCopyRes);
         return ResponseEntity.status(HttpStatus.OK).body(resultCopyRes);
     }
 

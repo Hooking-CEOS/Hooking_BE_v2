@@ -54,7 +54,16 @@ public class CopyService {
         return copyResList;
     }
 
+    public void setIsScrapWithUser(User user, List<CopyRes> copyResList) {
+        List<Scrap> scraps = scrapRepository.findScrapByUser(user);
 
+        // cardList의 id와 scraps의 card_id를 비교하여 isScrap 값을 설정
+        for (CopyRes copyRes : copyResList) {
+            long cardId = copyRes.getId();
+            boolean isScrapFound = scraps.stream().anyMatch(scrap -> scrap.getCard().getId() == cardId);
+            copyRes.setIsScrap(isScrapFound ? 1 : 0);
+        }
+    }
     @Transactional
 
     public void saveCrawlingData(List<CrawlingData> dataList) {
@@ -269,12 +278,6 @@ public class CopyService {
         return q;
     }
 
-    public ResponseEntity<CopySearchRes> getBadRequestResponseEntity(CopySearchRes response, List<CopySearchResult> results) {
-        response.setCode(HttpStatus.BAD_REQUEST.value());
-        response.setMessage("검색 결과를 찾을 수 없습니다.");
-        response.setData(results);
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
-    }
 
     @Transactional
     public CopyRes createScrapRes(Scrap scrap) {
@@ -328,7 +331,7 @@ public class CopyService {
         return false;
     }
 
-    public void setIsScrapWithUser(User user, List<CopyRes> cardList) {
+    public void setIsScrapWithUser2(User user, List<CopyRes> cardList) {
         List<Scrap> scraps = scrapRepository.findScrapByUser(user);
 
         // cardList의 id와 scraps의 card_id를 비교하여 isScrap 값을 설정
