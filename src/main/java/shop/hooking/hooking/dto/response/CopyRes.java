@@ -45,6 +45,7 @@ public class CopyRes implements Comparable<CopyRes>{
         this.createdAt = createdAt;
     }
 
+    //왜안됨..?
     @Override
     public int compareTo(CopyRes other) {
         return other.scrapTime.compareTo(this.scrapTime); // 역순으로 정렬
