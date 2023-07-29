@@ -26,6 +26,8 @@ public class BrandController {
 
     private final BrandService brandService;
 
+    private final JwtTokenProvider jwtTokenProvider;
+
     @CrossOrigin(origins = "https://hooking.shop, https://hooking-dev.netlify.app/, https://hooking.netlify.app/, http://localhost:3000/, http://localhost:3001/")
     @GetMapping("")
     public ResponseEntity<HttpRes<List<BrandRes.BrandDto>>> getAllBrand(){
@@ -37,6 +39,7 @@ public class BrandController {
     @CrossOrigin(origins = "https://hooking.shop, https://hooking-dev.netlify.app/, https://hooking.netlify.app/, http://localhost:3000/, http://localhost:3001/")
     @GetMapping("/{brand_id}/{index}")
     public ResponseEntity<HttpRes<BrandRes.BrandDetailDto>> getOneBrand(HttpServletRequest httpRequest, @PathVariable Long brand_id, @PathVariable int index){
+        User user = jwtTokenProvider.getUserInfoByToken(httpRequest);
         BrandRes.BrandDetailDto brandDetailDto = brandService.getOneBrand(brand_id);
 
 
@@ -52,6 +55,7 @@ public class BrandController {
 
         brandDetailDto.setCard(resultCards);
         brandService.setScrapCntWhenTokenNotProvided(httpRequest, resultCards);
+        brandService.setIsScrapWithUser(user, resultCards);
 
         return ResponseEntity.ok(new HttpRes<>(brandDetailDto));
     }

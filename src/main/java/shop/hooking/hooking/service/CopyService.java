@@ -10,6 +10,7 @@ import shop.hooking.hooking.config.MoodType;
 import shop.hooking.hooking.dto.CardSearchCondition;
 import shop.hooking.hooking.dto.request.CopyReq;
 import shop.hooking.hooking.dto.request.CrawlingData;
+import shop.hooking.hooking.dto.response.BrandRes;
 import shop.hooking.hooking.dto.response.CopyRes;
 import shop.hooking.hooking.dto.response.CopySearchRes;
 import shop.hooking.hooking.dto.response.CopySearchResult;
@@ -325,6 +326,17 @@ public class CopyService {
         }
 
         return false;
+    }
+
+    public void setIsScrapWithUser(User user, List<CopyRes> cardList) {
+        List<Scrap> scraps = scrapRepository.findScrapByUser(user);
+
+        // cardList의 id와 scraps의 card_id를 비교하여 isScrap 값을 설정
+        for (CopyRes copyRes : cardList) {
+            long cardId = copyRes.getId();
+            boolean isScrapFound = scraps.stream().anyMatch(scrap -> scrap.getCard().getId() == cardId);
+            copyRes.setIsScrap(isScrapFound ? 1 : 0);
+        }
     }
 
 }

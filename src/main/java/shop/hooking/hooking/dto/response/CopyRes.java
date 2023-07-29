@@ -27,6 +27,8 @@ public class CopyRes implements Comparable<CopyRes>{
 
     private LocalDateTime scrapTime;
 
+    private int isScrap;
+
     @Builder
     @QueryProjection
     public CopyRes(Long id, Brand brand, String text, Integer scrapCnt,LocalDateTime createdAt) {

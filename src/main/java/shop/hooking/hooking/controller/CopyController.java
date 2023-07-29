@@ -51,9 +51,10 @@ public class CopyController {
     // 페이지네이션
     @GetMapping("/{index}")
     public ResponseEntity<HttpRes<List<CopyRes>>> copyList(HttpServletRequest httpRequest, @PathVariable int index) {
-
+        User user = jwtTokenProvider.getUserInfoByToken(httpRequest);
         int limit = 30;
         List<CopyRes> resultCopyRes = copyService.getCopyListFromBrandsAndSetScrapCnt(httpRequest,index,limit);
+        copyService.setIsScrapWithUser(user, resultCopyRes);
         return ResponseEntity.ok(new HttpRes<>(resultCopyRes));
 
     }
@@ -64,7 +65,13 @@ public class CopyController {
     public ResponseEntity<CopySearchRes> copySearchList(HttpServletRequest httpRequest,
                                                         @RequestParam(name = "keyword") String q,
                                                         @PathVariable int index) {
+        User user = jwtTokenProvider.getUserInfoByToken(httpRequest);
         CopySearchRes response = copyService.copySearchList(httpRequest, q, index);
+        List<CopySearchResult> copySearchResults = response.getData();
+        for(CopySearchResult copySearchResult : copySearchResults){
+            List<CopyRes> copyRes = copySearchResult.getData();
+            copyService.setIsScrapWithUser(user, copyRes);
+        }
         if (response.getCode() == HttpStatus.BAD_REQUEST.value()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         } else {
