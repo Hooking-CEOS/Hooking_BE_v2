@@ -76,6 +76,7 @@ public class BrandService {
             cardDtos.add(cardDto);
         }
 
+
         cards.forEach(card -> card.setScrapCnt((int) scrapRepository.findByCardId(card.getId()).stream().count()));
 
 
@@ -86,7 +87,7 @@ public class BrandService {
             cardTexts.add(card.getText());
         }
 
-        List<Have> haves = haveRepository.findByBrandId(brand.getId());
+        List<Have> haves = haveRepository.findByBrandId(id);
 
         Mood moodZero = moodRepository.findMoodById(haves.get(0).getMood().getId());
         Mood moodOne = moodRepository.findMoodById(haves.get(1).getMood().getId());
@@ -94,7 +95,7 @@ public class BrandService {
 
 
         BrandRes.BrandDetailDto brandDetailDto = BrandRes.BrandDetailDto.builder()
-                .brandId(brand.getId())
+                .brandId(id)
                 .brandName(brand.getBrandName())
                 .brandIntro(brand.getBrandIntro())
                 .brandLink(brand.getBrandLink())
@@ -112,6 +113,7 @@ public class BrandService {
     }
 
     public void setScrapCntWhenTokenNotProvided(HttpServletRequest httpRequest, List<BrandRes.cardDto> cardList) {
+
         String token = httpRequest.getHeader("X-AUTH-TOKEN");
         if (token == null) {
             for (BrandRes.cardDto cardDto : cardList) {

@@ -14,7 +14,7 @@ public interface ScrapRepository extends JpaRepository<Scrap, Long> {
     @Override
     List<Scrap> findAll();
 
-    List<Scrap> findScrapByUser(User user);
+    List<Scrap> findScrapByUser(User user); //여기서 최신순으로 가져오게
 
     List<Scrap> findByCardId(Long id);
 

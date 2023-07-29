@@ -38,10 +38,13 @@ public class BrandController {
     @GetMapping("/{brand_id}/{index}")
     public ResponseEntity<HttpRes<BrandRes.BrandDetailDto>> getOneBrand(HttpServletRequest httpRequest, @PathVariable Long brand_id, @PathVariable int index){
         BrandRes.BrandDetailDto brandDetailDto = brandService.getOneBrand(brand_id);
+
+
         List<BrandRes.cardDto> cards = brandDetailDto.getCard();
 
         int startIndex = index * 30;
         List<BrandRes.cardDto> resultCards = brandService.getLimitedCardsByIndex(cards, startIndex);
+
 
         if (resultCards.isEmpty()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new HttpRes<>(HttpStatus.BAD_REQUEST.value(), "카드가 없습니다."));
