@@ -16,6 +16,8 @@ public interface ScrapRepository extends JpaRepository<Scrap, Long> {
 
     List<Scrap> findScrapByUser(User user); //여기서 최신순으로 가져오게
 
+    Scrap findByUserAndCardId(User user, Long cardId);
+
     List<Scrap> findByCardId(Long id); // 카드 식별번호로 스크랩 객체 찾기
 
     boolean existsByUserAndCard(User user, Card card); // 유저와 카드로 존재 여부 확인하기
