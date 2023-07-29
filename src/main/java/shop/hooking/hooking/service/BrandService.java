@@ -64,7 +64,18 @@ public class BrandService {
     public BrandRes.BrandDetailDto getOneBrand(Long id) {
         Brand brand = brandRepository.findBrandById(id);
 
-        List<Card> cards = cardRepository.findCardsByBrandId(id);
+        List<Card> cards = cardRepository.findCardsByBrandId(brand.getId());
+        List<BrandRes.cardDto> cardDtos = new ArrayList<>();
+        for(Card card : cards){
+            BrandRes.cardDto cardDto = new BrandRes.cardDto();
+            cardDto.setId(card.getId());
+            cardDto.setBrandName(card.getBrand().getBrandName());
+            cardDto.setText(card.getText());
+            cardDto.setCreatedAt(card.getCreatedAt());
+            cardDto.setScrapCnt(card.getScrapCnt());
+            cardDtos.add(cardDto);
+        }
+
 
         cards.forEach(card -> card.setScrapCnt((int) scrapRepository.findByCardId(card.getId()).stream().count()));
 
@@ -89,23 +100,26 @@ public class BrandService {
                 .brandIntro(brand.getBrandIntro())
                 .brandLink(brand.getBrandLink())
                 .randomCard(cardTexts)
-                .card(cards)
+                .card(cardDtos)
                 .mood(Arrays.asList(moodOne.getMoodName(),moodZero.getMoodName(),moodTwo.getMoodName()))
                 .build();
 
         return brandDetailDto;
     }
 
-     public List<Card> getLimitedCardsByIndex(List<Card> cards, int startIndex) {
+     public List<BrandRes.cardDto> getLimitedCardsByIndex(List<BrandRes.cardDto> cards, int startIndex) {
         int endIndex = Math.min(startIndex + 30, cards.size());
         return cards.subList(startIndex, endIndex);
     }
 
-    public void setScrapCntWhenTokenNotProvided(HttpServletRequest httpRequest, List<Card> cardList) {
+
+
+    public void setScrapCntWhenTokenNotProvided(HttpServletRequest httpRequest, List<BrandRes.cardDto> cardList) {
+
         String token = httpRequest.getHeader("X-AUTH-TOKEN");
         if (token == null) {
-            for (Card card : cardList) {
-                card.setScrapCnt(0);
+            for (BrandRes.cardDto cardDto : cardList) {
+                cardDto.setScrapCnt(0);
             }
         }
     }

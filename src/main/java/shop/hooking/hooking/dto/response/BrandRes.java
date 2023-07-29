@@ -36,7 +36,19 @@ public class BrandRes {
         String brandIntro; // 브랜드 한줄소개
         List<String> randomCard; // 랜덤 카피라이팅 카드에서 본문만 3개
         List<String> mood; // 브랜드 무드 3개
-        List<Card> card; // 브랜드 전체 카피라이팅 카드
+        List<cardDto> card; // 브랜드 전체 카피라이팅 카드
+    }
+
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    public static class cardDto{
+        private Long id;
+        private String brandName;
+        private String text;
+        private Integer scrapCnt;
+        private LocalDateTime createdAt;
     }
 
 }
