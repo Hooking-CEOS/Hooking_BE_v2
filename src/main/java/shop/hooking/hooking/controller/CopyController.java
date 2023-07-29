@@ -40,7 +40,6 @@ public class CopyController {
 
     private final CardRepository cardRepository;
 
-    private final CardJpaRepository cardJpaRepository;
 
 
 
@@ -50,12 +49,8 @@ public class CopyController {
     @GetMapping("/{index}")
     public ResponseEntity<HttpRes<List<CopyRes>>> copyList(HttpServletRequest httpRequest, @PathVariable int index) {
 
-        // 브랜드에서 카피 가져오기
-        List<CopyRes> tempCopyRes = copyService.getCopyResFromBrands();
-        Collections.shuffle(tempCopyRes);
-        int startIndex = index * 30;
-        List<CopyRes> resultCopyRes = copyService.getLimitedCopyResByIndex(tempCopyRes, startIndex);
-        copyService.setScrapCntWhenTokenNotProvided(httpRequest, resultCopyRes);
+        int limit = 30;
+        List<CopyRes> resultCopyRes = copyService.getCopyListFromBrandsAndSetScrapCnt(httpRequest,index,limit);
         return ResponseEntity.ok(new HttpRes<>(resultCopyRes));
 
     }
@@ -107,33 +102,6 @@ public class CopyController {
     }
 
 
-    // 크롤링 with 파이썬
-//    @PostMapping("/crawling")
-//    public HttpRes<String> saveCrawling(@RequestBody CrawlingReq crawlingReq) {
-//        List<CrawlingData> dataList = crawlingReq.getData();
-//
-//
-//        for (CrawlingData data : dataList) {
-//            String text = data.getText();
-//            String url = data.getUrl();
-//            LocalDateTime createdAt = data.getCreatedAt();
-//            Long brandId = data.getBrandId();
-//
-//
-//            Brand brand = brandRepository.findBrandById(brandId);
-//
-//            Card card = new Card();
-//
-//            card.setText(text);
-//            card.setCreatedAt(createdAt);
-//            card.setBrand(brand);
-//            card.setUrl(url);
-//
-//            cardRepository.save(card);
-//        }
-//
-//        return new HttpRes<>("크롤링 데이터가 저장되었습니다.");
-//    }
 
     @PostMapping("/crawling")
     public ResponseEntity<HttpRes<String>> saveCrawling(@RequestBody CrawlingReq crawlingReq) {
@@ -147,16 +115,15 @@ public class CopyController {
 
     // 카피라이팅 필터링
     @GetMapping("/filter/{index}")
-    public ResponseEntity<List<CopyRes>> searchFilterCard(HttpServletRequest httpRequest,@PathVariable int index,CardSearchCondition condition) {
-        List<CopyRes> results = cardJpaRepository.filter(condition);
-        int startIndex = index * 30; //인덱싱
-        List<CopyRes> resultCopyRes = copyService.getLimitedCopyResByIndex(results, startIndex);
-        copyService.setScrapCntWhenTokenNotProvided(httpRequest, resultCopyRes);
-        if(resultCopyRes.isEmpty()){
+    public ResponseEntity<List<CopyRes>> searchFilterCard(HttpServletRequest httpRequest, @PathVariable int index, CardSearchCondition condition) {
+        List<CopyRes> resultCopyRes = copyService.searchFilterCard(httpRequest, index, condition);
+        if (resultCopyRes.isEmpty()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
         return ResponseEntity.status(HttpStatus.OK).body(resultCopyRes);
     }
+
+
 
 
     // 카피라이팅 스크랩 취소 (soft delete)
