@@ -53,7 +53,16 @@ public class CopyService {
         return copyResList;
     }
 
+    public void setIsScrapWithUser(User user, List<CopyRes> copyResList) {
+        List<Scrap> scraps = scrapRepository.findScrapByUser(user);
 
+        // cardList의 id와 scraps의 card_id를 비교하여 isScrap 값을 설정
+        for (CopyRes copyRes : copyResList) {
+            long cardId = copyRes.getId();
+            boolean isScrapFound = scraps.stream().anyMatch(scrap -> scrap.getCard().getId() == cardId);
+            copyRes.setIsScrap(isScrapFound ? 1 : 0);
+        }
+    }
     @Transactional
 
     public void saveCrawlingData(List<CrawlingData> dataList) {

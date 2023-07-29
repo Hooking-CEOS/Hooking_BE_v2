@@ -24,6 +24,7 @@ public class CopyRes implements Comparable<CopyRes>{
     private LocalDateTime createdAt;
     private List<Integer> index;
     private LocalDateTime scrapTime;
+    private Integer isScrap;
 
     @Builder
     @QueryProjection
@@ -42,7 +43,6 @@ public class CopyRes implements Comparable<CopyRes>{
         this.text = text;
         this.scrapCnt = 0;
         this.createdAt = createdAt;
-
     }
 
     //왜안됨..?
