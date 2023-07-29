@@ -16,7 +16,7 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
-public class CopyRes {
+public class CopyRes implements Comparable<CopyRes>{
     private Long id;
     private String brandName;
     private String text;
@@ -25,6 +25,7 @@ public class CopyRes {
 
     private List<Integer> index;
 
+    private LocalDateTime scrapTime;
 
     @Builder
     @QueryProjection
@@ -44,6 +45,10 @@ public class CopyRes {
         this.createdAt = createdAt;
     }
 
+    @Override
+    public int compareTo(CopyRes other) {
+        return other.scrapTime.compareTo(this.scrapTime); // 역순으로 정렬
+    }
+
 
 }
-
