@@ -161,17 +161,18 @@ public class CopyController {
 
 
     // 카피라이팅 스크랩 취소 (soft delete)
-    @PostMapping ("/scrap/cancel")
-    public ResponseEntity<String> cancelScrap(HttpServletRequest httpRequest, @RequestBody CopyReq copyReq){
+    @PostMapping ("/scrap/cancle")
+    public ResponseEntity<HttpRes<String>> cancelScrap(HttpServletRequest httpRequest, @RequestBody CopyReq copyReq){
         User user = jwtTokenProvider.getUserInfoByToken(httpRequest);
         Long cardId = copyReq.getCardId();
         Card card = cardRepository.findCardById(cardId);
         boolean is_canceled = copyService.cancelScrap(user, card);
         if(is_canceled){
-            return ResponseEntity.status(HttpStatus.OK).body("삭제되었습니다.");
+            return ResponseEntity.ok(new HttpRes<>("해당 스크랩을 삭제했습니다."));
         }
         else{
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("스크랩 정보가 유효하지 않습니다.");
+            String errorMessage = "스크랩 정보가 유효하지 않습니다.";
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new HttpRes<>(HttpStatus.BAD_REQUEST.value(), errorMessage));
         }
 
     }
