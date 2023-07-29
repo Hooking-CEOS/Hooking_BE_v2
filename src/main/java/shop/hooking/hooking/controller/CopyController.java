@@ -4,8 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import shop.hooking.hooking.config.BrandType;
-import shop.hooking.hooking.config.MoodType;
 import shop.hooking.hooking.dto.CardSearchCondition;
 import shop.hooking.hooking.dto.HttpRes;
 import shop.hooking.hooking.dto.request.CopyReq;
@@ -13,11 +11,8 @@ import shop.hooking.hooking.dto.request.CrawlingData;
 import shop.hooking.hooking.dto.request.CrawlingReq;
 import shop.hooking.hooking.dto.response.CopyRes;
 import shop.hooking.hooking.dto.response.CopySearchRes;
-import shop.hooking.hooking.dto.response.CopySearchResult;
-import shop.hooking.hooking.entity.Brand;
 import shop.hooking.hooking.entity.Card;
 import shop.hooking.hooking.entity.User;
-import shop.hooking.hooking.repository.BrandRepository;
 import shop.hooking.hooking.repository.CardJpaRepository;
 import shop.hooking.hooking.repository.CardRepository;
 import shop.hooking.hooking.service.CopyService;
@@ -42,15 +37,8 @@ public class CopyController {
 
     private final CardJpaRepository cardJpaRepository;
 
-
-
-
-    // 전체 카피라이팅 조회
-    // 페이지네이션
     @GetMapping("/{index}")
     public ResponseEntity<HttpRes<List<CopyRes>>> copyList(HttpServletRequest httpRequest, @PathVariable int index) {
-
-        // 브랜드에서 카피 가져오기
         List<CopyRes> tempCopyRes = copyService.getCopyResFromBrands();
         Collections.shuffle(tempCopyRes);
         int startIndex = index * 30;
@@ -60,8 +48,6 @@ public class CopyController {
 
     }
 
-
-    // 카피라이팅 검색
     @GetMapping("/search/{index}")
     public ResponseEntity<CopySearchRes> copySearchList(HttpServletRequest httpRequest,
                                                         @RequestParam(name = "keyword") String q,
@@ -74,9 +60,6 @@ public class CopyController {
         }
     }
 
-
-
-    // 카피라이팅 스크랩 가져오기
     @CrossOrigin(origins = "https://hooking.shop, https://hooking-dev.netlify.app/, https://hooking.netlify.app/, http://localhost:3000/, http://localhost:3001/")
     @GetMapping("/scrap/{index}")
     public ResponseEntity<HttpRes<List<CopyRes>>> copyScrapList(HttpServletRequest httpRequest, @PathVariable int index) {
@@ -88,9 +71,6 @@ public class CopyController {
         return ResponseEntity.ok(new HttpRes<>(resultCopyRes));
     }
 
-
-
-    // 카피라이팅 스크랩
     @CrossOrigin(origins = "https://hooking.shop, https://hooking-dev.netlify.app/, https://hooking.netlify.app/, http://localhost:3000/, http://localhost:3001/")
     @PostMapping("/scrap")
     public ResponseEntity<HttpRes<String>> copyScrap(HttpServletRequest httpRequest, @RequestBody CopyReq copyReq) throws IOException {
@@ -106,35 +86,6 @@ public class CopyController {
         }
     }
 
-
-    // 크롤링 with 파이썬
-//    @PostMapping("/crawling")
-//    public HttpRes<String> saveCrawling(@RequestBody CrawlingReq crawlingReq) {
-//        List<CrawlingData> dataList = crawlingReq.getData();
-//
-//
-//        for (CrawlingData data : dataList) {
-//            String text = data.getText();
-//            String url = data.getUrl();
-//            LocalDateTime createdAt = data.getCreatedAt();
-//            Long brandId = data.getBrandId();
-//
-//
-//            Brand brand = brandRepository.findBrandById(brandId);
-//
-//            Card card = new Card();
-//
-//            card.setText(text);
-//            card.setCreatedAt(createdAt);
-//            card.setBrand(brand);
-//            card.setUrl(url);
-//
-//            cardRepository.save(card);
-//        }
-//
-//        return new HttpRes<>("크롤링 데이터가 저장되었습니다.");
-//    }
-
     @PostMapping("/crawling")
     public ResponseEntity<HttpRes<String>> saveCrawling(@RequestBody CrawlingReq crawlingReq) {
         List<CrawlingData> dataList = crawlingReq.getData();
@@ -144,12 +95,10 @@ public class CopyController {
         return ResponseEntity.ok(new HttpRes<>("크롤링 데이터가 저장되었습니다."));
     }
 
-
-    // 카피라이팅 필터링
     @GetMapping("/filter/{index}")
     public ResponseEntity<List<CopyRes>> searchFilterCard(HttpServletRequest httpRequest,@PathVariable int index,CardSearchCondition condition) {
         List<CopyRes> results = cardJpaRepository.filter(condition);
-        int startIndex = index * 30; //인덱싱
+        int startIndex = index * 30;
         List<CopyRes> resultCopyRes = copyService.getLimitedCopyResByIndex(results, startIndex);
         copyService.setScrapCntWhenTokenNotProvided(httpRequest, resultCopyRes);
         if(resultCopyRes.isEmpty()){
@@ -158,8 +107,6 @@ public class CopyController {
         return ResponseEntity.status(HttpStatus.OK).body(resultCopyRes);
     }
 
-
-    // 카피라이팅 스크랩 취소 (soft delete)
     @PostMapping ("/scrap/cancel")
     public ResponseEntity<String> cancelScrap(HttpServletRequest httpRequest, @RequestBody CopyReq copyReq){
         User user = jwtTokenProvider.getUserInfoByToken(httpRequest);
@@ -172,34 +119,5 @@ public class CopyController {
         else{
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("스크랩 정보가 유효하지 않습니다.");
         }
-
     }
-
-
-
-
-
-
-
-
-    // 함수 리팩토링 ...
-
-
-
-
-//    private void setIndicesForCopyRes(List<CopyRes> copyResList, String keyword) {
-//        for (CopyRes copyRes : copyResList) {
-//            String lowercaseText = copyRes.getText().toLowerCase();
-//            int index = lowercaseText.indexOf(keyword.toLowerCase());
-//            List<Integer> indices = new ArrayList<>();
-//            while (index != -1) {
-//                indices.add(index);
-//                index = lowercaseText.indexOf(keyword.toLowerCase(), index + 1);
-//            }
-//            copyRes.setIndex(indices);
-//        }
-//    }
-
-
-
 }

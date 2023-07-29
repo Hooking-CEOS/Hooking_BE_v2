@@ -29,13 +29,9 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class CopyService {
-
-    private final UserRepository userRepository;
     private final CardRepository cardRepository;
     private final BrandRepository brandRepository;
     private final ScrapRepository scrapRepository;
-    private final MoodRepository moodRepository;
-    private final HaveRepository haveRepository;
     private final CardJpaRepository cardJpaRepository;
 
 
@@ -123,66 +119,6 @@ public class CopyService {
         return response;
     }
 
-
-
-    // 검색 쿼리
-//    @Transactional
-//    public List<CopyRes> selectCopyByQuery(String q) {
-//        String type = "copy";
-//
-//        List<Card> cards = cardRepository.findByTextContaining(q);
-//        List<CopyRes> copyResList = new ArrayList<>();
-//
-//        for (Card card : cards) {
-//            CopyRes copyRes = createCopyRes(card);
-//            copyResList.add(copyRes);
-//        }
-//        return copyResList;
-//    }
-//
-//
-//    @Transactional
-//    public List<CopyRes> selectBrandByQuery(String q){
-//        String type = "brand";
-//
-//        Brand brand = brandRepository.findBrandByBrandNameContaining(q);
-//        List<Card> cards = cardRepository.findCardsByBrandId(brand.getId());
-//        List<CopyRes> copyResList = new ArrayList<>();
-//
-//        for (Card card : cards) {
-//            CopyRes copyRes = createCopyRes(card);
-//            copyResList.add(copyRes);
-//        }
-//        return copyResList;
-//    }
-//
-//    @Transactional
-//    public List<CopyRes> selectMoodByQuery(String q){
-//        String type = "mood";
-//
-//        Mood mood = moodRepository.findByMoodNameContaining(q);
-//        List<Have> haves = haveRepository.findByMoodId(mood.getId());
-//
-//        List<CopyRes> copyResList = new ArrayList<>();
-//
-//        List<Brand> brands = new ArrayList<>();
-//        for (Have have : haves) {
-//            brands.add(have.getBrand());
-//        }
-//        for ( Brand brand : brands){
-//            List<Card> cards = cardRepository.findCardsByBrandId(brand.getId());
-//
-//            for (Card card : cards) {
-//                CopyRes copyRes = createCopyRes(card);
-//                copyResList.add(copyRes);
-//            }
-//        }
-//
-//
-//        return copyResList;
-//    }
-
-
     @Transactional
     public List<CopyRes> getCopyScrapList(User user) {
         List<Scrap> scraps = scrapRepository.findScrapByUser(user);
@@ -198,7 +134,7 @@ public class CopyService {
 
     @Transactional
     public CopyRes createCopyRes(Card card) {
-        Long id = card.getId(); // id로 넘어옴
+        Long id = card.getId();
 
         List<Scrap> scraps = scrapRepository.findByCardId(id);
         int length = scraps.size();
@@ -277,7 +213,7 @@ public class CopyService {
 
 
     @Transactional
-    public boolean saveCopy(User user, Card card) throws IOException {
+    public boolean saveCopy(User user, Card card) {
 
         if(scrapRepository.existsByUserAndCard(user,card)){
             return false;

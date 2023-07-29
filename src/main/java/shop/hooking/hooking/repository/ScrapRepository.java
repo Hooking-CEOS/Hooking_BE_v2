@@ -16,9 +16,9 @@ public interface ScrapRepository extends JpaRepository<Scrap, Long> {
 
     List<Scrap> findScrapByUser(User user);
 
-    List<Scrap> findByCardId(Long id); // 카드 식별번호로 스크랩 객체 찾기
+    List<Scrap> findByCardId(Long id);
 
-    boolean existsByUserAndCard(User user, Card card); // 유저와 카드로 존재 여부 확인하기
+    boolean existsByUserAndCard(User user, Card card);
 
     Scrap findByUserAndCard(User user, Card card);
 

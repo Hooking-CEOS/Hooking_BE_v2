@@ -16,7 +16,7 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
-public class CopyRes {
+public class CopyRes{
     private Long id;
     private String brandName;
     private String text;
@@ -24,7 +24,6 @@ public class CopyRes {
     private LocalDateTime createdAt;
 
     private List<Integer> index;
-
 
     @Builder
     @QueryProjection

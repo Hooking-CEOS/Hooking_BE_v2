@@ -111,12 +111,6 @@ public class BrandService {
         return cards.subList(startIndex, endIndex);
     }
 
-    public void setScrapCntWhenTokenNotProvided(List<Card> cardList) {
-        for (Card card : cardList) {
-            card.setScrapCnt(0);
-        }
-    }
-
     public void setScrapCntWhenTokenNotProvided(HttpServletRequest httpRequest, List<BrandRes.cardDto> cardList) {
         String token = httpRequest.getHeader("X-AUTH-TOKEN");
         if (token == null) {

@@ -8,5 +8,4 @@ import java.util.List;
 
 public interface HaveRepository extends JpaRepository<Have, Long> {
     List<Have> findByBrandId(Long brand_id);
-    List<Have> findByMoodId(Long mood_id);
 }
