@@ -49,6 +49,7 @@ public class BrandRes {
         private String text;
         private Integer scrapCnt;
         private LocalDateTime createdAt;
+        private Integer isScrap;
     }
 
 }

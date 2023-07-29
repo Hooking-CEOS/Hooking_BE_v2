@@ -86,6 +86,7 @@ public class CopyController {
         for(CopyRes copyRes1 : resultCopyRes){
             Scrap scrap = scrapRepository.findByUserAndCardId(user, copyRes1.getId());
             copyRes1.setScrapTime(scrap.getCreatedAt());
+
         }
 
         Collections.sort(resultCopyRes);

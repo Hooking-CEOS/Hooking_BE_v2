@@ -22,9 +22,7 @@ public class CopyRes implements Comparable<CopyRes>{
     private String text;
     private Integer scrapCnt;
     private LocalDateTime createdAt;
-
     private List<Integer> index;
-
     private LocalDateTime scrapTime;
 
     @Builder
@@ -35,6 +33,7 @@ public class CopyRes implements Comparable<CopyRes>{
         this.text = text;
         this.scrapCnt = scrapCnt;
         this.createdAt = createdAt;
+
     }
 
     public CopyRes(Long id, Brand brand, String text, LocalDateTime createdAt) {
@@ -43,6 +42,7 @@ public class CopyRes implements Comparable<CopyRes>{
         this.text = text;
         this.scrapCnt = 0;
         this.createdAt = createdAt;
+
     }
 
     //왜안됨..?

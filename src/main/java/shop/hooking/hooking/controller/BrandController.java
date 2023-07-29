@@ -37,23 +37,25 @@ public class BrandController {
     }
 
     @CrossOrigin(origins = "https://hooking.shop, https://hooking-dev.netlify.app/, https://hooking.netlify.app/, http://localhost:3000/, http://localhost:3001/")
-    @PostMapping("/{brand_id}/{index}")
-    public ResponseEntity<HttpRes<BrandRes.BrandDetailDto>> showOneBrand(HttpServletRequest httpRequest, @PathVariable Long brand_id, @PathVariable int index){
+    @GetMapping("/{brand_id}/{index}")
+    public ResponseEntity<HttpRes<BrandRes.BrandDetailDto>> getOneBrand(HttpServletRequest httpRequest, @PathVariable Long brand_id, @PathVariable int index){
+        User user = jwtTokenProvider.getUserInfoByToken(httpRequest);
         BrandRes.BrandDetailDto brandDetailDto = brandService.getOneBrand(brand_id);
 
 
         List<BrandRes.cardDto> cards = brandDetailDto.getCard();
+
         int startIndex = index * 30;
         List<BrandRes.cardDto> resultCards = brandService.getLimitedCardsByIndex(cards, startIndex);
 
 
         if (resultCards.isEmpty()) {
-            String errorMessage = "카드가 없습니다.";
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new HttpRes<>(HttpStatus.BAD_REQUEST.value(), errorMessage));
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new HttpRes<>(HttpStatus.BAD_REQUEST.value(), "카드가 없습니다."));
         }
 
         brandDetailDto.setCard(resultCards);
         brandService.setScrapCntWhenTokenNotProvided(httpRequest, resultCards);
+        brandService.setIsScrapWithUser(user, resultCards);
 
         return ResponseEntity.ok(new HttpRes<>(brandDetailDto));
     }
