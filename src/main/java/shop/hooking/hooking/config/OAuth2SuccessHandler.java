@@ -70,7 +70,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         }
         else {
             // 기본적으로 로컬 개발 환경으로 설정
-            targetUrl = "http://localhost:3000/oath-processor"; // 로컬 환경
+            targetUrl = redirectUrl; // 로컬 환경
         }
 
         // 쿼리 파라미터를 추가하여 targetUrl 생성
