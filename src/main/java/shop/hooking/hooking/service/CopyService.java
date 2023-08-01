@@ -223,9 +223,10 @@ public class CopyService {
 
         Brand brand = card.getBrand();
         String text = card.getText();
+        String cardLink = card.getUrl();
         Integer scrapCnt = length;
         LocalDateTime createdAt = card.getCreatedAt();
-        return new CopyRes(id, brand,text,scrapCnt,createdAt);
+        return new CopyRes(id, brand,text,scrapCnt,createdAt,cardLink);
     }
 
     public List<CopyRes> getCopyListFromBrandsAndSetScrapCnt(HttpServletRequest httpRequest, int index, int limit) {
@@ -287,9 +288,10 @@ public class CopyService {
 
         Brand brand = scrap.getCard().getBrand();
         String text = scrap.getCard().getText();
+        String cardLink = scrap.getCard().getUrl();
         Integer scrapCnt = length;
         LocalDateTime createdAt = scrap.getCard().getCreatedAt();
-        return new CopyRes(id, brand,text,scrapCnt,createdAt);
+        return new CopyRes(id, brand,text,scrapCnt,createdAt,cardLink);
     }
 
     public List<CopyRes> searchFilterCard(HttpServletRequest httpRequest, int index, CardSearchCondition condition) {

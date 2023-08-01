@@ -23,26 +23,30 @@ public class CopyRes implements Comparable<CopyRes>{
     private Integer scrapCnt;
     private LocalDateTime createdAt;
     private List<Integer> index;
+    private String cardLink;
     private LocalDateTime scrapTime;
     private Integer isScrap;
 
+
     @Builder
     @QueryProjection
-    public CopyRes(Long id, Brand brand, String text, Integer scrapCnt,LocalDateTime createdAt) {
+    public CopyRes(Long id, Brand brand, String text, Integer scrapCnt,LocalDateTime createdAt,String cardLink) {
         this.id = id;
         this.brandName = brand.getBrandName();
         this.text = text;
         this.scrapCnt = scrapCnt;
         this.createdAt = createdAt;
+        this.cardLink = cardLink;
 
     }
 
-    public CopyRes(Long id, Brand brand, String text, LocalDateTime createdAt) {
+    public CopyRes(Long id, Brand brand, String text, LocalDateTime createdAt,String cardLink) {
         this.id = id;
         this.brandName = brand.getBrandName();
         this.text = text;
         this.scrapCnt = 0;
         this.createdAt = createdAt;
+        this.cardLink = cardLink;
     }
 
     //왜안됨..?
