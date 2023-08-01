@@ -73,6 +73,7 @@ public class BrandService {
             cardDto.setText(card.getText());
             cardDto.setCreatedAt(card.getCreatedAt());
             cardDto.setScrapCnt(card.getScrapCnt());
+            cardDto.setCardLink(card.getUrl());
             cardDtos.add(cardDto);
         }
 
