@@ -87,6 +87,7 @@ public class CopyService {
     public CopySearchRes copySearchList(HttpServletRequest httpRequest, String q, int index) {
         CopySearchRes response = new CopySearchRes();
         List<CopySearchResult> results = new ArrayList<>();
+        Integer startIndex = index*30;
 
         q = checkKeyword(q);
 
@@ -100,21 +101,21 @@ public class CopyService {
             moodCopyRes = cardJpaRepository.searchMood(q);
             setScrapCntWhenTokenNotProvided(httpRequest, moodCopyRes);
             Collections.shuffle(moodCopyRes);
-            results.add(createCopySearchResult("mood", q, moodCopyRes, index));
+            results.add(createCopySearchResult("mood", q, moodCopyRes, startIndex));
             if (!textCopyRes.isEmpty()) {
                 setScrapCntWhenTokenNotProvided(httpRequest, textCopyRes);
                 Collections.shuffle(textCopyRes);
-                results.add(createCopySearchResult("copy", q, textCopyRes, index));
+                results.add(createCopySearchResult("copy", q, textCopyRes, startIndex));
             }
         } else if (BrandType.containsKeyword(q)) {
             brandCopyRes = cardJpaRepository.searchBrand(q);
             setScrapCntWhenTokenNotProvided(httpRequest, brandCopyRes);
             Collections.shuffle(brandCopyRes);
-            results.add(createCopySearchResult("brand", q, brandCopyRes, index));
+            results.add(createCopySearchResult("brand", q, brandCopyRes, startIndex));
         } else if (!textCopyRes.isEmpty()) {
             setScrapCntWhenTokenNotProvided(httpRequest, textCopyRes);
             Collections.shuffle(textCopyRes);
-            results.add(createCopySearchResult("copy", q, textCopyRes, index));
+            results.add(createCopySearchResult("copy", q, textCopyRes, startIndex));
         }
 
         // 검색 결과가 없다면
@@ -256,7 +257,7 @@ public class CopyService {
     }
 
 
-    public List<CopyRes> getLimitedCopyResByIndex(List<CopyRes> copyResList, int startIndex) {
+    public List<CopyRes> getLimitedCopyResByIndex(List<CopyRes> copyResList, int startIndex) { //0 //30
         int endIndex = Math.min(startIndex + 30, copyResList.size());
         return copyResList.subList(startIndex, endIndex);
     }
