@@ -40,14 +40,14 @@ public class CopyRes implements Comparable<CopyRes>{
 
     }
 
-    public CopyRes(Long id, Brand brand, String text, LocalDateTime createdAt,String cardLink) {
-        this.id = id;
-        this.brandName = brand.getBrandName();
-        this.text = text;
-        this.scrapCnt = 0;
-        this.createdAt = createdAt;
-        this.cardLink = cardLink;
-    }
+//    public CopyRes(Long id, Brand brand, String text, LocalDateTime createdAt,String cardLink) {
+//        this.id = id;
+//        this.brandName = brand.getBrandName();
+//        this.text = text;
+//        this.scrapCnt = 0;
+//        this.createdAt = createdAt;
+//        this.cardLink = cardLink;
+//    }
 
     //왜안됨..?
     @Override
