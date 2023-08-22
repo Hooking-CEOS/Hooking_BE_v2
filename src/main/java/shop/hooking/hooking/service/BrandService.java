@@ -1,27 +1,18 @@
 package shop.hooking.hooking.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PathVariable;
-import shop.hooking.hooking.dto.CardSearchCondition;
-import shop.hooking.hooking.dto.HttpRes;
+import shop.hooking.hooking.config.jwt.JwtTokenProvider;
 import shop.hooking.hooking.dto.response.BrandRes;
-import shop.hooking.hooking.dto.response.CopyRes;
-import shop.hooking.hooking.dto.response.ReviewRes;
 import shop.hooking.hooking.entity.*;
 
 import shop.hooking.hooking.repository.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import static shop.hooking.hooking.exception.ErrorCode.*;
 
 
 @Service

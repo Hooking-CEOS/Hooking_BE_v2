@@ -3,12 +3,11 @@ package shop.hooking.hooking.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import shop.hooking.hooking.config.enumtype.BrandType;
 import shop.hooking.hooking.config.enumtype.MoodType;
+import shop.hooking.hooking.config.jwt.JwtTokenProvider;
 import shop.hooking.hooking.dto.CardSearchCondition;
-import shop.hooking.hooking.dto.HttpRes;
 import shop.hooking.hooking.dto.request.CopyReq;
 import shop.hooking.hooking.dto.request.CrawlingData;
 import shop.hooking.hooking.dto.request.CrawlingReq;
@@ -22,8 +21,6 @@ import shop.hooking.hooking.repository.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
-import java.io.IOException;
-import java.time.LocalDateTime;
 import java.util.*;
 
 

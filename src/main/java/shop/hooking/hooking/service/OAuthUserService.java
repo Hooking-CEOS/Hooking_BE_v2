@@ -12,7 +12,7 @@ import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
-import shop.hooking.hooking.dto.OAuthAttributesDTO;
+import shop.hooking.hooking.dto.response.OAuthAttributesRes;
 import shop.hooking.hooking.entity.User;
 import shop.hooking.hooking.exception.CustomException;
 import shop.hooking.hooking.exception.ErrorCode;
@@ -34,7 +34,7 @@ public class OAuthUserService implements OAuth2UserService<OAuth2UserRequest, OA
             OAuth2UserService<OAuth2UserRequest, OAuth2User> delegate = new DefaultOAuth2UserService(); //객체생성
             OAuth2User oAuth2User = delegate.loadUser(userRequest);// Oath2 정보를 가져옴
 
-            OAuthAttributesDTO attributes = OAuthAttributesDTO.ofKakao(oAuth2User.getAttributes()); //회원정보 JSON 정제해서 반환
+            OAuthAttributesRes attributes = OAuthAttributesRes.ofKakao(oAuth2User.getAttributes()); //회원정보 JSON 정제해서 반환
 
             Map<String, Object> newAttribute = updateAttributes(attributes);
             User user = saveOrUpdate(attributes); //정제된 회원정보 삽입
@@ -51,7 +51,7 @@ public class OAuthUserService implements OAuth2UserService<OAuth2UserRequest, OA
     }
 
     //첫번째 로그인인지 확인
-    private Map<String, Object> updateAttributes(OAuthAttributesDTO attributes) {
+    private Map<String, Object> updateAttributes(OAuthAttributesRes attributes) {
         User user = userRepository.findMemberByKakaoId(attributes.getKakaoId());
         Map<String, Object> newAttribute = new HashMap<String, Object>();
         newAttribute.putAll(attributes.getAttributes());
@@ -66,7 +66,7 @@ public class OAuthUserService implements OAuth2UserService<OAuth2UserRequest, OA
     }
 
     //인증된 유저 DTO 반환
-    private User saveOrUpdate(OAuthAttributesDTO attributes){
+    private User saveOrUpdate(OAuthAttributesRes attributes){
         User user = userRepository.findMemberByKakaoId(attributes.getKakaoId()); //db에 있는 유저인지 확인
         if(user!=null){ //있으면
             return user; //유저반환

@@ -1,13 +1,14 @@
-package shop.hooking.hooking.config;
+package shop.hooking.hooking.config.jwt;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.crypto.factory.PasswordEncoderFactories;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -15,7 +16,8 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.CorsUtils;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import shop.hooking.hooking.service.JwtTokenProvider;
+import shop.hooking.hooking.config.CustomAuthenticationEntryPoint;
+import shop.hooking.hooking.config.jwt.JwtTokenProvider;
 import shop.hooking.hooking.service.OAuthUserService;
 
 import java.util.Arrays;
@@ -31,6 +33,15 @@ public class SecurityConfig {
     private final OAuthUserService oAuthUserService;
     private final JwtTokenProvider jwtTokenProvider;
     private final AuthenticationSuccessHandler authenticationSuccessHandler;
+
+    //인증 실패 또는 인증헤더가 전달받지 못했을때 핸들러
+    private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
+
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return PasswordEncoderFactories.createDelegatingPasswordEncoder();
+    }
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
@@ -54,12 +65,14 @@ public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
             .csrf().disable()
             .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             .and()
+            .exceptionHandling()
+            .authenticationEntryPoint(customAuthenticationEntryPoint)
+            .and()
             .authorizeRequests()
             .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
-
-
-
-            .antMatchers("**/oath-processor/**","/kakaologin","/api/v1/copy/{index}", "/api/v1/copy/search/{index}","/api/v1/copy/search/brand/{index}","/api/v1/copy/filter/{index}","/api/v1/copy/crawling", "/api/v1/brand", "/api/v1/brand/{brand_id}/{index}","/example/login"
+            .antMatchers("/auth/signup/**", "/auth/login/**",
+                    "/auth/re-issue", "/auth/settings", "/auth/certification/**",
+                    "/api/v1/notification/subscribe", "/api/v1/util/**","**/oath-processor/**","/kakaologin","/api/v1/copy/{index}", "/api/v1/copy/search/{index}","/api/v1/copy/search/brand/{index}","/api/v1/copy/filter/{index}","/api/v1/copy/crawling", "/api/v1/brand", "/api/v1/brand/{brand_id}/{index}","/example/login"
                     ).permitAll()
 
             .anyRequest().authenticated()

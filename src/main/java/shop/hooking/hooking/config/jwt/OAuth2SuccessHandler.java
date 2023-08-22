@@ -1,12 +1,9 @@
-package shop.hooking.hooking.config;
+package shop.hooking.hooking.config.jwt;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 
 import lombok.extern.slf4j.Slf4j;
 
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 
 import org.springframework.security.oauth2.core.user.OAuth2User;
@@ -15,16 +12,13 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponentsBuilder;
 import shop.hooking.hooking.entity.User;
 import shop.hooking.hooking.repository.UserRepository;
-import shop.hooking.hooking.service.JwtTokenProvider;
+import shop.hooking.hooking.config.jwt.JwtTokenProvider;
 import shop.hooking.hooking.service.OAuthUserService;
 import org.springframework.beans.factory.annotation.Value;
 import javax.servlet.ServletException;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
 
 //로그인 다 완료되고 우리 서버에서 쓸 수 있는 jwt 토큰을 발급

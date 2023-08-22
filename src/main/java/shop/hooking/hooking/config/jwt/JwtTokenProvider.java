@@ -1,4 +1,4 @@
-package shop.hooking.hooking.service;
+package shop.hooking.hooking.config.jwt;
 
 
 
