@@ -3,19 +3,15 @@ package shop.hooking.hooking.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import shop.hooking.hooking.config.BrandType;
-import shop.hooking.hooking.config.MoodType;
+import shop.hooking.hooking.config.enumtype.BrandType;
+import shop.hooking.hooking.config.enumtype.MoodType;
 import shop.hooking.hooking.dto.CardSearchCondition;
-import shop.hooking.hooking.dto.request.CopyReq;
 import shop.hooking.hooking.dto.request.CrawlingData;
 import shop.hooking.hooking.dto.response.CopyRes;
 import shop.hooking.hooking.dto.response.CopySearchRes;
 import shop.hooking.hooking.dto.response.CopySearchResult;
 import shop.hooking.hooking.entity.*;
-import shop.hooking.hooking.exception.CustomException;
-import shop.hooking.hooking.exception.ErrorCode;
 import shop.hooking.hooking.repository.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -63,8 +59,8 @@ public class CopyService {
             copyRes.setIsScrap(isScrapFound ? 1 : 0);
         }
     }
-    @Transactional
 
+    @Transactional
     public void saveCrawlingData(List<CrawlingData> dataList) {
         for (CrawlingData data : dataList) {
             String text = data.getText();
@@ -134,6 +130,36 @@ public class CopyService {
         return response;
     }
 
+    public CopySearchRes brandSearchList(HttpServletRequest httpRequest, String q, int index) {
+        CopySearchRes response = new CopySearchRes();
+        List<CopySearchResult> results = new ArrayList<>();
+        Integer startIndex = index*30;
+
+        q = checkKeyword(q);
+
+        List<CopyRes> brandCopyRes = new ArrayList<>();
+        if (BrandType.containsKeyword(q)) {
+            brandCopyRes = cardJpaRepository.searchBrand(q);
+            setScrapCntWhenTokenNotProvided(httpRequest, brandCopyRes);
+            Collections.shuffle(brandCopyRes);
+            results.add(createCopySearchResult("brand", q, brandCopyRes, startIndex));
+        }
+
+        // 검색 결과가 없다면
+        if (q.isEmpty() || results.isEmpty()) {
+            response.setCode(HttpStatus.BAD_REQUEST.value());
+            response.setMessage("검색 결과를 찾을 수 없습니다.");
+            response.setData(results);
+            return response;
+        }
+
+        // 검색 결과가 있다면
+        response.setCode(HttpStatus.OK.value());
+        response.setMessage("요청에 성공하였습니다.");
+        response.setData(results);
+
+        return response;
+    }
 
     public List<CopyRes> getCopyScrapListAndSortByCreatedAt(HttpServletRequest httpRequest, int index, User user) {
         List<CopyRes> copyRes = getCopyScrapList(user);

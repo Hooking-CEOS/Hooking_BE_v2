@@ -4,7 +4,6 @@ package shop.hooking.hooking.service;
 //사용자의 정보들을 기반으로 가입 및 정보수정, 세션 저장등의 기능을 지원
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
@@ -19,7 +18,6 @@ import shop.hooking.hooking.exception.CustomException;
 import shop.hooking.hooking.exception.ErrorCode;
 import shop.hooking.hooking.repository.UserRepository;
 
-import javax.transaction.Transactional;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;

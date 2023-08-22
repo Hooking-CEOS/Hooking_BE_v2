@@ -4,8 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import shop.hooking.hooking.config.BrandType;
-import shop.hooking.hooking.config.MoodType;
 import shop.hooking.hooking.dto.CardSearchCondition;
 import shop.hooking.hooking.dto.HttpRes;
 import shop.hooking.hooking.dto.request.CopyReq;
@@ -14,12 +12,9 @@ import shop.hooking.hooking.dto.request.CrawlingReq;
 import shop.hooking.hooking.dto.response.CopyRes;
 import shop.hooking.hooking.dto.response.CopySearchRes;
 import shop.hooking.hooking.dto.response.CopySearchResult;
-import shop.hooking.hooking.entity.Brand;
 import shop.hooking.hooking.entity.Card;
 import shop.hooking.hooking.entity.Scrap;
 import shop.hooking.hooking.entity.User;
-import shop.hooking.hooking.repository.BrandRepository;
-import shop.hooking.hooking.repository.CardJpaRepository;
 import shop.hooking.hooking.repository.CardRepository;
 import shop.hooking.hooking.repository.ScrapRepository;
 import shop.hooking.hooking.service.CopyService;
@@ -33,7 +28,7 @@ import java.util.*;
 @Cacheable("copyListCache")
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/copy")
+@RequestMapping("api/v1/copy")
 public class CopyController {
 
     private final JwtTokenProvider jwtTokenProvider;
@@ -68,6 +63,24 @@ public class CopyController {
                                                         @PathVariable int index) {
         User user = jwtTokenProvider.getUserInfoByToken(httpRequest);
         CopySearchRes response = copyService.copySearchList(httpRequest, q, index);
+        List<CopySearchResult> copySearchResults = response.getData();
+        for(CopySearchResult copySearchResult : copySearchResults){
+            List<CopyRes> copyRes = copySearchResult.getData();
+            copyService.setIsScrapWithUser(user, copyRes);
+        }
+        if (response.getCode() == HttpStatus.BAD_REQUEST.value()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        } else {
+            return ResponseEntity.ok(response);
+        }
+    }
+
+    @GetMapping("/search/brand/{index}")
+    public ResponseEntity<CopySearchRes> brandSearchList(HttpServletRequest httpRequest,
+                                                        @RequestParam(name = "keyword") String q,
+                                                        @PathVariable int index) {
+        User user = jwtTokenProvider.getUserInfoByToken(httpRequest);
+        CopySearchRes response = copyService.brandSearchList(httpRequest, q, index);
         List<CopySearchResult> copySearchResults = response.getData();
         for(CopySearchResult copySearchResult : copySearchResults){
             List<CopyRes> copyRes = copySearchResult.getData();

@@ -5,7 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 import shop.hooking.hooking.entity.User;
 import java.util.Map;
-import shop.hooking.hooking.config.Role;
+import shop.hooking.hooking.config.enumtype.Role;
 
 
 @Getter

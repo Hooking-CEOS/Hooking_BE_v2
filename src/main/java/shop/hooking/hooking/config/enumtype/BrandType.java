@@ -1,4 +1,4 @@
-package shop.hooking.hooking.config;
+package shop.hooking.hooking.config.enumtype;
 
 public enum BrandType {
     FRESHIAN("프레시안"),
