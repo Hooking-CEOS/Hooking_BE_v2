@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 
@@ -44,7 +45,7 @@ public class CopyService {
     private final JwtTokenProvider jwtTokenProvider;
 
 
-    public List<CopyRes> getCopyList(HttpServletRequest httpRequest, int index, int limit) {
+    public List<CopyRes> getCopyList(HttpServletRequest httpRequest, int index) {
         User user = jwtTokenProvider.getUserInfoByToken(httpRequest);
         Long[] brandIds = {1L, 2L, 3L, 4L, 5L, 6L, 7L, 8L, 9L, 10L, 11L, 12L, 13L, 14L, 15L, 16L, 17L, 18L, 19L, 20L, 21L, 22L, 23L, 24L, 25L, 26L, 27L, 28L};
         List<CopyRes> tempCopyRes = new ArrayList<>();
@@ -53,13 +54,36 @@ public class CopyService {
             tempCopyRes.addAll(copyRes);
         }
         Collections.shuffle(tempCopyRes);
-        int startIndex = index * limit;
-        List<CopyRes> resultCopyRes = getCopyByIndex(tempCopyRes, startIndex);
+        List<CopyRes> resultCopyRes = getCopyByIndex(tempCopyRes, index);
         setScrapCnt(httpRequest, resultCopyRes);
         setIsScrap(user, resultCopyRes);
         return resultCopyRes;
     }
 
+    public List<CopyRes> getCopyByIndex(List<CopyRes> copyResList, int index) {
+        int startIndex = index * 30;
+        int endIndex = Math.min(startIndex + 30, copyResList.size());
+        return copyResList.subList(startIndex, endIndex);
+    }
+
+    public void setScrapCnt(HttpServletRequest httpRequest, List<CopyRes> copyResList) {
+        String token = httpRequest.getHeader("X-AUTH-TOKEN");
+        if (token == null) {
+            for (CopyRes copyRes : copyResList) {
+                copyRes.setScrapCnt(0);
+            }
+        }
+    }
+
+    public void setIsScrap(User user, List<CopyRes> copyResList) {
+        List<Scrap> scraps = scrapRepository.findScrapByUser(user);
+
+        for (CopyRes copyRes : copyResList) {
+            long cardId = copyRes.getId();
+            boolean isScrapFound = scraps.stream().anyMatch(scrap -> scrap.getCard().getId() == cardId);
+            copyRes.setIsScrap(isScrapFound ? 1 : 0);
+        }
+    }
 
     @Transactional
     public List<CopyRes> getTopSixCopy(Long brandId) {
@@ -74,15 +98,6 @@ public class CopyService {
         return copyResList;
     }
 
-    public void setIsScrap(User user, List<CopyRes> copyResList) {
-        List<Scrap> scraps = scrapRepository.findScrapByUser(user);
-
-        for (CopyRes copyRes : copyResList) {
-            long cardId = copyRes.getId();
-            boolean isScrapFound = scraps.stream().anyMatch(scrap -> scrap.getCard().getId() == cardId);
-            copyRes.setIsScrap(isScrapFound ? 1 : 0);
-        }
-    }
 
 
     public CopySearchRes searchCopyList(HttpServletRequest httpRequest, String q, int index) {
@@ -155,26 +170,22 @@ public class CopyService {
     }
 
 
-
     @Transactional
     public List<CopyRes> getScrapList(HttpServletRequest httpRequest, int index) {
         User user = jwtTokenProvider.getUserInfoByToken(httpRequest);
         List<Scrap> scraps = scrapRepository.findScrapByUser(user);
         List<CopyRes> scrapList = new ArrayList<>();
 
-        for (Scrap scrap : scraps) {
+        for (Scrap scrap : scraps) { //10,20,30
             CopyRes copyRes = createScrapRes(scrap);
             scrapList.add(copyRes);
-        }
-
-        int startIndex = index * 30;
-        List<CopyRes> result = getCopyByIndex(scrapList, startIndex);
-        for(CopyRes copyRes : result){
-            Scrap scrap = scrapRepository.findByUserAndCardId(user, copyRes.getId());
             copyRes.setScrapTime(scrap.getCreatedAt());
-
         }
-        Collections.sort(result);
+
+        setIsScrap(user,scrapList);
+        scrapList.sort(Comparator.comparing(CopyRes::getScrapTime).reversed()); // 최신순으로 정렬
+        List<CopyRes> result = getCopyByIndex(scrapList, index);
+
         return result;
     }
 
@@ -202,7 +213,6 @@ public class CopyService {
 
         Scrap savedScrap = scrapRepository.save(scrap);
 
-
         return savedScrap.getId();
     }
 
@@ -224,43 +234,28 @@ public class CopyService {
     @Transactional
     public CopyRes createCopyRes(Card card) {
         Long id = card.getId(); // id로 넘어옴
-
         List<Scrap> scraps = scrapRepository.findByCardId(id);
-        int length = scraps.size();
 
-        Brand brand = card.getBrand();
-        String text = card.getText();
-        String cardLink = card.getUrl();
-        Integer scrapCnt = length;
-        LocalDateTime createdAt = card.getCreatedAt();
-        return new CopyRes(id, brand,text,scrapCnt,createdAt,cardLink);
+        return CopyRes.builder()
+                .id(id)
+                .brand(card.getBrand())
+                .text(card.getText())
+                .scrapCnt(scraps.size())
+                .createdAt(card.getCreatedAt())
+                .cardLink(card.getUrl())
+                .build();
     }
 
 
-
-    public void setScrapCnt(HttpServletRequest httpRequest, List<CopyRes> copyResList) {
-        String token = httpRequest.getHeader("X-AUTH-TOKEN");
-        if (token == null) {
-            for (CopyRes copyRes : copyResList) {
-                copyRes.setScrapCnt(0);
-            }
-        }
-    }
-
-
-    public List<CopyRes> getCopyByIndex(List<CopyRes> copyResList, int startIndex) {
-        int endIndex = Math.min(startIndex + 30, copyResList.size());
-        return copyResList.subList(startIndex, endIndex);
-    }
 
 
     public CopySearchResult createCopySearchResult(String type, String keyword, List<CopyRes> copyResList, int index) {
-        CopySearchResult result = new CopySearchResult();
-        result.setType(type);
-        result.setKeyword(keyword);
-        result.setTotalNum(copyResList.size());
-        result.setData(getCopyByIndex(copyResList, index));
-        return result;
+        return CopySearchResult.builder()
+                .type(type)
+                .keyword(keyword)
+                .totalNum(copyResList.size())
+                .data(getCopyByIndex(copyResList, index))
+                .build();
     }
 
 
@@ -270,21 +265,22 @@ public class CopyService {
         Long id = scrap.getCard().getId();
 
         List<Scrap> scraps = scrapRepository.findByCardId(id);
-        int length = scraps.size();
 
-        Brand brand = scrap.getCard().getBrand();
-        String text = scrap.getCard().getText();
-        String cardLink = scrap.getCard().getUrl();
-        Integer scrapCnt = length;
-        LocalDateTime createdAt = scrap.getCard().getCreatedAt();
-        return new CopyRes(id, brand,text,scrapCnt,createdAt,cardLink);
+        return CopyRes.builder()
+                .id(id)
+                .brand(scrap.getCard().getBrand())
+                .text(scrap.getCard().getText())
+                .scrapCnt(scraps.size())
+                .createdAt(scrap.getCard().getCreatedAt())
+                .cardLink(scrap.getCard().getUrl())
+
+                .build();
     }
 
     public List<CopyRes> getCopyFilter(HttpServletRequest httpRequest, int index, CardSearchCondition condition) {
         User user = jwtTokenProvider.getUserInfoByToken(httpRequest);
         List<CopyRes> result = cardJpaRepository.filter(condition);
-        int startIndex = index * 30;
-        result = getCopyByIndex(result, startIndex);
+        result = getCopyByIndex(result, index);
         setScrapCnt(httpRequest, result);
         setIsScrap(user,result);
         return result;
@@ -294,18 +290,15 @@ public class CopyService {
     public void saveCrawlingData(CrawlingReq crawlingReq) {
         List<CrawlingData> dataList = crawlingReq.getData();
         for (CrawlingData data : dataList) {
-            String text = data.getText();
-            String url = data.getUrl();
-            LocalDateTime createdAt = data.getCreatedAt();
             Long brandId = data.getBrandId();
-
             Brand brand = brandRepository.findBrandById(brandId);
 
-            Card card = new Card();
-            card.setText(text);
-            card.setCreatedAt(createdAt);
-            card.setBrand(brand);
-            card.setUrl(url);
+            Card card = Card.builder()
+                    .text(data.getText())
+                    .createdAt(data.getCreatedAt())
+                    .brand(brand)
+                    .url(data.getUrl())
+                    .build();
 
             cardRepository.save(card);
         }

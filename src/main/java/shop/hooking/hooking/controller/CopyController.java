@@ -30,7 +30,7 @@ public class CopyController {
     @Operation(summary = "전체 카피라이팅 조회하기")
     @GetMapping("/{index}")
     public ResponseEntity<List<CopyRes>> getCopyList(HttpServletRequest httpRequest, @PathVariable int index) {
-        return ResponseEntity.ok(copyService.getCopyList(httpRequest,index,30));
+        return ResponseEntity.ok(copyService.getCopyList(httpRequest,index));
     }
 
 
@@ -46,8 +46,7 @@ public class CopyController {
     @Operation(summary = "카피라이팅 스크랩 조회하기")
     @GetMapping("/scrap/{index}")
     public ResponseEntity<List<CopyRes>> getScrapList(HttpServletRequest httpRequest, @PathVariable int index) {
-        List<CopyRes> result = copyService.getScrapList(httpRequest,index);
-        return ResponseEntity.ok(result);
+        return ResponseEntity.ok(copyService.getScrapList(httpRequest,index));
     }
 
 
@@ -66,16 +65,14 @@ public class CopyController {
     @Operation(summary = "스크랩 하기")
     @PostMapping("/scrap")
     public ResponseEntity<?> createScrap(HttpServletRequest httpRequest, @RequestBody CopyReq copyReq) {
-        Long scrapId = copyService.createScrap(httpRequest,copyReq);
-        return new ResponseEntity<>(scrapId, HttpStatus.OK);
+        return ResponseEntity.ok(copyService.createScrap(httpRequest,copyReq));
     }
 
 
     @Operation(summary = "스크랩 취소하기")
     @PostMapping ("/scrap/cancle")
     public ResponseEntity<?> deleteScrap(HttpServletRequest httpRequest, @RequestBody CopyReq copyReq){
-        Long scrapId = copyService.deleteScrap(httpRequest,copyReq);
-        return new ResponseEntity<>(scrapId, HttpStatus.OK);
+        return ResponseEntity.ok(copyService.deleteScrap(httpRequest,copyReq));
 
     }
 
