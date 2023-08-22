@@ -1,12 +1,17 @@
 package shop.hooking.hooking.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PathVariable;
 import shop.hooking.hooking.dto.CardSearchCondition;
+import shop.hooking.hooking.dto.HttpRes;
 import shop.hooking.hooking.dto.response.BrandRes;
 import shop.hooking.hooking.dto.response.CopyRes;
 import shop.hooking.hooking.dto.response.ReviewRes;
 import shop.hooking.hooking.entity.*;
+import shop.hooking.hooking.exception.error.CardNotFoundException;
 import shop.hooking.hooking.repository.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -16,11 +21,15 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static shop.hooking.hooking.exception.ErrorCode.*;
+
 
 @Service
 @RequiredArgsConstructor
 @Transactional
 public class BrandService {
+
+    private final JwtTokenProvider jwtTokenProvider;
 
     private final BrandRepository brandRepository;
 
@@ -135,21 +144,25 @@ public class BrandService {
         }
     }
 
-//    public boolean followBrand(Long brandId, User user){
-//
-//        Brand brand = brandRepository.findBrandById(brandId);
-//
-//        if(followRepository.existsByBrandAndUser(brand, user)){
-//            return false;
-//        }
-//
-//        Follow follow =Follow.builder()
-//                .brand(brand)
-//                .user(user)
-//                .build();
-//        followRepository.save(follow); // 데이터베이스에 저장
-//
-//        return true;
-//    }
+    public BrandRes.BrandDetailDto getBrandDetail(HttpServletRequest httpRequest, Long brand_id, int index) {
+        User user = jwtTokenProvider.getUserInfoByToken(httpRequest);
+        BrandRes.BrandDetailDto brandDetailDto = getOneBrand(brand_id);
+
+        List<BrandRes.cardDto> cards = brandDetailDto.getCard();
+
+        int startIndex = index * 30;
+        List<BrandRes.cardDto> resultCards = getLimitedCardsByIndex(cards, startIndex);
+
+        if (resultCards.isEmpty()) {
+            throw new CardNotFoundException();
+        }
+
+        brandDetailDto.setCard(resultCards);
+
+        setIsScrapWithUser(user, resultCards);
+        setScrapCntWhenTokenNotProvided(httpRequest, resultCards);
+
+        return brandDetailDto;
+    }
 
 }

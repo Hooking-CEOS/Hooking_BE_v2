@@ -59,7 +59,7 @@ public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
 
 
-            .antMatchers("**/oath-processor/**","/kakaologin","/copy/{index}", "/copy/search/{index}","copy/search/brand/{index}","/copy/filter/{index}","/copy/crawling", "/brand", "/brand/{brand_id}/{index}","/example/login"
+            .antMatchers("**/oath-processor/**","/kakaologin","/api/v1/copy/{index}", "/api/v1/copy/search/{index}","/api/v1/copy/search/brand/{index}","/api/v1/copy/filter/{index}","/api/v1/copy/crawling", "/api/v1/brand", "/api/v1/brand/{brand_id}/{index}","/example/login"
                     ).permitAll()
 
             .anyRequest().authenticated()

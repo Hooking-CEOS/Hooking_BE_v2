@@ -15,6 +15,7 @@ public enum ErrorCode implements BaseErrorCode{
     //400 BAD_REQUEST : 잘못된 요청
     CANNOT_EMPTY_CONTENT(BAD_REQUEST, "COPY_400_1","내용이 비어있을 수 없습니다."),
     INVALID_VALUE(BAD_REQUEST, "ADMIN_400_1","올바르지 않은 값입니다."),
+    CANNOT_DUPLICATE_SCRAP(BAD_REQUEST, "SCRAP_400_1","중복 스크랩이 불가합니다."),
 
     //403 FORBIDDEN : 권한 없음
     USER_UNAUTHORIZED(UNAUTHORIZED,"USER_403_1", "로그인이 필요한 서비스입니다."),
@@ -22,7 +23,7 @@ public enum ErrorCode implements BaseErrorCode{
 
     //404 NOT_FOUND : Resource를 찾을 수 없음
     USER_NOT_FOUND(NOT_FOUND,"USER_404_1", "해당 유저 정보를 찾을 수 없습니다."),
-    COPY_NOT_FOUND(NOT_FOUND, "COPY_404_1","해당 결과를 찾을 수 없습니다."),
+    CARD_NOT_FOUND(NOT_FOUND, "COPY_404_1","해당 결과를 찾을 수 없습니다."),
     SCRAP_NOT_FOUND(NOT_FOUND,"SCRAP_404_1", "해당 스크랩을 찾을 수 없습니다."),
     OUT_OF_INDEX(NOT_FOUND,"COPY_404_2", "허용가능한 인덱스 범위를 넘었습니다."),
 
