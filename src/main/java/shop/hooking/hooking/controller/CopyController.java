@@ -1,7 +1,7 @@
 package shop.hooking.hooking.controller;
 
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.tags.Tag;
+//import io.swagger.v3.oas.annotations.Operation;
+//import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,29 +12,33 @@ import shop.hooking.hooking.dto.request.CrawlingReq;
 import shop.hooking.hooking.dto.response.CopyRes;
 import shop.hooking.hooking.dto.response.CopySearchRes;
 import shop.hooking.hooking.service.CopyService;
-import springfox.documentation.annotations.Cacheable;
+//import springfox.documentation.annotations.Cacheable;
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 
-@Cacheable("copyListCache")
+//@Cacheable("copyListCache")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/copy")
-@Tag(name = "Copy")
+//@Tag(name = "Copy")
 public class CopyController {
 
     private final CopyService copyService;
 
-    
-    
-    @Operation(summary = "전체 카피라이팅 조회하기")
+
+    //@Operation(summary = "전체 카피라이팅 조회하기")
     @GetMapping("/{index}")
     public ResponseEntity<List<CopyRes>> getCopyList(HttpServletRequest httpRequest, @PathVariable int index) {
-        return ResponseEntity.ok(copyService.getCopyList(httpRequest,index));
+        try {
+            List<CopyRes> copyResList = copyService.getCopyList(httpRequest, index);
+            return ResponseEntity.ok(copyResList);
+        } catch (IllegalArgumentException ex) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
     }
 
 
-    @Operation(summary = "카피라이팅 검색하기")
+    //@Operation(summary = "카피라이팅 검색하기")
     @GetMapping("/search/{index}")
     public ResponseEntity<CopySearchRes> searchCopyList(HttpServletRequest httpRequest,
                                                         @RequestParam(name = "keyword") String q,
@@ -43,14 +47,14 @@ public class CopyController {
     }
 
 
-    @Operation(summary = "카피라이팅 스크랩 조회하기")
+    //@Operation(summary = "카피라이팅 스크랩 조회하기")
     @GetMapping("/scrap/{index}")
     public ResponseEntity<List<CopyRes>> getScrapList(HttpServletRequest httpRequest, @PathVariable int index) {
         return ResponseEntity.ok(copyService.getScrapList(httpRequest,index));
     }
 
 
-    @Operation(summary = "카피라이팅 필터링")
+    //@Operation(summary = "카피라이팅 필터링")
     @GetMapping("/filter/{index}")
     public ResponseEntity<List<CopyRes>> getCopyFilter(HttpServletRequest httpRequest, @PathVariable int index, CardSearchCondition condition) {
         List<CopyRes> result = copyService.getCopyFilter(httpRequest, index, condition);
@@ -62,14 +66,14 @@ public class CopyController {
     }
 
 
-    @Operation(summary = "스크랩 하기")
+    //@Operation(summary = "스크랩 하기")
     @PostMapping("/scrap")
     public ResponseEntity<?> createScrap(HttpServletRequest httpRequest, @RequestBody CopyReq copyReq) {
         return ResponseEntity.ok(copyService.createScrap(httpRequest,copyReq));
     }
 
 
-    @Operation(summary = "스크랩 취소하기")
+    //@Operation(summary = "스크랩 취소하기")
     @PostMapping ("/scrap/cancle")
     public ResponseEntity<?> deleteScrap(HttpServletRequest httpRequest, @RequestBody CopyReq copyReq){
         return ResponseEntity.ok(copyService.deleteScrap(httpRequest,copyReq));
@@ -77,7 +81,7 @@ public class CopyController {
     }
 
 
-    @Operation(summary = "카피라이팅 크롤링")
+    //@Operation(summary = "카피라이팅 크롤링")
     @PostMapping("/crawling")
     public ResponseEntity<?> createCrawling(@RequestBody CrawlingReq crawlingReq) {
         copyService.saveCrawlingData(crawlingReq);

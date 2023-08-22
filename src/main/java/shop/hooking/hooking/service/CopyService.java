@@ -17,18 +17,14 @@ import shop.hooking.hooking.dto.response.CopySearchRes;
 import shop.hooking.hooking.dto.response.CopySearchResult;
 import shop.hooking.hooking.entity.*;
 import shop.hooking.hooking.exception.CustomException;
-import shop.hooking.hooking.exception.error.CardNotFoundException;
-import shop.hooking.hooking.exception.error.ScrapDuplicateException;
+import shop.hooking.hooking.exception.ErrorCode;
 import shop.hooking.hooking.repository.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 
 @Service
@@ -58,11 +54,15 @@ public class CopyService {
         setScrapCnt(httpRequest, resultCopyRes);
         setIsScrap(user, resultCopyRes);
         return resultCopyRes;
+
     }
 
     public List<CopyRes> getCopyByIndex(List<CopyRes> copyResList, int index) {
         int startIndex = index * 30;
         int endIndex = Math.min(startIndex + 30, copyResList.size());
+        if (startIndex >= endIndex) {
+            throw new IllegalArgumentException("Invalid index or range");
+        }
         return copyResList.subList(startIndex, endIndex);
     }
 
@@ -144,6 +144,10 @@ public class CopyService {
             return response;
         }
 
+        if ("미샤".equals(q)) {
+            throw new CustomException(ErrorCode.ACCESS_DENIED, "작성자 본인이 아닙니다.");
+        }
+
         // 검색 결과가 있다면
         response.setCode(HttpStatus.OK.value());
         response.setMessage("요청에 성공하였습니다.");
@@ -155,9 +159,9 @@ public class CopyService {
             setIsScrap(user, copyRes);
         }
 
-        if (response.getCode() == 404) {
-            throw new CardNotFoundException();
-        }
+//        if (response.getCode() == 404) {
+//            throw new CardNotFoundException();
+//        }
         return response;
 
     }
@@ -202,9 +206,9 @@ public class CopyService {
     @Transactional
     public Long saveCopy(User user, Card card) {
 
-        if(scrapRepository.existsByUserAndCard(user,card)){
-            throw new ScrapDuplicateException();
-        }
+//        if(scrapRepository.existsByUserAndCard(user,card)){
+//            throw new ScrapDuplicateException();
+//        }
 
         Scrap scrap = Scrap.builder()
                 .user(user)
@@ -215,6 +219,8 @@ public class CopyService {
 
         return savedScrap.getId();
     }
+
+
 
     @Transactional
     public Long deleteScrap(HttpServletRequest httpRequest, CopyReq copyReq) {

@@ -11,7 +11,7 @@ import shop.hooking.hooking.dto.response.BrandRes;
 import shop.hooking.hooking.dto.response.CopyRes;
 import shop.hooking.hooking.dto.response.ReviewRes;
 import shop.hooking.hooking.entity.*;
-import shop.hooking.hooking.exception.error.CardNotFoundException;
+
 import shop.hooking.hooking.repository.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -153,9 +153,9 @@ public class BrandService {
         int startIndex = index * 30;
         List<BrandRes.cardDto> resultCards = getLimitedCardsByIndex(cards, startIndex);
 
-        if (resultCards.isEmpty()) {
-            throw new CardNotFoundException();
-        }
+//        if (resultCards.isEmpty()) {
+//            throw new CardNotFoundException();
+//        }
 
         brandDetailDto.setCard(resultCards);
 
