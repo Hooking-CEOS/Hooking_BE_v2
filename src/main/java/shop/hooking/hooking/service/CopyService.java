@@ -15,10 +15,7 @@ import shop.hooking.hooking.dto.response.CopyRes;
 import shop.hooking.hooking.dto.response.CopySearchRes;
 import shop.hooking.hooking.dto.response.CopySearchResult;
 import shop.hooking.hooking.entity.*;
-import shop.hooking.hooking.exception.CustomException;
-import shop.hooking.hooking.exception.DuplicateScrapException;
-import shop.hooking.hooking.exception.ErrorCode;
-import shop.hooking.hooking.exception.OutOfIndexException;
+import shop.hooking.hooking.exception.*;
 import shop.hooking.hooking.repository.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -97,9 +94,7 @@ public class CopyService {
         return copyResList;
     }
 
-
-
-    public CopySearchRes searchCopyList(HttpServletRequest httpRequest, String q, int index) {
+    public CopySearchRes searchBrandList(HttpServletRequest httpRequest, String q, int index){
         User user = jwtTokenProvider.getUserInfoByToken(httpRequest);
 
         CopySearchRes response = new CopySearchRes();
@@ -108,9 +103,42 @@ public class CopyService {
 
         q = checkKeyword(q);
 
+        List<CopyRes> brandCopyRes;
+
+        if(BrandType.containsKeyword(q)){
+            brandCopyRes = cardJpaRepository.searchBrand(q);
+            setScrapCnt(httpRequest, brandCopyRes);
+            Collections.shuffle(brandCopyRes);
+            results.add(createCopySearchResult("brand", q, brandCopyRes, startIndex));
+        }
+        // 검색 결과가 없다면
+        if (q.isEmpty() || results.isEmpty()) {
+            throw new CardNotFoundException();
+        }
+
+        // 검색 결과가 있다면
+        response.setCode(HttpStatus.OK.value());
+        response.setMessage("요청에 성공하였습니다.");
+        response.setData(results);
+
+        List<CopySearchResult> copySearchResults = response.getData();
+        for(CopySearchResult copySearchResult : copySearchResults){
+            List<CopyRes> copyRes = copySearchResult.getData();
+            setIsScrap(user, copyRes);
+        }
+        return response;
+
+    }
+
+    public CopySearchRes searchMoodList(HttpServletRequest httpRequest, String q, int index){
+        User user = jwtTokenProvider.getUserInfoByToken(httpRequest);
+
+        CopySearchRes response = new CopySearchRes();
+        List<CopySearchResult> results = new ArrayList<>();
+        Integer startIndex = index*30;
+
         List<CopyRes> moodCopyRes;
         List<CopyRes> textCopyRes;
-        List<CopyRes> brandCopyRes;
 
         textCopyRes = cardJpaRepository.searchCopy(q);
 
@@ -124,27 +152,10 @@ public class CopyService {
                 Collections.shuffle(textCopyRes);
                 results.add(createCopySearchResult("copy", q, textCopyRes, startIndex));
             }
-        } else if (BrandType.containsKeyword(q)) {
-            brandCopyRes = cardJpaRepository.searchBrand(q);
-            setScrapCnt(httpRequest, brandCopyRes);
-            Collections.shuffle(brandCopyRes);
-            results.add(createCopySearchResult("brand", q, brandCopyRes, startIndex));
-        } else if (!textCopyRes.isEmpty()) {
-            setScrapCnt(httpRequest, textCopyRes);
-            Collections.shuffle(textCopyRes);
-            results.add(createCopySearchResult("copy", q, textCopyRes, startIndex));
         }
-
         // 검색 결과가 없다면
         if (q.isEmpty() || results.isEmpty()) {
-            response.setCode(HttpStatus.NOT_FOUND.value());
-            response.setMessage("검색 결과를 찾을 수 없습니다.");
-            response.setData(results);
-            return response;
-        }
-
-        if ("미샤".equals(q)) {
-            throw new CustomException(ErrorCode.ACCESS_DENIED, "작성자 본인이 아닙니다.");
+            throw new CardNotFoundException();
         }
 
         // 검색 결과가 있다면
@@ -157,10 +168,45 @@ public class CopyService {
             List<CopyRes> copyRes = copySearchResult.getData();
             setIsScrap(user, copyRes);
         }
+        return response;
+    }
 
-//        if (response.getCode() == 404) {
-//            throw new CardNotFoundException();
-//        }
+
+
+    public CopySearchRes searchCopyList(HttpServletRequest httpRequest, String q, int index) {
+        User user = jwtTokenProvider.getUserInfoByToken(httpRequest);
+
+        CopySearchRes response = new CopySearchRes();
+        List<CopySearchResult> results = new ArrayList<>();
+        Integer startIndex = index*30;
+
+        List<CopyRes> moodCopyRes;
+        List<CopyRes> textCopyRes;
+        List<CopyRes> brandCopyRes;
+
+        textCopyRes = cardJpaRepository.searchCopy(q);
+
+        if (!textCopyRes.isEmpty()) {
+            setScrapCnt(httpRequest, textCopyRes);
+            Collections.shuffle(textCopyRes);
+            results.add(createCopySearchResult("copy", q, textCopyRes, startIndex));
+        }
+
+        // 검색 결과가 없다면
+        if (q.isEmpty() || results.isEmpty()) {
+            throw new CardNotFoundException();
+        }
+
+        // 검색 결과가 있다면
+        response.setCode(HttpStatus.OK.value());
+        response.setMessage("요청에 성공하였습니다.");
+        response.setData(results);
+
+        List<CopySearchResult> copySearchResults = response.getData();
+        for(CopySearchResult copySearchResult : copySearchResults){
+            List<CopyRes> copyRes = copySearchResult.getData();
+            setIsScrap(user, copyRes);
+        }
         return response;
 
     }

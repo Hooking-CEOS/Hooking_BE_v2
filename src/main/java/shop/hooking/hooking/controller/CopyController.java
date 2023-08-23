@@ -39,12 +39,28 @@ public class CopyController {
     }
 
 
-    //@Operation(summary = "카피라이팅 검색하기")
-    @GetMapping("/search/{index}")
+    //@Operation(summary = "브랜드 카피라이팅 검색하기")
+    @GetMapping("/search/brand/{index}")
+    public ResponseEntity<CopySearchRes> searchBrandList(HttpServletRequest httpRequest,
+                                                        @RequestParam(name = "keyword") String q,
+                                                        @PathVariable int index) {
+        return ResponseEntity.ok(copyService.searchBrandList(httpRequest, q, index));
+    }
+
+    //@Operation(summary = "키워드 카피라이팅 검색하기")
+    @GetMapping("/search/copy/{index}")
     public ResponseEntity<CopySearchRes> searchCopyList(HttpServletRequest httpRequest,
                                                         @RequestParam(name = "keyword") String q,
                                                         @PathVariable int index) {
         return ResponseEntity.ok(copyService.searchCopyList(httpRequest, q, index));
+    }
+
+    //@Operation(summary = "무드 카피라이팅 검색하기")
+    @GetMapping("/search/mood/{index}")
+    public ResponseEntity<CopySearchRes> searchMoodList(HttpServletRequest httpRequest,
+                                                        @RequestParam(name = "keyword") String q,
+                                                        @PathVariable int index) {
+        return ResponseEntity.ok(copyService.searchMoodList(httpRequest, q, index));
     }
 
 
