@@ -27,6 +27,7 @@ public class ResponseConstant {
     // exception
     public static final String DUPLICATE_NICKNAME = "중복된 닉네임이 존재합니다.";
     public static final String DUPLICATE_EMAIL = "중복된 이메일이 존재합니다.";
+    public static final String DUPLICATE_SCRAP = "중복된 스크랩이 존재합니다.";
     public static final String PASSWORD_NOT_MATCH = "비밀번호가 일치하지 않습니다.";
     public static final String NOTFOUND_USER = "해당 유저를 찾을 수 없습니다.";
 
@@ -77,5 +78,6 @@ public class ResponseConstant {
 
     /* SSE Exception */
     public static final String SSE_CONNECTION_FAILURE_MSG = "실시간 알림 연결에 실패했습니다.";
+    public static final String OUT_OF_INDEX = "허용가능한 인덱스 범위를 넘었습니다.";
 }
 

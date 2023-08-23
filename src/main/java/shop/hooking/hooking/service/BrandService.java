@@ -127,7 +127,7 @@ public class BrandService {
 
     public void setScrapCntWhenTokenNotProvided(HttpServletRequest httpRequest, List<BrandRes.cardDto> cardList) {
 
-        String token = httpRequest.getHeader("X-AUTH-TOKEN");
+        String token = httpRequest.getHeader("Authorization");
         if (token == null) {
             for (BrandRes.cardDto cardDto : cardList) {
                 cardDto.setScrapCnt(0);

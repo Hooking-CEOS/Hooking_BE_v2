@@ -26,7 +26,7 @@ public class Member extends BaseTimeEntity {
     @Id
     @GeneratedValue(generator = "uuid2")
     @GenericGenerator(name = "uuid2", strategy = "uuid2")
-    @Column(length = 16)
+    @Column(length = 36)
     private UUID id;
 
 /*
