@@ -1,6 +1,7 @@
 package shop.hooking.hooking.repository;
 
 
+import io.lettuce.core.dynamic.annotation.Param;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import shop.hooking.hooking.entity.Member;
@@ -13,7 +14,7 @@ public interface MemberRepository extends JpaRepository<Member, Long>{
 
 
     boolean existsByEmail(String email);
-    @Query("SELECT u FROM Member u WHERE u.email=:email")
-    Optional<Member> findByEmail(String email);
 
+
+    Optional<Member> findByEmail(@Param("email") String email);
 }
