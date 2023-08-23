@@ -114,9 +114,8 @@ public class BrandService {
      public List<BrandRes.cardDto> getLimitedCardsByIndex(List<BrandRes.cardDto> cards, int index) {
          int startIndex = index * 30;
          int endIndex = Math.min(startIndex + 30, cards.size());
-         // outofindex 에러 처리
          if (startIndex >= endIndex) {
-             throw new IllegalArgumentException("Invalid index or range");
+             throw new OutOfIndexException();
          }
          return cards.subList(startIndex, endIndex);
     }
