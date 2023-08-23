@@ -6,12 +6,12 @@ import org.springframework.http.ResponseCookie;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import shop.hooking.hooking.config.jwt.JwtTokenProvider;
 import shop.hooking.hooking.dto.request.MemberFormDto;
 import shop.hooking.hooking.dto.response.LoginInfoDto;
 import shop.hooking.hooking.entity.Member;
 import shop.hooking.hooking.exception.PasswordNotMatchedException;
 import shop.hooking.hooking.exception.UserNotFoundException;
-import shop.hooking.hooking.global.config.jwt.JwtProvider;
 import shop.hooking.hooking.repository.MemberRepository;
 
 @Service
@@ -22,7 +22,7 @@ public class MemberService {
     private final MemberRepository memberRepository;
 
     private final PasswordEncoder passwordEncoder;
-    private final JwtProvider jwtProvider;
+    private final JwtTokenProvider jwtTokenProvider;
 
 
     @Transactional
@@ -50,8 +50,8 @@ public class MemberService {
     public LoginInfoDto login(String email, String password) {
         Member member = memberRepository.findByEmail(email).orElseThrow(UserNotFoundException::new);
         checkPassword(password, member.getPassword());
-        String accessToken = jwtProvider.createAccessToken(member.getEmail(), member.getRole());
-        String refreshToken = jwtProvider.createRefreshToken(member.getEmail(), member.getRole());
+        String accessToken = jwtTokenProvider.createAccessToken(member.getEmail(), member.getRole());
+        String refreshToken = jwtTokenProvider.createRefreshToken(member.getEmail(), member.getRole());
         return new LoginInfoDto(accessToken, refreshToken, member.getNickname());
     }
 
@@ -61,8 +61,8 @@ public class MemberService {
     //accessToken 재생성하여 refreshToken과 함께 응답
     public LoginInfoDto reIssueAccessToken(String email, String refreshToken) {
         Member member = memberRepository.findByEmail(email).orElseThrow(UserNotFoundException::new);
-        jwtProvider.checkRefreshToken(email, refreshToken);
-        String accessToken = jwtProvider.createAccessToken(member.getEmail(), member.getRole());
+        jwtTokenProvider.checkRefreshToken(email, refreshToken);
+        String accessToken = jwtTokenProvider.createAccessToken(member.getEmail(), member.getRole());
         return new LoginInfoDto(accessToken, refreshToken, member.getNickname());
     }
 
@@ -94,14 +94,14 @@ public class MemberService {
     {
         Member member = memberRepository
                 .findByEmail(email).orElseThrow(UserNotFoundException::new);
-        String accessToken = jwtProvider.createAccessToken(member.getEmail(), member.getRole());
-        String refreshToken = jwtProvider.createRefreshToken(member.getEmail(), member.getRole());
+        String accessToken = jwtTokenProvider.createAccessToken(member.getEmail(), member.getRole());
+        String refreshToken = jwtTokenProvider.createRefreshToken(member.getEmail(), member.getRole());
         return new LoginInfoDto(accessToken, refreshToken, member.getNickname());
     }
 
 
     public void logout(String email, String accessToken) {
-        jwtProvider.logout(email, accessToken);
+        jwtTokenProvider.logout(email, accessToken);
     }
 
 }

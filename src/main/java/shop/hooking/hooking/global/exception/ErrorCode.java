@@ -14,7 +14,7 @@ public enum ErrorCode {
     /* Common */
     // Basic - C0**
     RUNTIME_EXCEPTION(BAD_REQUEST, "C001", "RUNTIME_EXCEPTION"),
-
+    BAD_DATE_REQUEST(BAD_REQUEST, "C1003", "BAD_DATE_REQUEST"),
 
 
     // User - U0**
