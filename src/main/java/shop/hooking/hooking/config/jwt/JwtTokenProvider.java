@@ -11,9 +11,12 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
+import shop.hooking.hooking.entity.Member;
 import shop.hooking.hooking.entity.User;
 import shop.hooking.hooking.exception.RefreshTokenExpiredException;
+import shop.hooking.hooking.exception.UserNotFoundException;
 import shop.hooking.hooking.global.redis.RedisService;
+import shop.hooking.hooking.repository.MemberRepository;
 import shop.hooking.hooking.repository.UserRepository;
 import shop.hooking.hooking.dto.response.OAuthUserRes;
 import shop.hooking.hooking.service.CustomUsersDetailsService;
@@ -35,6 +38,7 @@ public class JwtTokenProvider {
     private final UserRepository userRepository;
     private final CustomUsersDetailsService customUsersDetailsService;
     private final RedisService redisService;
+    private final MemberRepository memberRepository;
 
     @Value("${spring.jwt.secretKey}")
     private String SECRET_KEY;
@@ -160,10 +164,18 @@ public class JwtTokenProvider {
         String token = resolveToken(request);
         Authentication authentication = validateToken(request, token);
         if (authentication != null) {
+            String userEmail = getUserEmail(token);
             User user = userRepository.findMemberByKakaoId(Long.parseLong(getUserPk(token)));
-            return user;
-        }
-        else {
+            Member member = memberRepository.findByEmail(userEmail).orElse(null);
+
+            if (user != null) {
+                return user;
+            } else if (member != null) {
+                return null;
+            } else {
+                throw new UserNotFoundException();
+            }
+        } else {
             return null;
         }
     }

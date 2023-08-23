@@ -41,21 +41,6 @@ public class ResponseConstant {
     public static final String DELETE_FRIEND_SUCCESS = "성공적으로 친구 끊기가 완료되었습니다.";
     public static final String CONFLICT_SELF_FRIEND = "자기 자신과 친구를 맺을 수 없습니다.";
 
-    /* Diary */
-    public static final String DIARY_CREATE_SUCCESS = " 날짜의 다이어리가 생성되었습니다.";
-    public static final String DIARY_DELETE_SUCCESS = " 날짜의 다이어리가 삭제되었습니다.";
-    public static final String DIARY_UPDATE_SUCCESS = " 날짜의 다이어리가 저장되었습니다.";
-    public static final String DUPLICATE_DIARY = "해당 날짜에 이미 다이어리가 존재합니다.";
-    public static final String NOTFOUND_DIARY = "해당 다이어리를 찾을 수 없습니다.";
-    public static final String BAD_DATE_REQUEST = "잘못된 날짜입니다.";
-
-    // edit
-    public static final String NOTFOUND_TEMPLATE = "해당 속지를 찾을 수 없습니다.";
-    public static final String NOTFOUND_TEXT = "해당 텍스트를 찾을 수 없습니다.";
-    public static final String NOTFOUND_IMAGE = "해당 이미지를 찾을 수 없습니다.";
-    public static final String NOTFOUND_STICKER = "해당 스티커를 찾을 수 없습니다.";
-    public static final String NOTFOUND_COMMENT = "존재하지 않는 댓글입니다";
-    public static final String NOTFOUND_LIKE = "해당 다이어리의 좋아요 정보를 찾을 수 없습니다.";
 
     /* Image */
     public static final String SIZECHECK_FAILURE_IMAGE = "해당 이미지의 정보를 불러올 수 없습니다.";
@@ -77,7 +62,6 @@ public class ResponseConstant {
     public static final String REISSUE_TOKEN_SUCCESS = "토큰이 재발급되었습니다.";
 
     /* SSE Exception */
-    public static final String SSE_CONNECTION_FAILURE_MSG = "실시간 알림 연결에 실패했습니다.";
     public static final String OUT_OF_INDEX = "허용가능한 인덱스 범위를 넘었습니다.";
 }
 
