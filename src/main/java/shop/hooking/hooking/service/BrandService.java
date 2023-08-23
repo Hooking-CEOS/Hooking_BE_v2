@@ -4,7 +4,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import shop.hooking.hooking.config.jwt.JwtTokenProvider;
 import shop.hooking.hooking.dto.response.BrandRes;
+import shop.hooking.hooking.dto.response.CopyRes;
 import shop.hooking.hooking.entity.*;
+import shop.hooking.hooking.exception.*;
 
 import shop.hooking.hooking.repository.*;
 
@@ -109,9 +111,14 @@ public class BrandService {
         return brandDetailDto;
     }
 
-     public List<BrandRes.cardDto> getLimitedCardsByIndex(List<BrandRes.cardDto> cards, int startIndex) {
-        int endIndex = Math.min(startIndex + 30, cards.size());
-        return cards.subList(startIndex, endIndex);
+     public List<BrandRes.cardDto> getLimitedCardsByIndex(List<BrandRes.cardDto> cards, int index) {
+         int startIndex = index * 30;
+         int endIndex = Math.min(startIndex + 30, cards.size());
+         // outofindex 에러 처리
+         if (startIndex >= endIndex) {
+             throw new IllegalArgumentException("Invalid index or range");
+         }
+         return cards.subList(startIndex, endIndex);
     }
 
     public void setIsScrapWithUser(User user, List<BrandRes.cardDto> cardList) {
@@ -145,10 +152,6 @@ public class BrandService {
 
         int startIndex = index * 30;
         List<BrandRes.cardDto> resultCards = getLimitedCardsByIndex(cards, startIndex);
-
-//        if (resultCards.isEmpty()) {
-//            throw new CardNotFoundException();
-//        }
 
         brandDetailDto.setCard(resultCards);
 
