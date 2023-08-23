@@ -9,6 +9,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import shop.hooking.hooking.exception.BadTokenRequestException;
+import shop.hooking.hooking.exception.DuplicateEmailException;
 import shop.hooking.hooking.exception.UserNotFoundException;
 
 
@@ -61,6 +62,11 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(BadTokenRequestException.class)
     protected final ResponseEntity<ErrorResponse> handleBadTokenRequestException(BadTokenRequestException e) {
         return ErrorResponse.toErrorResponseEntity(ErrorCode.TOKEN_VALIDATE_FAILURE, e.getMessage());
+    }
+
+    @ExceptionHandler(DuplicateEmailException.class)
+    protected final ResponseEntity<ErrorResponse> handleBadTokenRequestException(DuplicateEmailException e) {
+        return ErrorResponse.toErrorResponseEntity(ErrorCode.DUPLICATE_EMAIL, e.getMessage());
     }
 
 

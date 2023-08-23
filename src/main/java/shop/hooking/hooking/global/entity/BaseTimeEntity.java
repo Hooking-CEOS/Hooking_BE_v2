@@ -21,5 +21,10 @@ public abstract class BaseTimeEntity {
 
     @LastModifiedDate
     private LocalDateTime modifiedOn;
+
+    public BaseTimeEntity() {
+        this.createdOn = LocalDateTime.now();
+        this.modifiedOn = LocalDateTime.now();
+    }
 }
 

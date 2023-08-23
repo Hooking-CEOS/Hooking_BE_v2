@@ -37,7 +37,7 @@ public class OAuthUserService implements OAuth2UserService<OAuth2UserRequest, OA
             OAuthAttributesRes attributes = OAuthAttributesRes.ofKakao(oAuth2User.getAttributes()); //회원정보 JSON 정제해서 반환
 
             Map<String, Object> newAttribute = updateAttributes(attributes);
-            User user = saveOrUpdate(attributes); //정제된 회원정보 삽입
+            User user = saveOrUpdate(attributes);
             String key = user.getRole();
 
 

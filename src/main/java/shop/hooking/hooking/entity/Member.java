@@ -7,12 +7,10 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.validator.constraints.UniqueElements;
 import shop.hooking.hooking.global.entity.BaseTimeEntity;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.UUID;
 
@@ -28,12 +26,16 @@ public class Member extends BaseTimeEntity {
     @GenericGenerator(name = "uuid2", strategy = "uuid2")
     @Column(length = 36)
     private UUID id;
+//    @Id
+//    @GeneratedValue(strategy = GenerationType.IDENTITY)
+//    private Long id;
 
 /*
     @Column(unique = true, length = 12)
     private Long uid;*/
 
     @NotNull
+    @Column(unique = true)
     private String email;
 
     @JsonIgnore
@@ -58,8 +60,8 @@ public class Member extends BaseTimeEntity {
     public void setPassword(String password) {
         this.password = password;
     }
-    public void setId(UUID uuid){
-        this.id = uuid;
+    public void setId(UUID id){
+        this.id = id;
     }
 
     //TODO : profile 연관관계 편의 메소드

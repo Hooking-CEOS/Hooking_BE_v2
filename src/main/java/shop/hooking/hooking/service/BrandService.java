@@ -4,7 +4,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import shop.hooking.hooking.config.jwt.JwtTokenProvider;
 import shop.hooking.hooking.dto.response.BrandRes;
+import shop.hooking.hooking.dto.response.CopyRes;
 import shop.hooking.hooking.entity.*;
+import shop.hooking.hooking.exception.*;
 
 import shop.hooking.hooking.repository.*;
 
@@ -67,13 +69,14 @@ public class BrandService {
         List<Card> cards = cardRepository.findCardsByBrandId(brand.getId());
         List<BrandRes.cardDto> cardDtos = new ArrayList<>();
         for(Card card : cards){
-            BrandRes.cardDto cardDto = new BrandRes.cardDto();
-            cardDto.setId(card.getId());
-            cardDto.setBrandName(card.getBrand().getBrandName());
-            cardDto.setText(card.getText());
-            cardDto.setCreatedAt(card.getCreatedAt());
-            cardDto.setScrapCnt(card.getScrapCnt());
-            cardDto.setCardLink(card.getUrl());
+            BrandRes.cardDto cardDto = BrandRes.cardDto.builder()
+                    .id(card.getId())
+                    .brandName(card.getBrand().getBrandName())
+                    .text(card.getText())
+                    .createdAt(card.getCreatedAt())
+                    .scrapCnt(card.getScrapCnt())
+                    .cardLink(card.getUrl())
+                    .build();
             cardDtos.add(cardDto);
         }
 
@@ -108,9 +111,13 @@ public class BrandService {
         return brandDetailDto;
     }
 
-     public List<BrandRes.cardDto> getLimitedCardsByIndex(List<BrandRes.cardDto> cards, int startIndex) {
-        int endIndex = Math.min(startIndex + 30, cards.size());
-        return cards.subList(startIndex, endIndex);
+     public List<BrandRes.cardDto> getLimitedCardsByIndex(List<BrandRes.cardDto> cards, int index) {
+         int startIndex = index * 30;
+         int endIndex = Math.min(startIndex + 30, cards.size());
+         if (startIndex >= endIndex) {
+             throw new OutOfIndexException();
+         }
+         return cards.subList(startIndex, endIndex);
     }
 
     public void setIsScrapWithUser(User user, List<BrandRes.cardDto> cardList) {
@@ -135,6 +142,7 @@ public class BrandService {
         }
     }
 
+
     public BrandRes.BrandDetailDto getBrandDetail(HttpServletRequest httpRequest, Long brand_id, int index) {
         User user = jwtTokenProvider.getUserInfoByToken(httpRequest);
         BrandRes.BrandDetailDto brandDetailDto = getOneBrand(brand_id);
@@ -143,10 +151,6 @@ public class BrandService {
 
         int startIndex = index * 30;
         List<BrandRes.cardDto> resultCards = getLimitedCardsByIndex(cards, startIndex);
-
-//        if (resultCards.isEmpty()) {
-//            throw new CardNotFoundException();
-//        }
 
         brandDetailDto.setCard(resultCards);
 

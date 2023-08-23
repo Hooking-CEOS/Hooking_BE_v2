@@ -8,6 +8,4 @@ import java.util.List;
 public interface MoodRepository extends JpaRepository<Mood, Long> {
 
     Mood findMoodById(Long id);
-
-    Mood findByMoodNameContaining(String q);
 }

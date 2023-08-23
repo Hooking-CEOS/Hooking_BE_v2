@@ -21,6 +21,7 @@ public class BrandController {
     @GetMapping("")
     public ResponseEntity<List<BrandRes.BrandDto>> showAllBrand() {
         return ResponseEntity.ok(brandService.getBrandList());
+
     }
 
     //브랜드 상세 조회
@@ -28,5 +29,6 @@ public class BrandController {
     public ResponseEntity<BrandRes.BrandDetailDto> getOneBrand(HttpServletRequest httpRequest, @PathVariable Long brand_id, @PathVariable int index) {
         return ResponseEntity.ok(brandService.getBrandDetail(httpRequest, brand_id, index));
     }
+
 
 }

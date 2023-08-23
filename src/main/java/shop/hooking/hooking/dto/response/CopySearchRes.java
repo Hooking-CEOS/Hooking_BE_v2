@@ -13,7 +13,4 @@ public class CopySearchRes {
     private int code;
     private String message;
     private List<CopySearchResult> data;
-
-
-    // Constructors, getters, setters, and other methods
 }
