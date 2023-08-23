@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.validator.constraints.UniqueElements;
 import shop.hooking.hooking.global.entity.BaseTimeEntity;
 
 import javax.persistence.*;
@@ -34,6 +35,7 @@ public class Member extends BaseTimeEntity {
     private Long uid;*/
 
     @NotNull
+    @Column(unique = true)
     private String email;
 
     @JsonIgnore
