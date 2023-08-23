@@ -3,11 +3,11 @@ package shop.hooking.hooking.exception;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.springframework.web.server.ResponseStatusException;
 
 @Getter
-@AllArgsConstructor
-public class CustomException extends RuntimeException {
-    private final ErrorCode errorCode;
-    private final String details;
+public class CustomException extends ResponseStatusException {
+    public CustomException(ErrorCode errorCode, String reason) {
+        super(errorCode.getHttpStatus(), reason);
+    }
 }
-

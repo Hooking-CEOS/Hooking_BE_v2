@@ -1,5 +1,4 @@
-package shop.hooking.hooking.config;
-
+package shop.hooking.hooking.config.enumtype;
 public enum MoodType {
     PURE("퓨어한"),
     GORGEOUS("화려한"),

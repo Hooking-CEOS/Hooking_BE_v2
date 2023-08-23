@@ -34,36 +34,45 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation'org.springframework.boot:spring-boot-starter-validation'
 	implementation group: 'mysql', name: 'mysql-connector-java', version: '8.0.26'
 	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
 	implementation 'org.springframework.session:spring-session-jdbc'
-	implementation group: 'io.jsonwebtoken', name: 'jjwt', version: '0.9.1'
-
-	//querydsl 추가
-	implementation "com.querydsl:querydsl-jpa:${queryDslVersion}"
-	implementation "com.querydsl:querydsl-apt:${queryDslVersion}"
-
-	//querydsl log 추가
-	//implementation 'com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.9.0'
-
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'org.springframework.boot:spring-boot-starter-data-rest'
 	compileOnly 'org.projectlombok:lombok'
+	annotationProcessor 'org.projectlombok:lombok'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	runtimeOnly 'com.microsoft.sqlserver:mssql-jdbc'
 	runtimeOnly 'mysql:mysql-connector-java'
+
+	// QUERYDSL
+	implementation "com.querydsl:querydsl-jpa:${queryDslVersion}"
+	implementation "com.querydsl:querydsl-apt:${queryDslVersion}"
+	//implementation 'com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.9.0'
+
+
+	// SECURITY
+	implementation group: 'io.jsonwebtoken', name: 'jjwt', version: '0.9.1'
+	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+	implementation 'org.springframework.boot:spring-boot-starter-data-redis-reactive'
+	implementation 'org.springframework.session:spring-session-data-redis'
+	implementation 'it.ozimov:embedded-redis:0.7.2'
+	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
+
+	// TEST
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
-	implementation 'org.springframework.session:spring-session-jdbc'
-
 	implementation group: 'com.googlecode.json-simple', name: 'json-simple', version: '1.1.1'
 
 
-	// swagger
-//	compile('io.springfox:springfox-swagger2:3.0.0')
-//	compile('io.springfox:springfox-swagger-ui:3.0.0')
-//	implementation 'io.springfox:springfox-boot-starter:3.0.0'
-//	implementation 'io.springfox:springfox-swagger-ui:3.0.0'
-	implementation group: 'io.springfox', name: 'springfox-boot-starter', version: '3.0.0'
+	// SWAGGER
+//	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.0.0'
+//	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-api:2.0.0'
+//	implementation 'org.springframework.boot:spring-boot-starter-validation'
+//	implementation group: 'io.springfox', name: 'springfox-boot-starter', version: '3.0.0'
+
 
 
 

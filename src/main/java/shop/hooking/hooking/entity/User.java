@@ -6,7 +6,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Where;
-import shop.hooking.hooking.config.Role;
+import shop.hooking.hooking.config.enumtype.Role;
 
 
 import javax.persistence.*;

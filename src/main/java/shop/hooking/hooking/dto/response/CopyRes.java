@@ -7,10 +7,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import shop.hooking.hooking.entity.Brand;
+import java.util.*;
 
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 
 @Getter
@@ -38,6 +38,7 @@ public class CopyRes implements Comparable<CopyRes>{
         this.createdAt = createdAt;
         this.cardLink = cardLink;
 
+
     }
 
     public CopyRes(Long id, Brand brand, String text, LocalDateTime createdAt,String cardLink) {
@@ -49,7 +50,12 @@ public class CopyRes implements Comparable<CopyRes>{
         this.cardLink = cardLink;
     }
 
-    //왜안됨..?
+//        this.scrapTime = scrapTime;
+//        this.isScrap = isScrap;
+
+
+
+
     @Override
     public int compareTo(CopyRes other) {
         return other.scrapTime.compareTo(this.scrapTime); // 역순으로 정렬

@@ -50,6 +50,7 @@ public class BrandRes {
         private Integer scrapCnt;
         private Integer isScrap;
         private LocalDateTime createdAt;
+
         private String cardLink;
     }
 

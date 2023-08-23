@@ -2,16 +2,14 @@ package shop.hooking.hooking.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import shop.hooking.hooking.dto.CardSearchCondition;
+import shop.hooking.hooking.config.jwt.JwtTokenProvider;
 import shop.hooking.hooking.dto.response.BrandRes;
-import shop.hooking.hooking.dto.response.CopyRes;
-import shop.hooking.hooking.dto.response.ReviewRes;
 import shop.hooking.hooking.entity.*;
+
 import shop.hooking.hooking.repository.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -21,6 +19,8 @@ import java.util.List;
 @RequiredArgsConstructor
 @Transactional
 public class BrandService {
+
+    private final JwtTokenProvider jwtTokenProvider;
 
     private final BrandRepository brandRepository;
 
@@ -73,6 +73,7 @@ public class BrandService {
             cardDto.setText(card.getText());
             cardDto.setCreatedAt(card.getCreatedAt());
             cardDto.setScrapCnt(card.getScrapCnt());
+            cardDto.setCardLink(card.getUrl());
             cardDtos.add(cardDto);
         }
 
@@ -134,31 +135,26 @@ public class BrandService {
         }
     }
 
-    public void setIsScrapWithUser1(User user, List<BrandRes.cardDto> cardList) {
-        List<Scrap> scraps = scrapRepository.findScrapByUser(user);
 
-        // cardList의 id와 scraps의 card_id를 비교하여 isScrap 값을 설정
-        for (BrandRes.cardDto cardDto : cardList) {
-            long cardId = cardDto.getId();
-            boolean isScrapFound = scraps.stream().anyMatch(scrap -> scrap.getCard().getId() == cardId);
-            cardDto.setIsScrap(isScrapFound ? 1 : 0);
-        }
-    }
-//    public boolean followBrand(Long brandId, User user){
-//
-//        Brand brand = brandRepository.findBrandById(brandId);
-//
-//        if(followRepository.existsByBrandAndUser(brand, user)){
-//            return false;
+    public BrandRes.BrandDetailDto getBrandDetail(HttpServletRequest httpRequest, Long brand_id, int index) {
+        User user = jwtTokenProvider.getUserInfoByToken(httpRequest);
+        BrandRes.BrandDetailDto brandDetailDto = getOneBrand(brand_id);
+
+        List<BrandRes.cardDto> cards = brandDetailDto.getCard();
+
+        int startIndex = index * 30;
+        List<BrandRes.cardDto> resultCards = getLimitedCardsByIndex(cards, startIndex);
+
+//        if (resultCards.isEmpty()) {
+//            throw new CardNotFoundException();
 //        }
-//
-//        Follow follow =Follow.builder()
-//                .brand(brand)
-//                .user(user)
-//                .build();
-//        followRepository.save(follow); // 데이터베이스에 저장
-//
-//        return true;
-//    }
+
+        brandDetailDto.setCard(resultCards);
+
+        setIsScrapWithUser(user, resultCards);
+        setScrapCntWhenTokenNotProvided(httpRequest, resultCards);
+
+        return brandDetailDto;
+    }
 
 }

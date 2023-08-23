@@ -1,4 +1,4 @@
-package shop.hooking.hooking.config;
+package shop.hooking.hooking.config.enumtype;
 
 
 import lombok.AllArgsConstructor;

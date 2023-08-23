@@ -1,11 +1,11 @@
-package shop.hooking.hooking.config;
+package shop.hooking.hooking.config.jwt;
 
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
-import shop.hooking.hooking.service.JwtTokenProvider;
+import shop.hooking.hooking.config.jwt.JwtTokenProvider;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
