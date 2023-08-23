@@ -11,6 +11,7 @@ import shop.hooking.hooking.dto.request.CopyReq;
 import shop.hooking.hooking.dto.request.CrawlingReq;
 import shop.hooking.hooking.dto.response.CopyRes;
 import shop.hooking.hooking.dto.response.CopySearchRes;
+import shop.hooking.hooking.exception.OutOfIndexException;
 import shop.hooking.hooking.service.CopyService;
 //import springfox.documentation.annotations.Cacheable;
 import javax.servlet.http.HttpServletRequest;
@@ -33,7 +34,7 @@ public class CopyController {
             List<CopyRes> copyResList = copyService.getCopyList(httpRequest, index);
             return ResponseEntity.ok(copyResList);
         } catch (IllegalArgumentException ex) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+            throw new OutOfIndexException();
         }
     }
 

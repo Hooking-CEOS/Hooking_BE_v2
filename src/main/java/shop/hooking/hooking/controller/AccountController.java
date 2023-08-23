@@ -21,14 +21,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 
-/*
-        1. 로그인하면 access 토큰과 refresh 토큰을 발급 받는다. refresh 토큰은 redis에 저장된다.
-        2. 요청을 보낼 때마다 헤더(X-AUTH-TOKEN)에 액세스 토큰을 담아서 보낸다.
-        3. Access 토큰이 만료(expired)되었으면, Access 토큰과 Refresh 토큰을 함께 보내서 토큰 재발급을 요청한다.
-        4. 기간만 만료된 유효한 access 토큰이고, redis에 저장된 refresh 토큰과 같으면서 유효한 refresh 토큰이면, 1번 과정처럼 aceess 토큰과 refresh 토큰을 재발급 받는다.
-        5. 유효하지않은 refresh 토큰이라면, 재로그인 요청을 받는다.
- */
-@RequestMapping(value = "/auth")
+@RequestMapping(value = "/api/v1/auth")
 @RestController
 @RequiredArgsConstructor
 public class AccountController {
@@ -36,7 +29,7 @@ public class AccountController {
     private final MemberService memberService;
     private final PasswordEncoder passwordEncoder;
 
-
+    //@Operation(summary = "일반 회원가입하기")
     @PostMapping("/signup")
     public ResponseEntity<String> signup(@Valid @RequestBody MemberFormDto memberFormDto) {
         memberService.signup(memberFormDto);
@@ -45,6 +38,7 @@ public class AccountController {
 
 
 
+    //@Operation(summary = "일반 로그인하기")
     @PostMapping("/login")
     public ResponseEntity<LoginResDto> login(@RequestBody LoginFormDto loginDto) {
         LoginInfoDto loginInfoDto = memberService.login(loginDto.getEmail(), loginDto.getPassword());

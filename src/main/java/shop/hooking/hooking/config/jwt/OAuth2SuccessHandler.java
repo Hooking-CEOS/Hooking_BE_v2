@@ -48,7 +48,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         log.info("OAuth2User = {}", oAuth2User);
         String targetUrl;
         log.info("토큰 발행 시작");
-        String token = jwtTokenProvider.createJwtAccessToken(oAuth2User.getAttribute("id").toString(), role); //토큰발행
+        String token = jwtTokenProvider.createOauthAccessToken(oAuth2User.getAttribute("id").toString(), role); //토큰발행
         log.info("{}", token);
 
         String referer = request.getHeader("Referer");

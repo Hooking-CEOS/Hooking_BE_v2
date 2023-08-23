@@ -16,7 +16,9 @@ import shop.hooking.hooking.dto.response.CopySearchRes;
 import shop.hooking.hooking.dto.response.CopySearchResult;
 import shop.hooking.hooking.entity.*;
 import shop.hooking.hooking.exception.CustomException;
+import shop.hooking.hooking.exception.DuplicateScrapException;
 import shop.hooking.hooking.exception.ErrorCode;
+import shop.hooking.hooking.exception.OutOfIndexException;
 import shop.hooking.hooking.repository.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -64,7 +66,7 @@ public class CopyService {
     }
 
     public void setScrapCnt(HttpServletRequest httpRequest, List<CopyRes> copyResList) {
-        String token = httpRequest.getHeader("X-AUTH-TOKEN");
+        String token = httpRequest.getHeader("Authorization");
         if (token == null) {
             for (CopyRes copyRes : copyResList) {
                 copyRes.setScrapCnt(0);
@@ -194,10 +196,20 @@ public class CopyService {
     public Long createScrap(HttpServletRequest httpRequest, CopyReq copyReq) {
         User user = jwtTokenProvider.getUserInfoByToken(httpRequest);
         Card card = cardRepository.findCardById(copyReq.getCardId());
+
+        if (hasScrapped(user, card)) {
+            throw new DuplicateScrapException();
+        }
+
         Long cardId = card.getId();
         saveCopy(user, card);
 
         return cardId;
+    }
+
+    private boolean hasScrapped(User user, Card card) {
+        Scrap existingScrap = scrapRepository.findByUserAndCard(user, card);
+        return existingScrap != null;
     }
 
     @Transactional

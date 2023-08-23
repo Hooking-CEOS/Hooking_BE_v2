@@ -9,6 +9,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 import shop.hooking.hooking.entity.User;
 import shop.hooking.hooking.exception.RefreshTokenExpiredException;
@@ -49,7 +50,7 @@ public class JwtTokenProvider {
     }
 
     // JWT token 생성
-    public String createJwtAccessToken(String userPk, String roles) {
+    public String createOauthAccessToken(String userPk, String roles) {
         Claims claims = Jwts.claims().setSubject(userPk);
         claims.put("roles", roles);  // 권한 설정, key/ value 쌍으로 저장
         Date now = new Date(); // 현재 시간 -> 유효기간 확인을 위함
@@ -66,6 +67,15 @@ public class JwtTokenProvider {
         return this.createToken(userId, roles, tokenInvalidTime);
     }
 
+
+    public String createRefreshToken(String userId, String roles) {
+        Long tokenInvalidTime = 1000L * 60 * 60 * 24; // 1d
+        String refreshToken = this.createToken(userId, roles, tokenInvalidTime);
+        //refresh token은 redis에 저장
+        redisService.setValues(userId, refreshToken, Duration.ofMillis(tokenInvalidTime));
+        return refreshToken;
+    }
+
     public String createToken(String userId, String roles, Long tokenInvalidTime) {
         //user 구분을 위해 user pk 값 넣어줌
         Claims claims = Jwts.claims().setSubject(userId); // claims 생성 및 payload 설정
@@ -79,62 +89,8 @@ public class JwtTokenProvider {
                 .compact();
     }
 
-    public String createRefreshToken(String userId, String roles) {
-        Long tokenInvalidTime = 1000L * 60 * 60 * 24; // 1d
-        String refreshToken = this.createToken(userId, roles, tokenInvalidTime);
-        //refresh token은 redis에 저장
-        redisService.setValues(userId, refreshToken, Duration.ofMillis(tokenInvalidTime));
-        return refreshToken;
-    }
 
-
-    public Authentication getAuthentication(String token) {
-        User user = userRepository.findMemberByKakaoId(Long.parseLong(getUserPk(token)));
-        OAuthUserRes resDTO = OAuthUserRes.builder().user(user).build();
-        return new UsernamePasswordAuthenticationToken(resDTO, "", resDTO.getAuthorities());
-    }
-
-    private Authentication getAuthentication2(String token) {
-        UserDetails userDetails = customUsersDetailsService.loadUserByUsername(getUserEmail(token));
-        return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
-    }
-
-
-    // jwt에서 회원정보 추출
-    public String getUserPk(String token){
-        return Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(token).getBody().getSubject();
-    }
-
-    // HTTP 요청 안에서 헤더 찾아서 토큰 가져옴
-    public String resolveToken(HttpServletRequest request){
-            return request.getHeader("X-AUTH-TOKEN");
-    }
-
-    // 토큰 유효성 + 만료일자 확인
-    public boolean validateToken(String jwtToken, HttpServletRequest request) {
-        try {
-            Jws<Claims> claims = Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(jwtToken);
-            return !claims.getBody().getExpiration().before(new Date()); // 유효하면 return
-        } catch (SignatureException e){
-            System.out.println("Invalid Signature");
-            return false; //유효하지 않은 경우
-        } catch (MalformedJwtException e){
-            System.out.println("Invalid JWT");
-            return false; //유효하지 않은 경우
-        } catch (ExpiredJwtException e){
-            System.out.println("Expired JWT");
-            return false; //유효하지 않은 경우
-        } catch (UnsupportedJwtException e){
-            System.out.println("Unsupported Excepton");
-            return false; //유효하지 않은 경우
-        } catch (IllegalArgumentException e){
-            System.out.println("Empty JWT Claims string");
-            return false; //유효하지 않은 경우
-        }
-
-    }
-
-    public Authentication validateToken2(HttpServletRequest request, String token) {
+    public Authentication validateToken(HttpServletRequest request, String token) {
         String exception = "exception";
         try {
             String expiredAT = redisService.getValues(blackListATPrefix + token);
@@ -154,22 +110,56 @@ public class JwtTokenProvider {
     }
 
 
-
-    public OAuthUserRes getKakaoInfo(HttpServletRequest request) {
-        String token = resolveToken(request);
-        if(validateToken(token,request)) {
+    public Authentication getAuthentication(String token) {
+        if (userDetailsExists(token)) { //일반로그인
+            UserDetails userDetails = customUsersDetailsService.loadUserByUsername(getUserEmail(token));
+            return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
+        } else { //소셜로그인
             User user = userRepository.findMemberByKakaoId(Long.parseLong(getUserPk(token)));
-            return new OAuthUserRes(user);
+            OAuthUserRes resDTO = OAuthUserRes.builder().user(user).build();
+            return new UsernamePasswordAuthenticationToken(resDTO, "", resDTO.getAuthorities());
         }
-        else {
-            return null;
+    }
+
+    private boolean userDetailsExists(String token) {
+        try {
+            UserDetails userDetails = customUsersDetailsService.loadUserByUsername(getUserEmail(token));
+            return userDetails != null;
+        } catch (UsernameNotFoundException ex) {
+            return false;
         }
     }
 
 
+
+    // jwt에서 회원정보 추출
+    public String getUserPk(String token){
+        return Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(token).getBody().getSubject();
+    }
+
+     //HTTP 요청 안에서 헤더 찾아서 토큰 가져옴
+    public String resolveToken(HttpServletRequest request){
+            return request.getHeader("Authorization");
+    }
+
+
+//    public OAuthUserRes getKakaoInfo(HttpServletRequest request) {
+//        String token = resolveToken(request);
+//        Authentication authentication = validateToken(request, token);
+//        if (authentication != null){
+//            User user = userRepository.findMemberByKakaoId(Long.parseLong(getUserPk(token)));
+//            return new OAuthUserRes(user);
+//        }
+//        else {
+//            return null;
+//        }
+//    }
+
+
     public User getUserInfoByToken(HttpServletRequest request) {
         String token = resolveToken(request);
-        if(validateToken(token,request)) {
+        Authentication authentication = validateToken(request, token);
+        if (authentication != null) {
             User user = userRepository.findMemberByKakaoId(Long.parseLong(getUserPk(token)));
             return user;
         }
@@ -190,7 +180,7 @@ public class JwtTokenProvider {
         }
     }
 
-    // access 토큰 만료시간을 체크 후,redis에 (blacklist) + accessToken, 계정, 만료기간을이 담긴
+    // access 토큰 만료시간을 체크 후, redis에 (blacklist) + accessToken, 계정, 만료기간을이 담긴
     // ValueOperation을 만들어 redis에 저장한다.
     // redis에서 유저 refreshtoken 값을 삭제한다
     public void logout(String userId, String accessToken) {
