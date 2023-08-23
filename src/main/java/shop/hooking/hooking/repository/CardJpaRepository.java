@@ -65,7 +65,8 @@ public class CardJpaRepository {
                         card.brand,
                         card.text,
                         card.scrapCnt,
-                        card.createdAt))
+                        card.createdAt,
+                        card.url))
                 .from(card)
                 .leftJoin(card.brand, brand)
                 .leftJoin(have)
@@ -91,7 +92,8 @@ public class CardJpaRepository {
                         card.brand,
                         card.text,
                         card.scrapCnt,
-                        card.createdAt))
+                        card.createdAt,
+                        card.url))
                 .from(card)
                 .leftJoin(card.brand, brand)
                 .leftJoin(have)
@@ -110,7 +112,8 @@ public class CardJpaRepository {
                         card.brand,
                         card.text,
                         card.scrapCnt,
-                        card.createdAt))
+                        card.createdAt,
+                        card.url))
                 .from(card)
                 .where(textContainsQ)
                 .fetch();
@@ -125,7 +128,8 @@ public class CardJpaRepository {
                         card.brand,
                         card.text,
                         card.scrapCnt,
-                        card.createdAt))
+                        card.createdAt,
+                        card.url))
                 .from(card)
                 .leftJoin(card.brand, brand)
                 .where(brandContainsQ)

@@ -47,6 +47,7 @@ public class CopyController {
 
 
 
+
     // 전체 카피라이팅 조회
     // 페이지네이션
     @GetMapping("/{index}")
@@ -54,7 +55,7 @@ public class CopyController {
         User user = jwtTokenProvider.getUserInfoByToken(httpRequest);
         int limit = 30;
         List<CopyRes> resultCopyRes = copyService.getCopyListFromBrandsAndSetScrapCnt(httpRequest,index,limit);
-        copyService.setIsScrapWithUser2(user, resultCopyRes);
+        copyService.setIsScrapWithUser(user, resultCopyRes);
         return ResponseEntity.ok(new HttpRes<>(resultCopyRes));
 
     }
@@ -70,7 +71,7 @@ public class CopyController {
         List<CopySearchResult> copySearchResults = response.getData();
         for(CopySearchResult copySearchResult : copySearchResults){
             List<CopyRes> copyRes = copySearchResult.getData();
-            copyService.setIsScrapWithUser2(user, copyRes);
+            copyService.setIsScrapWithUser(user, copyRes);
         }
         if (response.getCode() == HttpStatus.BAD_REQUEST.value()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
@@ -137,7 +138,7 @@ public class CopyController {
         if (resultCopyRes.isEmpty()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
-        copyService.setIsScrapWithUser2(user,resultCopyRes);
+        copyService.setIsScrapWithUser(user,resultCopyRes);
         return ResponseEntity.status(HttpStatus.OK).body(resultCopyRes);
     }
 

@@ -10,7 +10,6 @@ import shop.hooking.hooking.config.MoodType;
 import shop.hooking.hooking.dto.CardSearchCondition;
 import shop.hooking.hooking.dto.request.CopyReq;
 import shop.hooking.hooking.dto.request.CrawlingData;
-import shop.hooking.hooking.dto.response.BrandRes;
 import shop.hooking.hooking.dto.response.CopyRes;
 import shop.hooking.hooking.dto.response.CopySearchRes;
 import shop.hooking.hooking.dto.response.CopySearchResult;
@@ -224,9 +223,10 @@ public class CopyService {
 
         Brand brand = card.getBrand();
         String text = card.getText();
+        String cardLink = card.getUrl();
         Integer scrapCnt = length;
         LocalDateTime createdAt = card.getCreatedAt();
-        return new CopyRes(id, brand,text,scrapCnt,createdAt);
+        return new CopyRes(id, brand,text,scrapCnt,createdAt,cardLink);
     }
 
     public List<CopyRes> getCopyListFromBrandsAndSetScrapCnt(HttpServletRequest httpRequest, int index, int limit) {
@@ -288,15 +288,17 @@ public class CopyService {
 
         Brand brand = scrap.getCard().getBrand();
         String text = scrap.getCard().getText();
+        String cardLink = scrap.getCard().getUrl();
         Integer scrapCnt = length;
         LocalDateTime createdAt = scrap.getCard().getCreatedAt();
-        return new CopyRes(id, brand,text,scrapCnt,createdAt);
+        return new CopyRes(id, brand,text,scrapCnt,createdAt,cardLink);
     }
 
     public List<CopyRes> searchFilterCard(HttpServletRequest httpRequest, int index, CardSearchCondition condition) {
         List<CopyRes> results = cardJpaRepository.filter(condition);
         int startIndex = index * 30;
         List<CopyRes> resultCopyRes = getLimitedCopyResByIndex(results, startIndex);
+
         setScrapCntWhenTokenNotProvided(httpRequest, resultCopyRes);
         return resultCopyRes;
     }
@@ -329,17 +331,6 @@ public class CopyService {
         }
 
         return false;
-    }
-
-    public void setIsScrapWithUser2(User user, List<CopyRes> cardList) {
-        List<Scrap> scraps = scrapRepository.findScrapByUser(user);
-
-        // cardList의 id와 scraps의 card_id를 비교하여 isScrap 값을 설정
-        for (CopyRes copyRes : cardList) {
-            long cardId = copyRes.getId();
-            boolean isScrapFound = scraps.stream().anyMatch(scrap -> scrap.getCard().getId() == cardId);
-            copyRes.setIsScrap(isScrapFound ? 1 : 0);
-        }
     }
 
 }
