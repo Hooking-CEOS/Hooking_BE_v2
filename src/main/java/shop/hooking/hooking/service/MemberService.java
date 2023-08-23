@@ -2,6 +2,7 @@ package shop.hooking.hooking.service;
 
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -10,9 +11,14 @@ import shop.hooking.hooking.config.jwt.JwtTokenProvider;
 import shop.hooking.hooking.dto.request.MemberFormDto;
 import shop.hooking.hooking.dto.response.LoginInfoDto;
 import shop.hooking.hooking.entity.Member;
+import shop.hooking.hooking.exception.DuplicateEmailException;
 import shop.hooking.hooking.exception.PasswordNotMatchedException;
 import shop.hooking.hooking.exception.UserNotFoundException;
 import shop.hooking.hooking.repository.MemberRepository;
+import shop.hooking.hooking.global.exception.*;
+
+import javax.swing.*;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -28,23 +34,14 @@ public class MemberService {
     @Transactional
     public Member signup(MemberFormDto memberFormDto) {
         memberFormDto.setPassword(passwordEncoder.encode(memberFormDto.getPassword()));
-        Member member = memberRepository.save(memberFormDto.toEntity());
-        /* Profile profile = Profile.builder()
-                .file(null)
-                .bio("반갑습니다 :)")
-                .build();
-        profileRepository.save(profile);*/
-        return member;
-    }
-
-    /*
-    private void validateDuplicateMember(Member member){
-        Member findMember = memberRepository.findByEmail(member.getEmail());
-        if(findMember != null){
-            throw new IllegalStateException("이미 가입된 회원입니다.");
+        Optional<Member> existingMember = memberRepository.findByEmail(memberFormDto.getEmail());
+        if (existingMember.isPresent()) {
+            throw new DuplicateEmailException();
         }
+        Member member = memberRepository.save(memberFormDto.toEntity());
+        return member;
+
     }
-    */
 
 
     public LoginInfoDto login(String email, String password) {
