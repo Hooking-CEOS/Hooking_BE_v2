@@ -67,13 +67,14 @@ public class BrandService {
         List<Card> cards = cardRepository.findCardsByBrandId(brand.getId());
         List<BrandRes.cardDto> cardDtos = new ArrayList<>();
         for(Card card : cards){
-            BrandRes.cardDto cardDto = new BrandRes.cardDto();
-            cardDto.setId(card.getId());
-            cardDto.setBrandName(card.getBrand().getBrandName());
-            cardDto.setText(card.getText());
-            cardDto.setCreatedAt(card.getCreatedAt());
-            cardDto.setScrapCnt(card.getScrapCnt());
-            cardDto.setCardLink(card.getUrl());
+            BrandRes.cardDto cardDto = BrandRes.cardDto.builder()
+                    .id(card.getId())
+                    .brandName(card.getBrand().getBrandName())
+                    .text(card.getText())
+                    .createdAt(card.getCreatedAt())
+                    .scrapCnt(card.getScrapCnt())
+                    .cardLink(card.getUrl())
+                    .build();
             cardDtos.add(cardDto);
         }
 
