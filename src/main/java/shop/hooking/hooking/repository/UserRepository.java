@@ -13,8 +13,7 @@ import java.util.Optional;
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
     User findMemberByKakaoId(Long kakaoId);
-
-    User findByUserId(Long Id);
+    User findUserById(Long Id);
 
     Optional<User> findByEmail(@Param("email") String email);
 }

@@ -115,7 +115,7 @@ public class JwtTokenProvider {
         Long userId = getUserId(token);
 
         // Use userRepository.findById to find the user by their ID
-        User user = userRepository.findByUserId(userId);
+        User user = userRepository.findUserById(userId);
 
         if (user != null) {
             OAuthUserRes resDTO = OAuthUserRes.builder().user(user).build();
@@ -182,7 +182,7 @@ public class JwtTokenProvider {
         if (authentication != null) {
             Long userId = getUserId(token);
 
-            User user = userRepository.findByUserId(userId);
+            User user = userRepository.findUserById(userId);
 
             if (user != null) {
                 return user;
