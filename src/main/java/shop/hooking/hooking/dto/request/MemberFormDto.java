@@ -6,7 +6,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
-import shop.hooking.hooking.entity.Member;
+import shop.hooking.hooking.entity.User;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
@@ -38,8 +38,8 @@ public class MemberFormDto {
         this.nickname = nickname;
     }
 
-    public Member toEntity() {
-        return Member.builder()
+    public User toEntity() {
+        return User.builder()
                 .nickname(nickname)
                 .email(email)
                 .password(password)

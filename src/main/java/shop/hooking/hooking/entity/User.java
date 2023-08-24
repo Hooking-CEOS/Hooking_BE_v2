@@ -6,7 +6,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Where;
-import shop.hooking.hooking.config.enumtype.Role;
+import shop.hooking.hooking.global.entity.BaseTimeEntity;
 
 
 import javax.persistence.*;
@@ -16,13 +16,13 @@ import javax.persistence.*;
 @Where(clause = "delete_flag=0")
 @Entity
 @Table(name = "user")
-public class User {
+public class User extends BaseTimeEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Column(name="user_id")
+    private Long UserId;
 
     @Column(name="kakao_id")
-    @NotNull
     private Long kakaoId;
 
     @Column
@@ -31,18 +31,13 @@ public class User {
 
     @Column
     private String email;
+    
+    @Column
+    private String password;
 
     @Column
     private String image;
 
-    @Column
-    private String gender;
-
-    @Column(name = "age_range")
-    private String ageRange;
-
-    @Column(name = "role")
-    @NotNull
     private String role;
 
     @Column(name="delete_flag")
@@ -50,14 +45,13 @@ public class User {
     private Boolean deleteFlag;
 
     @Builder
-    public User(Long kakaoId, String nickname, String email, String image, String gender, String ageRange, Role role) {
+    public User(Long kakaoId, String nickname, String email, String image, String password) {
         this.kakaoId = kakaoId;
         this.nickname = nickname;
         if(email!=null) this.email = email;
+        this.password = password;
         this.image = image;
-        if(gender!=null) this.gender = gender;
-        if(ageRange!=null) this.ageRange = ageRange;
-        this.role = role.getValue();
+        role = "USER";
         this.deleteFlag = false;
     }
 
@@ -68,10 +62,6 @@ public class User {
 
     public void updateImage(String fileurl) {
         this.image = fileurl;
-    }
-
-    public void updateRole(Role role) {
-        this.role = role.getValue();
     }
 
     public void updateDeleteFlag() {

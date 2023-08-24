@@ -10,12 +10,11 @@ import org.springframework.transaction.annotation.Transactional;
 import shop.hooking.hooking.config.jwt.JwtTokenProvider;
 import shop.hooking.hooking.dto.request.MemberFormDto;
 import shop.hooking.hooking.dto.response.LoginInfoDto;
-import shop.hooking.hooking.entity.Member;
+import shop.hooking.hooking.entity.User;
 import shop.hooking.hooking.exception.DuplicateEmailException;
 import shop.hooking.hooking.exception.PasswordNotMatchedException;
 import shop.hooking.hooking.exception.UserNotFoundException;
-import shop.hooking.hooking.repository.MemberRepository;
-import shop.hooking.hooking.global.exception.*;
+import shop.hooking.hooking.repository.UserRepository;
 
 import javax.swing.*;
 import java.util.Optional;
@@ -25,31 +24,31 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class MemberService {
 
-    private final MemberRepository memberRepository;
+    private final UserRepository userRepository;
 
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
 
 
     @Transactional
-    public Member signup(MemberFormDto memberFormDto) {
+    public User signup(MemberFormDto memberFormDto) {
         memberFormDto.setPassword(passwordEncoder.encode(memberFormDto.getPassword()));
-        Optional<Member> existingMember = memberRepository.findByEmail(memberFormDto.getEmail());
+        Optional<User> existingMember = userRepository.findByEmail(memberFormDto.getEmail());
         if (existingMember.isPresent()) {
             throw new DuplicateEmailException();
         }
-        Member member = memberRepository.save(memberFormDto.toEntity());
-        return member;
+        User user = userRepository.save(memberFormDto.toEntity());
+        return user;
 
     }
 
 
     public LoginInfoDto login(String email, String password) {
-        Member member = memberRepository.findByEmail(email).orElseThrow(UserNotFoundException::new);
-        checkPassword(password, member.getPassword());
-        String accessToken = jwtTokenProvider.createAccessToken(member.getEmail(), member.getRole());
-        String refreshToken = jwtTokenProvider.createRefreshToken(member.getEmail(), member.getRole());
-        return new LoginInfoDto(accessToken, refreshToken, member.getNickname());
+        User user = userRepository.findByEmail(email).orElseThrow(UserNotFoundException::new);
+        checkPassword(password, user.getPassword());
+        String accessToken = jwtTokenProvider.createAccessToken(user.getEmail(), user.getRole());
+        String refreshToken = jwtTokenProvider.createRefreshToken(user.getEmail(), user.getRole());
+        return new LoginInfoDto(accessToken, refreshToken, user.getNickname());
     }
 
 
@@ -57,10 +56,10 @@ public class MemberService {
     //전달받은 유저의 이메일로 유저가 존재하는지 확인 + refreshtokne이 유효한지 체크
     //accessToken 재생성하여 refreshToken과 함께 응답
     public LoginInfoDto reIssueAccessToken(String email, String refreshToken) {
-        Member member = memberRepository.findByEmail(email).orElseThrow(UserNotFoundException::new);
+        User user = userRepository.findByEmail(email).orElseThrow(UserNotFoundException::new);
         jwtTokenProvider.checkRefreshToken(email, refreshToken);
-        String accessToken = jwtTokenProvider.createAccessToken(member.getEmail(), member.getRole());
-        return new LoginInfoDto(accessToken, refreshToken, member.getNickname());
+        String accessToken = jwtTokenProvider.createAccessToken(user.getEmail(), user.getRole());
+        return new LoginInfoDto(accessToken, refreshToken, user.getNickname());
     }
 
 
@@ -89,11 +88,11 @@ public class MemberService {
 
     public LoginInfoDto provideToken(String email)
     {
-        Member member = memberRepository
+        User user = userRepository
                 .findByEmail(email).orElseThrow(UserNotFoundException::new);
-        String accessToken = jwtTokenProvider.createAccessToken(member.getEmail(), member.getRole());
-        String refreshToken = jwtTokenProvider.createRefreshToken(member.getEmail(), member.getRole());
-        return new LoginInfoDto(accessToken, refreshToken, member.getNickname());
+        String accessToken = jwtTokenProvider.createAccessToken(user.getEmail(), user.getRole());
+        String refreshToken = jwtTokenProvider.createRefreshToken(user.getEmail(), user.getRole());
+        return new LoginInfoDto(accessToken, refreshToken, user.getNickname());
     }
 
 

@@ -5,7 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 import shop.hooking.hooking.entity.User;
 import java.util.Map;
-import shop.hooking.hooking.config.enumtype.Role;
+
 
 
 @Getter
@@ -14,19 +14,15 @@ public class OAuthAttributesRes {
     private Long kakaoId;
     private String nickname;
     private String email;
-    private String gender;
-    private String ageRange;
     private String picture;
 
     @Builder
     public OAuthAttributesRes(Map<String, Object> attributes, Long kakaoId, String nickname,
-                              String email, String gender, String ageRange, String picture) {
+                              String email, String picture) {
         this.kakaoId = kakaoId;
         this.attributes = attributes;
         this.nickname = nickname;
         this.email = email;
-        this.gender = gender;
-        this.ageRange = ageRange;
         this.picture = picture;
     }
 
@@ -38,8 +34,6 @@ public class OAuthAttributesRes {
                 .kakaoId((Long)attributes.get("id"))
                 .nickname((String)profile.get("nickname"))
                 .email((String)response.get("email"))
-                .gender((String)response.get("gender"))
-                .ageRange((String)response.get("age_range"))
                 .picture((String)profile.get("profile_image_url"))
                 .attributes(attributes)
                 .build();
@@ -51,9 +45,6 @@ public class OAuthAttributesRes {
                 .nickname(nickname)
                 .image(picture)
                 .email(email)
-                .gender(gender)
-                .ageRange(ageRange)
-                .role(Role.USER)
                 .build();
 
         return user;

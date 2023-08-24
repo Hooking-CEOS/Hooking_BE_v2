@@ -7,25 +7,23 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
-import shop.hooking.hooking.entity.Member;
 import shop.hooking.hooking.entity.User;
 import shop.hooking.hooking.exception.RefreshTokenExpiredException;
 import shop.hooking.hooking.exception.UserNotFoundException;
 import shop.hooking.hooking.global.redis.RedisService;
-import shop.hooking.hooking.repository.MemberRepository;
 import shop.hooking.hooking.repository.UserRepository;
 import shop.hooking.hooking.dto.response.OAuthUserRes;
-import shop.hooking.hooking.service.CustomUsersDetailsService;
+//import shop.hooking.hooking.service.CustomUsersDetailsService;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import java.time.Duration;
 import java.util.Base64;
 import java.util.Date;
+import java.util.Optional;
 
 
 //토큰 생성
@@ -36,9 +34,8 @@ public class JwtTokenProvider {
 
 
     private final UserRepository userRepository;
-    private final CustomUsersDetailsService customUsersDetailsService;
+//    private final CustomUsersDetailsService customUsersDetailsService;
     private final RedisService redisService;
-    private final MemberRepository memberRepository;
 
     @Value("${spring.jwt.secretKey}")
     private String SECRET_KEY;
@@ -115,6 +112,21 @@ public class JwtTokenProvider {
 
 
     public Authentication getAuthentication(String token) {
+        Long userId = getUserId(token);
+
+        // Use userRepository.findById to find the user by their ID
+        User user = userRepository.findByUserId(userId);
+
+        if (user != null) {
+            OAuthUserRes resDTO = OAuthUserRes.builder().user(user).build();
+            return new UsernamePasswordAuthenticationToken(resDTO, "", resDTO.getAuthorities());
+        } else {
+            throw new UserNotFoundException();
+        }
+    }
+
+/*
+    public Authentication getAuthentication(String token) {
         if (userDetailsExists(token)) { //일반로그인
             UserDetails userDetails = customUsersDetailsService.loadUserByUsername(getUserEmail(token));
             return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
@@ -133,13 +145,17 @@ public class JwtTokenProvider {
             return false;
         }
     }
+    */
+
+
+
 
 
 
     // jwt에서 회원정보 추출
-    public String getUserPk(String token){
-        return Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(token).getBody().getSubject();
-    }
+//    public String getUserPk(String token){
+//        return Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(token).getBody().getSubject();
+//    }
 
      //HTTP 요청 안에서 헤더 찾아서 토큰 가져옴
     public String resolveToken(HttpServletRequest request){
@@ -164,26 +180,24 @@ public class JwtTokenProvider {
         String token = resolveToken(request);
         Authentication authentication = validateToken(request, token);
         if (authentication != null) {
-            String userEmail = getUserEmail(token);
-            User user = userRepository.findMemberByKakaoId(Long.parseLong(getUserPk(token)));
-            Member member = memberRepository.findByEmail(userEmail).orElse(null);
+            Long userId = getUserId(token);
+
+            User user = userRepository.findByUserId(userId);
 
             if (user != null) {
                 return user;
-            } else if (member != null) {
-                return null;
-            } else {
-                throw new UserNotFoundException();
             }
-        } else {
-            return null;
         }
+        return null;
     }
 
-    //jwt에서 회원 구분 email 추출
-    private String getUserEmail(String token) {
-        return Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(token).getBody().getSubject();
+
+    private Long getUserId(String token) {
+        Claims claims = Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(token).getBody();
+        String userIdString = claims.get("Id", String.class); // "userId" 클레임의 값을 추출
+        return Long.parseLong(userIdString); // 추출한 값을 Long 타입으로 변환하여 반환
     }
+
 
     public void checkRefreshToken(String userId, String refreshToken) {
         String redisRT = redisService.getValues(userId);
