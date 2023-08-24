@@ -13,7 +13,6 @@ import shop.hooking.hooking.dto.response.CopyRes;
 import shop.hooking.hooking.dto.response.CopySearchRes;
 import shop.hooking.hooking.exception.OutOfIndexException;
 import shop.hooking.hooking.service.CopyService;
-//import springfox.documentation.annotations.Cacheable;
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 
@@ -42,13 +41,13 @@ public class CopyController {
     //@Operation(summary = "브랜드 카피라이팅 검색하기")
     @GetMapping("/search/brand/{index}")
     public ResponseEntity<CopySearchRes> searchBrandList(HttpServletRequest httpRequest,
-                                                        @RequestParam(name = "keyword") String q,
-                                                        @PathVariable int index) {
+                                                         @RequestParam(name = "keyword") String q,
+                                                         @PathVariable int index) {
         return ResponseEntity.ok(copyService.searchBrandList(httpRequest, q, index));
     }
 
     //@Operation(summary = "키워드 카피라이팅 검색하기")
-    @GetMapping("/search/copy/{index}")
+    @GetMapping("/search/text/{index}")
     public ResponseEntity<CopySearchRes> searchCopyList(HttpServletRequest httpRequest,
                                                         @RequestParam(name = "keyword") String q,
                                                         @PathVariable int index) {
