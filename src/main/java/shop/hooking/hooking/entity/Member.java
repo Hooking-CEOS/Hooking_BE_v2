@@ -36,8 +36,6 @@ public class Member extends BaseTimeEntity {
     @NotNull
     private String nickname;
 
-
-
     private String role;
 
     @Builder
