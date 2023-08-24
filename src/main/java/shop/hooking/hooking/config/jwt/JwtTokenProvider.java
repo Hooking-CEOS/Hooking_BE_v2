@@ -12,10 +12,10 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 import shop.hooking.hooking.entity.User;
 import shop.hooking.hooking.exception.RefreshTokenExpiredException;
-import shop.hooking.hooking.exception.UserNotFoundException;
 import shop.hooking.hooking.global.redis.RedisService;
 import shop.hooking.hooking.repository.UserRepository;
 import shop.hooking.hooking.dto.response.OAuthUserRes;
+import shop.hooking.hooking.service.CustomUsersDetailsService;
 //import shop.hooking.hooking.service.CustomUsersDetailsService;
 
 import javax.annotation.PostConstruct;
@@ -34,7 +34,7 @@ public class JwtTokenProvider {
 
 
     private final UserRepository userRepository;
-//    private final CustomUsersDetailsService customUsersDetailsService;
+    private final CustomUsersDetailsService customUsersDetailsService;
     private final RedisService redisService;
 
     @Value("${spring.jwt.secretKey}")
@@ -111,24 +111,10 @@ public class JwtTokenProvider {
     }
 
 
-    public Authentication getAuthentication(String token) {
-        Long userId = getUserId(token);
 
-        // Use userRepository.findById to find the user by their ID
-        User user = userRepository.findByUserId(userId);
-
-        if (user != null) {
-            OAuthUserRes resDTO = OAuthUserRes.builder().user(user).build();
-            return new UsernamePasswordAuthenticationToken(resDTO, "", resDTO.getAuthorities());
-        } else {
-            throw new UserNotFoundException();
-        }
-    }
-
-/*
     public Authentication getAuthentication(String token) {
         if (userDetailsExists(token)) { //일반로그인
-            UserDetails userDetails = customUsersDetailsService.loadUserByUsername(getUserEmail(token));
+            UserDetails userDetails = customUsersDetailsService.loadUserByUsername(getUserPk(token));
             return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
         } else { //소셜로그인
             User user = userRepository.findMemberByKakaoId(Long.parseLong(getUserPk(token)));
@@ -139,23 +125,21 @@ public class JwtTokenProvider {
 
     private boolean userDetailsExists(String token) {
         try {
-            UserDetails userDetails = customUsersDetailsService.loadUserByUsername(getUserEmail(token));
+            UserDetails userDetails = customUsersDetailsService.loadUserByUsername(getUserPk(token));
             return userDetails != null;
         } catch (UsernameNotFoundException ex) {
             return false;
         }
     }
-    */
-
 
 
 
 
 
     // jwt에서 회원정보 추출
-//    public String getUserPk(String token){
-//        return Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(token).getBody().getSubject();
-//    }
+    public String getUserPk(String token){
+        return Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(token).getBody().getSubject();
+    }
 
      //HTTP 요청 안에서 헤더 찾아서 토큰 가져옴
     public String resolveToken(HttpServletRequest request){
@@ -181,8 +165,7 @@ public class JwtTokenProvider {
         Authentication authentication = validateToken(request, token);
         if (authentication != null) {
             Long userId = getUserId(token);
-
-            User user = userRepository.findByUserId(userId);
+            User user = userRepository.findUserByUserId(userId);
 
             if (user != null) {
                 return user;

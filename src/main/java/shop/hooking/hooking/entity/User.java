@@ -16,11 +16,11 @@ import javax.persistence.*;
 @Where(clause = "delete_flag=0")
 @Entity
 @Table(name = "user")
-public class User extends BaseTimeEntity{
+public class User{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="user_id")
-    private Long UserId;
+    private Long userId;
 
     @Column(name="kakao_id")
     private Long kakaoId;
@@ -63,6 +63,7 @@ public class User extends BaseTimeEntity{
     public void updateImage(String fileurl) {
         this.image = fileurl;
     }
+
 
     public void updateDeleteFlag() {
         this.deleteFlag = true;
