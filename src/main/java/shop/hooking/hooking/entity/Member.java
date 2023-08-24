@@ -22,17 +22,8 @@ import java.util.UUID;
 public class Member extends BaseTimeEntity {
 
     @Id
-    @GeneratedValue(generator = "uuid2")
-    @GenericGenerator(name = "uuid2", strategy = "uuid2")
-    @Column(length = 36)
-    private UUID id;
-//    @Id
-//    @GeneratedValue(strategy = GenerationType.IDENTITY)
-//    private Long id;
-
-/*
-    @Column(unique = true, length = 12)
-    private Long uid;*/
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @NotNull
     @Column(unique = true)
@@ -59,9 +50,6 @@ public class Member extends BaseTimeEntity {
 
     public void setPassword(String password) {
         this.password = password;
-    }
-    public void setId(UUID id){
-        this.id = id;
     }
 
     //TODO : profile 연관관계 편의 메소드
