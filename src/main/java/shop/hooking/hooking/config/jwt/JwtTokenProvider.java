@@ -12,6 +12,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 import shop.hooking.hooking.entity.User;
 import shop.hooking.hooking.exception.RefreshTokenExpiredException;
+import shop.hooking.hooking.exception.UserNotFoundException;
 import shop.hooking.hooking.global.redis.RedisService;
 import shop.hooking.hooking.repository.UserRepository;
 import shop.hooking.hooking.dto.response.OAuthUserRes;
@@ -177,9 +178,17 @@ public class JwtTokenProvider {
 
     private Long getUserId(String token) {
         Claims claims = Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(token).getBody();
-        String userIdString = claims.get("Id", String.class); // "userId" 클레임의 값을 추출
-        return Long.parseLong(userIdString); // 추출한 값을 Long 타입으로 변환하여 반환
+        String userEmailString = claims.getSubject(); // "sub" 클레임에서 사용자 이메일 추출
+
+        Optional<User> user = userRepository.findByEmail(userEmailString);
+        if (user.isPresent()) {
+            return user.get().getUserId(); // 이미 Long 형태의 값이기 때문에 변환이 필요 없음
+        } else {
+            // 사용자를 찾지 못한 경우 예외 처리
+            throw new UserNotFoundException();
+        }
     }
+
 
 
     public void checkRefreshToken(String userId, String refreshToken) {
