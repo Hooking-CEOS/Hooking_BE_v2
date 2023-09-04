@@ -22,7 +22,7 @@ public class CustomUsersDetailsService implements UserDetailsService {
         // memberRepository를 통해 memberemail에 해당하는 member의 존재여부만 판단
         shop.hooking.hooking.entity.User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("회원이 존재하지 않습니다."));
-        System.out.println(user.getEmail());
+        System.out.println(user.getEmail()+" loadUserByUsername");
         return User.builder()
                 .username(user.getEmail())
                 .password(user.getPassword())

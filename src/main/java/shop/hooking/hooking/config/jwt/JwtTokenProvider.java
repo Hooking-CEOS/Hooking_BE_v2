@@ -63,6 +63,7 @@ public class JwtTokenProvider {
                 .compact();
     }
 
+
     public String createAccessToken(String userId, String roles) {
         Long tokenInvalidTime = 1000L * 60 * 120; // 2h
         return this.createToken(userId, roles, tokenInvalidTime);
@@ -115,9 +116,11 @@ public class JwtTokenProvider {
     public Authentication getAuthentication(String token) {
         if (userDetailsExists(token)) { //일반로그인
             UserDetails userDetails = customUsersDetailsService.loadUserByUsername(getUserPk(token));
+            System.out.println(userDetails+"getAuthentication");
             return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
         } else { //소셜로그인
-            User user = userRepository.findMemberByKakaoId(Long.parseLong(getUserPk(token)));
+            User user = userRepository.findMemberByKakaoId(Long.parseLong(getUserPk(token)))
+                    .orElseThrow(() -> new UsernameNotFoundException("회원이 존재하지 않습니다."));
             OAuthUserRes resDTO = OAuthUserRes.builder().user(user).build();
             return new UsernamePasswordAuthenticationToken(resDTO, "", resDTO.getAuthorities());
         }
@@ -134,10 +137,11 @@ public class JwtTokenProvider {
 
 
 
-
-
     // jwt에서 회원정보 추출
     public String getUserPk(String token){
+        return Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(token).getBody().getSubject();
+    }
+    private String getUserEmail(String token) {
         return Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(token).getBody().getSubject();
     }
 
@@ -147,37 +151,32 @@ public class JwtTokenProvider {
     }
 
 
-//    public OAuthUserRes getKakaoInfo(HttpServletRequest request) {
-//        String token = resolveToken(request);
-//        Authentication authentication = validateToken(request, token);
-//        if (authentication != null){
-//            User user = userRepository.findMemberByKakaoId(Long.parseLong(getUserPk(token)));
-//            return new OAuthUserRes(user);
-//        }
-//        else {
-//            return null;
-//        }
-//    }
-
-
     public User getUserInfoByToken(HttpServletRequest request) {
         String token = resolveToken(request);
         Authentication authentication = validateToken(request, token);
+        String email = getUserEmail(token);
         if (authentication != null) {
-            Long userId = getUserId(token);
-            User user = userRepository.findUserByUserId(userId);
-
-            if (user != null) {
+            if (userDetailsExists(token)){
+                User user = userRepository.findByEmail(email)
+                        .orElseThrow(() -> new UsernameNotFoundException("회원이 존재하지 않습니다."));
+                return user;
+            }
+            else {
+                User user = userRepository.findMemberByKakaoId(Long.parseLong(getUserPk(token)))
+                        .orElseThrow(() -> new UsernameNotFoundException("회원이 존재하지 않습니다."));
                 return user;
             }
         }
-        return null;
+        else {
+            return null;
+        }
     }
+
 
 
     private Long getUserId(String token) {
         Claims claims = Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(token).getBody();
-        String userIdString = claims.get("Id", String.class); // "userId" 클레임의 값을 추출
+        String userIdString = claims.get("userId", String.class); // "userId" 클레임의 값을 추출
         return Long.parseLong(userIdString); // 추출한 값을 Long 타입으로 변환하여 반환
     }
 

@@ -5,6 +5,7 @@ package shop.hooking.hooking.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
@@ -52,7 +53,8 @@ public class OAuthUserService implements OAuth2UserService<OAuth2UserRequest, OA
 
     //첫번째 로그인인지 확인
     private Map<String, Object> updateAttributes(OAuthAttributesRes attributes) {
-        User user = userRepository.findMemberByKakaoId(attributes.getKakaoId());
+        User user = userRepository.findMemberByKakaoId(attributes.getKakaoId())
+                .orElseThrow(() -> new UsernameNotFoundException("회원이 존재하지 않습니다."));
         Map<String, Object> newAttribute = new HashMap<String, Object>();
         newAttribute.putAll(attributes.getAttributes());
 
@@ -67,12 +69,14 @@ public class OAuthUserService implements OAuth2UserService<OAuth2UserRequest, OA
 
     //인증된 유저 DTO 반환
     private User saveOrUpdate(OAuthAttributesRes attributes){
-        User user = userRepository.findMemberByKakaoId(attributes.getKakaoId()); //db에 있는 유저인지 확인
+        User user = userRepository.findMemberByKakaoId(attributes.getKakaoId())
+                .orElseThrow(() -> new UsernameNotFoundException("회원이 존재하지 않습니다.")); //db에 있는 유저인지 확인
         if(user!=null){ //있으면
             return user; //유저반환
         } else{
             userRepository.save(attributes.toEntity()); //없으면
-            User newUser = userRepository.findMemberByKakaoId(attributes.getKakaoId()); //회원가입
+            User newUser = userRepository.findMemberByKakaoId(attributes.getKakaoId())
+                    .orElseThrow(() -> new UsernameNotFoundException("회원이 존재하지 않습니다.")); //회원가입
             return newUser;
         }
     }

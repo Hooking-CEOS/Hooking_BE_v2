@@ -173,6 +173,9 @@ public class CopyService {
         List<CopyRes> scrapList = new ArrayList<>();
 
         for (Scrap scrap : scraps) { //10,20,30
+            if(scrap.getId()==null){
+                throw new ScrapNotFoundException(); // 왜 안터지지...
+            }
             CopyRes copyRes = createScrapRes(scrap);
             scrapList.add(copyRes);
             copyRes.setScrapTime(scrap.getCreatedAt());
@@ -188,6 +191,7 @@ public class CopyService {
     @Transactional
     public Long createScrap(HttpServletRequest httpRequest, CopyReq copyReq) {
         User user = jwtTokenProvider.getUserInfoByToken(httpRequest);
+        System.out.println(user.getEmail()+" createScrap");
         Card card = cardRepository.findCardById(copyReq.getCardId());
 
         if (hasScrapped(user, card)) {
