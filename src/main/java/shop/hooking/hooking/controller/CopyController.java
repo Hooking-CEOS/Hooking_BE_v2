@@ -1,7 +1,7 @@
 package shop.hooking.hooking.controller;
 
-//import io.swagger.v3.oas.annotations.Operation;
-//import io.swagger.v3.oas.annotations.tags.Tag;
+
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,7 +26,7 @@ public class CopyController {
     private final CopyService copyService;
 
 
-    //@Operation(summary = "전체 카피라이팅 조회하기")
+    @Operation(summary = "전체 카피라이팅 조회하기")
     @GetMapping("/{index}")
     public ResponseEntity<List<CopyRes>> getCopyList(HttpServletRequest httpRequest, @PathVariable int index) {
         try {

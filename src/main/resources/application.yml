@@ -42,6 +42,13 @@ spring:
     host: 127.0.0.1
     port: 6379
 
+springdoc:
+  version: 0.0.1
+  default-consumes-media-type: application/json # media-type 디폴트값 설정
+  default-produces-media-type: application/json
+  swagger-ui:
+    path: /swagger-ui.html
+
 #  jackson:
 #    serialization:
 #      fail-on-empty-beans: false

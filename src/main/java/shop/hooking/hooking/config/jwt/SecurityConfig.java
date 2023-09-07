@@ -74,7 +74,8 @@ public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
                     "/api/v1/auth/re-issue", "/api/v1/auth/settings", "/api/v1/auth/certification/**",
                      "/api/v1/util/**","**/oath-processor/**","/kakaologin","/api/v1/copy/{index}",
                     "/api/v1/copy/scrap/**", "/api/v1/copy/search/**","/api/v1/copy/filter/{index}",
-                    "/api/v1/copy/crawling", "/api/v1/brand", "/api/v1/brand/{brand_id}/{index}","/example/login"
+                    "/api/v1/copy/crawling", "/api/v1/brand", "/api/v1/brand/{brand_id}/{index}","/example/login",
+                    "/swagger-ui.html", "/swagger-ui"
                     ).permitAll()
 
             .anyRequest().authenticated()
