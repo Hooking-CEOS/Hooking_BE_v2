@@ -75,7 +75,16 @@ public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
                      "/api/v1/util/**","**/oath-processor/**","/kakaologin","/api/v1/copy/{index}",
                     "/api/v1/copy/scrap/**", "/api/v1/copy/search/**","/api/v1/copy/filter/{index}",
                     "/api/v1/copy/crawling", "/api/v1/brand", "/api/v1/brand/{brand_id}/{index}","/example/login",
-                    "/swagger-ui.html", "/swagger-ui"
+                    "/v2/api-docs",
+                    "/swagger-resources",
+                    "/swagger-resources/**",
+                    "/configuration/ui",
+                    "/configuration/security",
+                    "/swagger-ui.html",
+                    "/webjars/**",
+                    /* swagger v3 */
+                    "/v3/api-docs/**",
+                    "/swagger-ui/**"
                     ).permitAll()
 
             .anyRequest().authenticated()

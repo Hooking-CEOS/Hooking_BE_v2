@@ -53,6 +53,8 @@ springdoc:
 #    serialization:
 #      fail-on-empty-beans: false
 
+
+
 app:
   deployment:
     url: ${request_URL}
