@@ -16,9 +16,7 @@ public interface ScrapRepository extends JpaRepository<Scrap, Long> {
 
     List<Scrap> findScrapByUser(User user);
 
-
     List<Scrap> findByCardId(Long id);
-
 
     Scrap findByUserAndCard(User user, Card card);
 

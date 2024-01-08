@@ -5,13 +5,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import shop.hooking.hooking.config.enumtype.BrandType;
 import shop.hooking.hooking.config.enumtype.MoodType;
-import shop.hooking.hooking.config.jwt.JwtTokenProvider;
+import shop.hooking.hooking.dto.response.CopyResDto;
+import shop.hooking.hooking.global.jwt.JwtTokenProvider;
 import shop.hooking.hooking.dto.CardSearchCondition;
-import shop.hooking.hooking.dto.request.CopyReq;
+import shop.hooking.hooking.dto.request.CopyReqDto;
 import shop.hooking.hooking.dto.request.CrawlingData;
-import shop.hooking.hooking.dto.request.CrawlingReq;
-import shop.hooking.hooking.dto.response.CopyRes;
-import shop.hooking.hooking.dto.response.CopySearchRes;
+import shop.hooking.hooking.dto.request.CrawlingReqDto;
+import shop.hooking.hooking.dto.response.CopySearchResDto;
 import shop.hooking.hooking.entity.*;
 import shop.hooking.hooking.exception.*;
 import shop.hooking.hooking.repository.*;
@@ -32,16 +32,16 @@ public class CopyService {
     private final JwtTokenProvider jwtTokenProvider;
 
     //상속 -> 일반 부모 , 카카오 자식
-    public List<CopyRes> getCopyList(HttpServletRequest httpRequest, int index) {
+    public List<CopyResDto> getCopyList(HttpServletRequest httpRequest, int index) {
         User user = jwtTokenProvider.getUserInfoByToken(httpRequest);
         Long[] brandIds = {1L, 2L, 3L, 4L, 5L, 6L, 7L, 8L, 9L, 10L, 11L, 12L, 13L, 14L, 15L, 16L, 17L, 18L, 19L, 20L, 21L, 22L, 23L, 24L, 25L, 26L, 27L, 28L};
-        List<CopyRes> tempCopyRes = new ArrayList<>();
+        List<CopyResDto> tempCopyRes = new ArrayList<>();
         for (Long brandId : brandIds) {
-            List<CopyRes> copyRes = getTopSixCopy(brandId);
+            List<CopyResDto> copyRes = getTopSixCopy(brandId);
             tempCopyRes.addAll(copyRes);
         }
         Collections.shuffle(tempCopyRes);
-        List<CopyRes> resultCopyRes = getCopyByIndex(tempCopyRes, index);
+        List<CopyResDto> resultCopyRes = getCopyByIndex(tempCopyRes, index);
         setScrapCnt(httpRequest, resultCopyRes);
         setIsScrap(user, resultCopyRes);
         return resultCopyRes;
@@ -51,7 +51,7 @@ public class CopyService {
 
 
 
-    public List<CopyRes> getCopyByIndex(List<CopyRes> copyResList, int index) {
+    public List<CopyResDto> getCopyByIndex(List<CopyResDto> copyResList, int index) {
         int startIndex = index * 30;
         int endIndex = Math.min(startIndex + 30, copyResList.size());
         if (startIndex >= endIndex) {
@@ -62,19 +62,19 @@ public class CopyService {
 
 
 
-    public void setScrapCnt(HttpServletRequest httpRequest, List<CopyRes> copyResList) {
+    public void setScrapCnt(HttpServletRequest httpRequest, List<CopyResDto> copyResList) {
         String token = httpRequest.getHeader("Authorization");
         if (token == null) {
-            for (CopyRes copyRes : copyResList) {
+            for (CopyResDto copyRes : copyResList) {
                 copyRes.setScrapCnt(0);
             }
         }
     }
 
-    public void setIsScrap(User user, List<CopyRes> copyResList) {
+    public void setIsScrap(User user, List<CopyResDto> copyResList) {
         List<Scrap> scraps = scrapRepository.findScrapByUser(user);
 
-        for (CopyRes copyRes : copyResList) {
+        for (CopyResDto copyRes : copyResList) {
             long cardId = copyRes.getId();
             boolean isScrapFound = scraps.stream().anyMatch(scrap -> scrap.getCard().getId() == cardId);
             copyRes.setIsScrap(isScrapFound ? 1 : 0);
@@ -82,24 +82,24 @@ public class CopyService {
     }
 
     @Transactional
-    public List<CopyRes> getTopSixCopy(Long brandId) {
+    public List<CopyResDto> getTopSixCopy(Long brandId) {
         List<Card> cards = cardRepository.findTop6ByBrandIdOrderByCreatedAtDesc(brandId);
-        List<CopyRes> copyResList = new ArrayList<>();
+        List<CopyResDto> copyResList = new ArrayList<>();
 
         for (Card card : cards) {
-            CopyRes copyRes = createCopyRes(card);
+            CopyResDto copyRes = createCopyRes(card);
             copyResList.add(copyRes);
         }
 
         return copyResList;
     }
 
-    public CopySearchRes searchBrandList(HttpServletRequest httpRequest, String q, int index) {
+    public CopySearchResDto searchBrandList(HttpServletRequest httpRequest, String q, int index) {
         User user = jwtTokenProvider.getUserInfoByToken(httpRequest);
 
         q = checkKeyword(q);
 
-        List<CopyRes> brandCopyRes;
+        List<CopyResDto> brandCopyRes;
 
         if (BrandType.containsKeyword(q)) {
             brandCopyRes = cardJpaRepository.searchBrand(q);
@@ -107,7 +107,7 @@ public class CopyService {
             setIsScrap(user, brandCopyRes);
             Collections.shuffle(brandCopyRes);
 
-            CopySearchRes brandSearchResult = createCopySearchResult("brand", q, brandCopyRes, index);
+            CopySearchResDto brandSearchResult = createCopySearchResult("brand", q, brandCopyRes, index);
             return brandSearchResult;
         }
 
@@ -123,10 +123,10 @@ public class CopyService {
         return q;
     }
 
-    public CopySearchRes searchMoodList(HttpServletRequest httpRequest, String q, int index) {
+    public CopySearchResDto searchMoodList(HttpServletRequest httpRequest, String q, int index) {
         User user = jwtTokenProvider.getUserInfoByToken(httpRequest);
 
-        List<CopyRes> moodCopyRes;
+        List<CopyResDto> moodCopyRes;
 
         if (MoodType.containsKeyword(q)) {
             moodCopyRes = cardJpaRepository.searchMood(q);
@@ -134,7 +134,7 @@ public class CopyService {
             setIsScrap(user, moodCopyRes);
             Collections.shuffle(moodCopyRes);
 
-            CopySearchRes moodSearchResult = createCopySearchResult("mood", q, moodCopyRes, index);
+            CopySearchResDto moodSearchResult = createCopySearchResult("mood", q, moodCopyRes, index);
             return moodSearchResult;
         }
 
@@ -144,10 +144,10 @@ public class CopyService {
 
 
 
-    public CopySearchRes searchCopyList(HttpServletRequest httpRequest, String q, int index) {
+    public CopySearchResDto searchCopyList(HttpServletRequest httpRequest, String q, int index) {
         User user = jwtTokenProvider.getUserInfoByToken(httpRequest);
 
-        List<CopyRes> textCopyRes;
+        List<CopyResDto> textCopyRes;
 
         textCopyRes = cardJpaRepository.searchCopy(q);
 
@@ -156,7 +156,7 @@ public class CopyService {
             setIsScrap(user, textCopyRes);
             Collections.shuffle(textCopyRes);
 
-            CopySearchRes textSearchResult = createCopySearchResult("text", q, textCopyRes, index);
+            CopySearchResDto textSearchResult = createCopySearchResult("text", q, textCopyRes, index);
             return textSearchResult;
         }
 
@@ -167,29 +167,32 @@ public class CopyService {
 
 
     @Transactional
-    public List<CopyRes> getScrapList(HttpServletRequest httpRequest, int index) {
+    public List<CopyResDto> getScrapList(HttpServletRequest httpRequest, int index) {
         User user = jwtTokenProvider.getUserInfoByToken(httpRequest);
         List<Scrap> scraps = scrapRepository.findScrapByUser(user);
-        List<CopyRes> scrapList = new ArrayList<>();
+        List<CopyResDto> scrapList = new ArrayList<>();
 
         for (Scrap scrap : scraps) { //10,20,30
-            if(scrap.getId()==null){
+            if (scrap.getId() == null)
                 throw new ScrapNotFoundException(); // 왜 안터지지...
-            }
-            CopyRes copyRes = createScrapRes(scrap);
+
+            CopyResDto copyRes = createScrapRes(scrap);
             scrapList.add(copyRes);
             copyRes.setScrapTime(scrap.getCreatedAt());
+
+
+            setIsScrap(user, scrapList);
+            scrapList.sort(Comparator.comparing(CopyResDto::getScrapTime).reversed()); // 최신순으로 정렬
+            List<CopyResDto> result = getCopyByIndex(scrapList, index);
+
+
+            return result;
         }
-
-        setIsScrap(user,scrapList);
-        scrapList.sort(Comparator.comparing(CopyRes::getScrapTime).reversed()); // 최신순으로 정렬
-        List<CopyRes> result = getCopyByIndex(scrapList, index);
-
-        return result;
+        return scrapList;
     }
 
     @Transactional
-    public Long createScrap(HttpServletRequest httpRequest, CopyReq copyReq) {
+    public Long createScrap(HttpServletRequest httpRequest, CopyReqDto copyReq) {
         User user = jwtTokenProvider.getUserInfoByToken(httpRequest);
         System.out.println(user.getEmail()+" createScrap");
         Card card = cardRepository.findCardById(copyReq.getCardId());
@@ -225,7 +228,7 @@ public class CopyService {
 
 
     @Transactional
-    public Long deleteScrap(HttpServletRequest httpRequest, CopyReq copyReq) {
+    public Long deleteScrap(HttpServletRequest httpRequest, CopyReqDto copyReq) {
         User user = jwtTokenProvider.getUserInfoByToken(httpRequest);
         Long cardId = copyReq.getCardId();
         Card card = cardRepository.findCardById(cardId);
@@ -240,11 +243,11 @@ public class CopyService {
     }
 
     @Transactional
-    public CopyRes createCopyRes(Card card) {
+    public CopyResDto createCopyRes(Card card) {
         Long id = card.getId(); // id로 넘어옴
         List<Scrap> scraps = scrapRepository.findByCardId(id);
 
-        return CopyRes.builder()
+        return CopyResDto.builder()
                 .id(id)
                 .brand(card.getBrand())
                 .text(card.getText())
@@ -258,10 +261,10 @@ public class CopyService {
 
 
 
-    public CopySearchRes createCopySearchResult(String type, String keyword, List<CopyRes> copyResList, int index) {
-        List<CopyRes> slicedCopyResList = getCopyByIndex(copyResList, index);
+    public CopySearchResDto createCopySearchResult(String type, String keyword, List<CopyResDto> copyResList, int index) {
+        List<CopyResDto> slicedCopyResList = getCopyByIndex(copyResList, index);
 
-        return CopySearchRes.builder()
+        return CopySearchResDto.builder()
                 .type(type)
                 .keyword(keyword)
                 .totalNum(copyResList.size())
@@ -271,25 +274,24 @@ public class CopyService {
 
 
     @Transactional
-    public CopyRes createScrapRes(Scrap scrap) {
+    public CopyResDto createScrapRes(Scrap scrap) {
         Long id = scrap.getCard().getId();
 
         List<Scrap> scraps = scrapRepository.findByCardId(id);
 
-        return CopyRes.builder()
+        return CopyResDto.builder()
                 .id(id)
                 .brand(scrap.getCard().getBrand())
                 .text(scrap.getCard().getText())
                 .scrapCnt(scraps.size())
                 .createdAt(scrap.getCard().getCreatedAt())
                 .cardLink(scrap.getCard().getUrl())
-
                 .build();
     }
 
-    public List<CopyRes> getCopyFilter(HttpServletRequest httpRequest, int index, CardSearchCondition condition) {
+    public List<CopyResDto> getCopyFilter(HttpServletRequest httpRequest, int index, CardSearchCondition condition) {
         User user = jwtTokenProvider.getUserInfoByToken(httpRequest);
-        List<CopyRes> result = cardJpaRepository.filter(condition);
+        List<CopyResDto> result = cardJpaRepository.filter(condition);
         result = getCopyByIndex(result, index);
         setScrapCnt(httpRequest, result);
         setIsScrap(user,result);
@@ -297,7 +299,7 @@ public class CopyService {
     }
 
     @Transactional
-    public void saveCrawlingData(CrawlingReq crawlingReq) {
+    public void saveCrawlingData(CrawlingReqDto crawlingReq) {
         List<CrawlingData> dataList = crawlingReq.getData();
         for (CrawlingData data : dataList) {
             Long brandId = data.getBrandId();

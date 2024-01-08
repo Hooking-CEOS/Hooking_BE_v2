@@ -7,19 +7,19 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import shop.hooking.hooking.dto.CardSearchCondition;
-import shop.hooking.hooking.dto.request.CopyReq;
-import shop.hooking.hooking.dto.request.CrawlingReq;
-import shop.hooking.hooking.dto.response.CopyRes;
-import shop.hooking.hooking.dto.response.CopySearchRes;
+import shop.hooking.hooking.dto.request.CopyReqDto;
+import shop.hooking.hooking.dto.request.CrawlingReqDto;
+import shop.hooking.hooking.dto.response.CopyResDto;
+import shop.hooking.hooking.dto.response.CopySearchResDto;
 import shop.hooking.hooking.exception.OutOfIndexException;
 import shop.hooking.hooking.service.CopyService;
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 
-//@Cacheable("copyListCache")
+
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/copy")
+@RequestMapping("/api/v2/copy")
 //@Tag(name = "Copy")
 public class CopyController {
 
@@ -28,9 +28,9 @@ public class CopyController {
 
     @Operation(summary = "전체 카피라이팅 조회하기")
     @GetMapping("/{index}")
-    public ResponseEntity<List<CopyRes>> getCopyList(HttpServletRequest httpRequest, @PathVariable int index) {
+    public ResponseEntity<List<CopyResDto>> getCopyList(HttpServletRequest httpRequest, @PathVariable int index) {
         try {
-            List<CopyRes> copyResList = copyService.getCopyList(httpRequest, index);
+            List<CopyResDto> copyResList = copyService.getCopyList(httpRequest, index);
             return ResponseEntity.ok(copyResList);
         } catch (IllegalArgumentException ex) {
             throw new OutOfIndexException();
@@ -40,40 +40,40 @@ public class CopyController {
 
     //@Operation(summary = "브랜드 카피라이팅 검색하기")
     @GetMapping("/search/brand/{index}")
-    public ResponseEntity<CopySearchRes> searchBrandList(HttpServletRequest httpRequest,
-                                                         @RequestParam(name = "keyword") String q,
-                                                         @PathVariable int index) {
+    public ResponseEntity<CopySearchResDto> searchBrandList(HttpServletRequest httpRequest,
+                                                            @RequestParam(name = "keyword") String q,
+                                                            @PathVariable int index) {
         return ResponseEntity.ok(copyService.searchBrandList(httpRequest, q, index));
     }
 
     //@Operation(summary = "키워드 카피라이팅 검색하기")
     @GetMapping("/search/text/{index}")
-    public ResponseEntity<CopySearchRes> searchCopyList(HttpServletRequest httpRequest,
-                                                        @RequestParam(name = "keyword") String q,
-                                                        @PathVariable int index) {
+    public ResponseEntity<CopySearchResDto> searchCopyList(HttpServletRequest httpRequest,
+                                                           @RequestParam(name = "keyword") String q,
+                                                           @PathVariable int index) {
         return ResponseEntity.ok(copyService.searchCopyList(httpRequest, q, index));
     }
 
     //@Operation(summary = "무드 카피라이팅 검색하기")
     @GetMapping("/search/mood/{index}")
-    public ResponseEntity<CopySearchRes> searchMoodList(HttpServletRequest httpRequest,
-                                                        @RequestParam(name = "keyword") String q,
-                                                        @PathVariable int index) {
+    public ResponseEntity<CopySearchResDto> searchMoodList(HttpServletRequest httpRequest,
+                                                           @RequestParam(name = "keyword") String q,
+                                                           @PathVariable int index) {
         return ResponseEntity.ok(copyService.searchMoodList(httpRequest, q, index));
     }
 
 
     //@Operation(summary = "카피라이팅 스크랩 조회하기")
     @GetMapping("/scrap/{index}")
-    public ResponseEntity<List<CopyRes>> getScrapList(HttpServletRequest httpRequest, @PathVariable int index) {
+    public ResponseEntity<List<CopyResDto>> getScrapList(HttpServletRequest httpRequest, @PathVariable int index) {
         return ResponseEntity.ok(copyService.getScrapList(httpRequest,index));
     }
 
 
     //@Operation(summary = "카피라이팅 필터링")
     @GetMapping("/filter/{index}")
-    public ResponseEntity<List<CopyRes>> getCopyFilter(HttpServletRequest httpRequest, @PathVariable int index, CardSearchCondition condition) {
-        List<CopyRes> result = copyService.getCopyFilter(httpRequest, index, condition);
+    public ResponseEntity<List<CopyResDto>> getCopyFilter(HttpServletRequest httpRequest, @PathVariable int index, CardSearchCondition condition) {
+        List<CopyResDto> result = copyService.getCopyFilter(httpRequest, index, condition);
         if (result.isEmpty()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
@@ -84,23 +84,23 @@ public class CopyController {
 
     //@Operation(summary = "스크랩 하기")
     @PostMapping("/scrap")
-    public ResponseEntity<?> createScrap(HttpServletRequest httpRequest, @RequestBody CopyReq copyReq) {
-        return ResponseEntity.ok(copyService.createScrap(httpRequest,copyReq));
+    public ResponseEntity<?> createScrap(HttpServletRequest httpRequest, @RequestBody CopyReqDto copyReqDto) {
+        return ResponseEntity.ok(copyService.createScrap(httpRequest,copyReqDto));
     }
 
 
     //@Operation(summary = "스크랩 취소하기")
     @PostMapping ("/scrap/cancle")
-    public ResponseEntity<?> deleteScrap(HttpServletRequest httpRequest, @RequestBody CopyReq copyReq){
-        return ResponseEntity.ok(copyService.deleteScrap(httpRequest,copyReq));
+    public ResponseEntity<?> deleteScrap(HttpServletRequest httpRequest, @RequestBody CopyReqDto copyReqDto){
+        return ResponseEntity.ok(copyService.deleteScrap(httpRequest,copyReqDto));
 
     }
 
 
     //@Operation(summary = "카피라이팅 크롤링")
     @PostMapping("/crawling")
-    public ResponseEntity<?> createCrawling(@RequestBody CrawlingReq crawlingReq) {
-        copyService.saveCrawlingData(crawlingReq);
+    public ResponseEntity<?> createCrawling(@RequestBody CrawlingReqDto crawlingReqDto) {
+        copyService.saveCrawlingData(crawlingReqDto);
         return ResponseEntity.ok("크롤링 데이터가 저장되었습니다.");
     }
 

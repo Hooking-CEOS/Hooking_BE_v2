@@ -14,7 +14,6 @@ public interface BrandRepository extends JpaRepository<Brand, Long> {
     @Override
     List<Brand> findAll();
 
-
     Brand findBrandById(Long id);
 
 }

@@ -4,7 +4,7 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.stereotype.Repository;
 import shop.hooking.hooking.dto.CardSearchCondition;
-import shop.hooking.hooking.dto.response.CopyRes;
+import shop.hooking.hooking.dto.response.CopyResDto;
 import shop.hooking.hooking.dto.response.QCopyRes;
 import shop.hooking.hooking.entity.*;
 
@@ -26,7 +26,7 @@ public class CardJpaRepository {
         this.queryFactory = new JPAQueryFactory(em);
     }
 
-    public List<CopyRes> filter(CardSearchCondition condition){
+    public List<CopyResDto> filter(CardSearchCondition condition){
 
         String moodString = condition.getMood();
         String[] moods = null;
@@ -83,7 +83,7 @@ public class CardJpaRepository {
 
 
 
-    public List<CopyRes> searchMood(String q){
+    public List<CopyResDto> searchMood(String q){
         BooleanExpression moodNameEqualsQ = mood.moodName.eq(q);
 
         return queryFactory
@@ -103,7 +103,7 @@ public class CardJpaRepository {
                 .fetch();
     }
 
-    public List<CopyRes> searchCopy(String q){
+    public List<CopyResDto> searchCopy(String q){
         BooleanExpression textContainsQ = card.text.contains(q);
 
         return queryFactory
@@ -119,7 +119,7 @@ public class CardJpaRepository {
                 .fetch();
     }
 
-    public List<CopyRes> searchBrand(String q){
+    public List<CopyResDto> searchBrand(String q){
         BooleanExpression brandContainsQ = brand.brandName.contains(q);
 
         return queryFactory

@@ -2,9 +2,8 @@ package shop.hooking.hooking.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import shop.hooking.hooking.config.jwt.JwtTokenProvider;
-import shop.hooking.hooking.dto.response.BrandRes;
-import shop.hooking.hooking.dto.response.CopyRes;
+import shop.hooking.hooking.global.jwt.JwtTokenProvider;
+import shop.hooking.hooking.dto.response.BrandResDto;
 import shop.hooking.hooking.entity.*;
 import shop.hooking.hooking.exception.*;
 
@@ -34,8 +33,8 @@ public class BrandService {
 
     private final ScrapRepository scrapRepository;
 
-    public List<BrandRes.BrandDto> getBrandList(){
-        List<BrandRes.BrandDto> brandDtoList = new ArrayList<>();
+    public List<BrandResDto.BrandDto> getBrandList(){
+        List<BrandResDto.BrandDto> brandDtoList = new ArrayList<>();
         List<Brand> brands = brandRepository.findAll();
 
         for( Brand brand : brands){
@@ -50,7 +49,7 @@ public class BrandService {
             Mood moodTwo = moodRepository.findMoodById(haves.get(2).getMood().getId());
 
 
-            brandDtoList.add(BrandRes.BrandDto.builder()
+            brandDtoList.add(BrandResDto.BrandDto.builder()
                     .brandId(brand.getId())
                     .brandName(brand.getBrandName())
                     .brandLink(brand.getBrandLink())
@@ -63,13 +62,13 @@ public class BrandService {
     }
 
 
-    public BrandRes.BrandDetailDto getOneBrand(Long id) {
+    public BrandResDto.BrandDetailDto getOneBrand(Long id) {
         Brand brand = brandRepository.findBrandById(id);
 
         List<Card> cards = cardRepository.findCardsByBrandId(brand.getId());
-        List<BrandRes.cardDto> cardDtos = new ArrayList<>();
+        List<BrandResDto.cardDto> cardDtos = new ArrayList<>();
         for(Card card : cards){
-            BrandRes.cardDto cardDto = BrandRes.cardDto.builder()
+            BrandResDto.cardDto cardDto = BrandResDto.cardDto.builder()
                     .id(card.getId())
                     .brandName(card.getBrand().getBrandName())
                     .text(card.getText())
@@ -98,7 +97,7 @@ public class BrandService {
         Mood moodTwo = moodRepository.findMoodById(haves.get(2).getMood().getId());
 
 
-        BrandRes.BrandDetailDto brandDetailDto = BrandRes.BrandDetailDto.builder()
+        BrandResDto.BrandDetailDto brandDetailDto = BrandResDto.BrandDetailDto.builder()
                 .brandId(id)
                 .brandName(brand.getBrandName())
                 .brandIntro(brand.getBrandIntro())
@@ -111,7 +110,7 @@ public class BrandService {
         return brandDetailDto;
     }
 
-     public List<BrandRes.cardDto> getLimitedCardsByIndex(List<BrandRes.cardDto> cards, int index) {
+     public List<BrandResDto.cardDto> getLimitedCardsByIndex(List<BrandResDto.cardDto> cards, int index) {
          int startIndex = index * 30;
          int endIndex = Math.min(startIndex + 30, cards.size());
          if (startIndex >= endIndex) {
@@ -120,11 +119,11 @@ public class BrandService {
          return cards.subList(startIndex, endIndex);
     }
 
-    public void setIsScrapWithUser(User user, List<BrandRes.cardDto> cardList) {
+    public void setIsScrapWithUser(User user, List<BrandResDto.cardDto> cardList) {
         List<Scrap> scraps = scrapRepository.findScrapByUser(user);
 
         // cardList의 id와 scraps의 card_id를 비교하여 isScrap 값을 설정
-        for (BrandRes.cardDto cardDto : cardList) {
+        for (BrandResDto.cardDto cardDto : cardList) {
             long cardId = cardDto.getId();
             boolean isScrapFound = scraps.stream().anyMatch(scrap -> scrap.getCard().getId() == cardId);
             cardDto.setIsScrap(isScrapFound ? 1 : 0);
@@ -132,25 +131,25 @@ public class BrandService {
     }
 
 
-    public void setScrapCntWhenTokenNotProvided(HttpServletRequest httpRequest, List<BrandRes.cardDto> cardList) {
+    public void setScrapCntWhenTokenNotProvided(HttpServletRequest httpRequest, List<BrandResDto.cardDto> cardList) {
 
         String token = httpRequest.getHeader("Authorization");
         if (token == null) {
-            for (BrandRes.cardDto cardDto : cardList) {
+            for (BrandResDto.cardDto cardDto : cardList) {
                 cardDto.setScrapCnt(0);
             }
         }
     }
 
 
-    public BrandRes.BrandDetailDto getBrandDetail(HttpServletRequest httpRequest, Long brand_id, int index) {
+    public BrandResDto.BrandDetailDto getBrandDetail(HttpServletRequest httpRequest, Long brand_id, int index) {
         User user = jwtTokenProvider.getUserInfoByToken(httpRequest);
-        BrandRes.BrandDetailDto brandDetailDto = getOneBrand(brand_id);
+        BrandResDto.BrandDetailDto brandDetailDto = getOneBrand(brand_id);
 
-        List<BrandRes.cardDto> cards = brandDetailDto.getCard();
+        List<BrandResDto.cardDto> cards = brandDetailDto.getCard();
 
         int startIndex = index * 30;
-        List<BrandRes.cardDto> resultCards = getLimitedCardsByIndex(cards, startIndex);
+        List<BrandResDto.cardDto> resultCards = getLimitedCardsByIndex(cards, startIndex);
 
         brandDetailDto.setCard(resultCards);
 

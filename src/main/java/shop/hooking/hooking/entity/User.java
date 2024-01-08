@@ -6,7 +6,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Where;
-import shop.hooking.hooking.global.entity.BaseTimeEntity;
 
 
 import javax.persistence.*;
@@ -23,6 +22,7 @@ public class User{
     private Long userId;
 
     @Column(name="kakao_id")
+    @NotNull
     private Long kakaoId;
 
     @Column
@@ -31,27 +31,24 @@ public class User{
 
     @Column
     private String email;
-    
-    @Column
-    private String password;
 
     @Column
     private String image;
 
-    private String role;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "role")
+    private Role role;
 
     @Column(name="delete_flag")
     @NotNull
     private Boolean deleteFlag;
 
     @Builder
-    public User(Long kakaoId, String nickname, String email, String image, String password) {
+    public User(Long kakaoId, String nickname, String email, String image) {
         this.kakaoId = kakaoId;
         this.nickname = nickname;
         if(email!=null) this.email = email;
-        this.password = password;
         this.image = image;
-        role = "USER";
         this.deleteFlag = false;
     }
 
@@ -64,6 +61,9 @@ public class User{
         this.image = fileurl;
     }
 
+    public void setRole(String role) {
+        this.role = Role.valueOf(role);
+    }
 
     public void updateDeleteFlag() {
         this.deleteFlag = true;

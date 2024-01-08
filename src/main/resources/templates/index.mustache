@@ -1,0 +1,45 @@
+<h1>Springboot Oauth2 실습</h1>
+<div>
+    {{#nickname}}
+    <!-- 로그인 성공 -->
+    <p>
+        Logged in as: <span id="user">{{nickname}}</span>
+        {{picture}}
+        <br> <a href="/logout" role="button">Logout</a>
+    </p>
+    <p>
+        <!-- 권한 선택 버튼 -->
+        <button onclick="selectRole('GUEST')">Select GEUST Role</button>
+        <button onclick="selectRole('BRAND')">Select BRAND Role</button>
+    </p>
+    {{/nickname}}
+    {{^nickname}}
+    <!-- 로그인 전 -->
+    <a href="/oauth2/authorization/google" >Google Login</a>
+    <br><a href="/oauth2/authorization/kakao">Kakao Login</a>
+    {{/nickname}}
+</div>
+<br>
+
+<script>
+   function selectRole(role) {
+           // 사용자의 권한을 선택하고 서버로 업데이트
+           const token = 'accessToken';
+           fetch('/select-role?role=' + role, {
+               method: 'POST',
+               headers: {
+                   'Authorization': token,
+                   'Content-Type': 'application/json'
+               }
+           })
+           .then(response => response.json())
+           .then(data => {
+               if (data.success) {
+                   // 선택이 성공하면 새로고침
+                   location.reload();
+               } else {
+                   alert('Failed to select role. Please try again.');
+               }
+           });
+       }
+</script>

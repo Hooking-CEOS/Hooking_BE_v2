@@ -3,7 +3,7 @@ package shop.hooking.hooking.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import shop.hooking.hooking.dto.response.BrandRes;
+import shop.hooking.hooking.dto.response.BrandResDto;
 import shop.hooking.hooking.service.BrandService;
 
 import javax.servlet.http.HttpServletRequest;
@@ -11,7 +11,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/brand")
+@RequestMapping("/api/v2/brand")
 public class BrandController {
 
     private final BrandService brandService;
@@ -19,14 +19,14 @@ public class BrandController {
 
     //브랜드 전체 조회
     @GetMapping("")
-    public ResponseEntity<List<BrandRes.BrandDto>> showAllBrand() {
+    public ResponseEntity<List<BrandResDto.BrandDto>> showAllBrand() {
         return ResponseEntity.ok(brandService.getBrandList());
 
     }
 
     //브랜드 상세 조회
     @GetMapping("/{brand_id}/{index}")
-    public ResponseEntity<BrandRes.BrandDetailDto> getOneBrand(HttpServletRequest httpRequest, @PathVariable Long brand_id, @PathVariable int index) {
+    public ResponseEntity<BrandResDto.BrandDetailDto> getOneBrand(HttpServletRequest httpRequest, @PathVariable Long brand_id, @PathVariable int index) {
         return ResponseEntity.ok(brandService.getBrandDetail(httpRequest, brand_id, index));
     }
 

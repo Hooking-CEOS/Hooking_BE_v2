@@ -23,7 +23,6 @@ public class RefererController {
         System.out.println("Host: " + host);
 
         // 로그인 성공 후 리다이렉트할 URL 분기처리 등 추가 작업 수행
-
         return "Login success";
     }
 }
