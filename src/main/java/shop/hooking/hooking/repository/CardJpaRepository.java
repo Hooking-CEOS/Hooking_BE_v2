@@ -5,7 +5,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.stereotype.Repository;
 import shop.hooking.hooking.dto.CardSearchCondition;
 import shop.hooking.hooking.dto.response.CopyResDto;
-import shop.hooking.hooking.dto.response.QCopyRes;
+import shop.hooking.hooking.dto.response.QCopyResDto;
 import shop.hooking.hooking.entity.*;
 
 import javax.persistence.EntityManager;
@@ -60,7 +60,7 @@ public class CardJpaRepository {
 
 
         return queryFactory
-                .selectDistinct(new QCopyRes(
+                .selectDistinct(new QCopyResDto(
                         card.id,
                         card.brand,
                         card.text,
@@ -87,7 +87,7 @@ public class CardJpaRepository {
         BooleanExpression moodNameEqualsQ = mood.moodName.eq(q);
 
         return queryFactory
-                .selectDistinct(new QCopyRes(
+                .selectDistinct(new QCopyResDto(
                         card.id,
                         card.brand,
                         card.text,
@@ -107,7 +107,7 @@ public class CardJpaRepository {
         BooleanExpression textContainsQ = card.text.contains(q);
 
         return queryFactory
-                .selectDistinct(new QCopyRes(
+                .selectDistinct(new QCopyResDto(
                         card.id,
                         card.brand,
                         card.text,
@@ -123,7 +123,7 @@ public class CardJpaRepository {
         BooleanExpression brandContainsQ = brand.brandName.contains(q);
 
         return queryFactory
-                .selectDistinct(new QCopyRes(
+                .selectDistinct(new QCopyResDto(
                         card.id,
                         card.brand,
                         card.text,
