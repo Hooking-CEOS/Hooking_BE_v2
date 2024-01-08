@@ -3,7 +3,7 @@ services:
 
   web:
     container_name: web
-    image: jiwonkim08/hooking-docker-web
+    image: jiwonkim08/docker-web
     expose:
       - "8080"
     ports:
@@ -13,7 +13,7 @@ services:
 
   nginx:
     container_name: nginx
-    image: jiwonkim08/hooking-docker-nginx
+    image: jiwonkim08/docker-nginx
     ports:
       - "80:80"
     depends_on:
