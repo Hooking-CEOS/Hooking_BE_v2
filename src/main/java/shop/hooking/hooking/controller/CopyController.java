@@ -38,7 +38,7 @@ public class CopyController {
     }
 
 
-    //@Operation(summary = "브랜드 카피라이팅 검색하기")
+    @Operation(summary = "브랜드 카피라이팅 검색하기")
     @GetMapping("/search/brand/{index}")
     public ResponseEntity<CopySearchResDto> searchBrandList(HttpServletRequest httpRequest,
                                                             @RequestParam(name = "keyword") String q,
@@ -46,7 +46,7 @@ public class CopyController {
         return ResponseEntity.ok(copyService.searchBrandList(httpRequest, q, index));
     }
 
-    //@Operation(summary = "키워드 카피라이팅 검색하기")
+    @Operation(summary = "키워드 카피라이팅 검색하기")
     @GetMapping("/search/text/{index}")
     public ResponseEntity<CopySearchResDto> searchCopyList(HttpServletRequest httpRequest,
                                                            @RequestParam(name = "keyword") String q,
@@ -54,7 +54,7 @@ public class CopyController {
         return ResponseEntity.ok(copyService.searchCopyList(httpRequest, q, index));
     }
 
-    //@Operation(summary = "무드 카피라이팅 검색하기")
+    @Operation(summary = "무드 카피라이팅 검색하기")
     @GetMapping("/search/mood/{index}")
     public ResponseEntity<CopySearchResDto> searchMoodList(HttpServletRequest httpRequest,
                                                            @RequestParam(name = "keyword") String q,
@@ -63,14 +63,14 @@ public class CopyController {
     }
 
 
-    //@Operation(summary = "카피라이팅 스크랩 조회하기")
+    @Operation(summary = "카피라이팅 스크랩 조회하기")
     @GetMapping("/scrap/{index}")
     public ResponseEntity<List<CopyResDto>> getScrapList(HttpServletRequest httpRequest, @PathVariable int index) {
         return ResponseEntity.ok(copyService.getScrapList(httpRequest,index));
     }
 
 
-    //@Operation(summary = "카피라이팅 필터링")
+    @Operation(summary = "카피라이팅 필터링")
     @GetMapping("/filter/{index}")
     public ResponseEntity<List<CopyResDto>> getCopyFilter(HttpServletRequest httpRequest, @PathVariable int index, CardSearchCondition condition) {
         List<CopyResDto> result = copyService.getCopyFilter(httpRequest, index, condition);
@@ -82,14 +82,14 @@ public class CopyController {
     }
 
 
-    //@Operation(summary = "스크랩 하기")
+    @Operation(summary = "스크랩 하기")
     @PostMapping("/scrap")
     public ResponseEntity<?> createScrap(HttpServletRequest httpRequest, @RequestBody CopyReqDto copyReqDto) {
         return ResponseEntity.ok(copyService.createScrap(httpRequest,copyReqDto));
     }
 
 
-    //@Operation(summary = "스크랩 취소하기")
+    @Operation(summary = "스크랩 취소하기")
     @PostMapping ("/scrap/cancle")
     public ResponseEntity<?> deleteScrap(HttpServletRequest httpRequest, @RequestBody CopyReqDto copyReqDto){
         return ResponseEntity.ok(copyService.deleteScrap(httpRequest,copyReqDto));
@@ -97,7 +97,7 @@ public class CopyController {
     }
 
 
-    //@Operation(summary = "카피라이팅 크롤링")
+    @Operation(summary = "카피라이팅 크롤링")
     @PostMapping("/crawling")
     public ResponseEntity<?> createCrawling(@RequestBody CrawlingReqDto crawlingReqDto) {
         copyService.saveCrawlingData(crawlingReqDto);

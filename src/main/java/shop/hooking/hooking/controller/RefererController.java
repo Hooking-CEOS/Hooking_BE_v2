@@ -1,5 +1,6 @@
 package shop.hooking.hooking.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,6 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 @RequestMapping("/example")
 public class RefererController {
 
+    @Operation(summary = "사용자 토큰 확인하기")
     @GetMapping("/login")
     public String login(HttpServletRequest request) {
         // Referer 헤더 확인

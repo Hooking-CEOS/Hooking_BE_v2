@@ -1,5 +1,6 @@
 package shop.hooking.hooking.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,11 +16,13 @@ public class UserController {
 
     private final OAuthUserService oAuthUserService;
 
+    @Operation(summary = "토큰으로 사용자 정보 불러오기")
     @GetMapping("/information")
     public OAuthUserResDto getUserInfo(HttpServletRequest httpRequest) {
         return oAuthUserService.getUser(httpRequest);
     }
 
+    @Operation(summary = "역할 선택하기")
     @PostMapping("/select-role")
     public ResponseEntity<?> selectRole(HttpServletRequest httpRequest, @RequestParam String role) {
         try {

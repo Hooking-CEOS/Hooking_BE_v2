@@ -2,6 +2,7 @@ package shop.hooking.hooking.controller;
 
 import java.io.IOException;
 
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Value;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.ObjectMetadata;
@@ -27,6 +28,7 @@ public class FileUploadController {
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 
+    @Operation(summary = "사진 업로드하기")
     @PostMapping
     public ResponseEntity<String> uploadFile(@RequestParam("file") MultipartFile file) {
         try {
