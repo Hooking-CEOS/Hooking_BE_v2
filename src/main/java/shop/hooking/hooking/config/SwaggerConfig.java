@@ -26,7 +26,7 @@ public class SwaggerConfig {
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder()
                 .title("HOOKING Spring Boot REST API")
-                .version("1.0.0")
+                .version("2.0.0")
                 .description("후킹 API 명세서입니다.")
                 .build();
     }

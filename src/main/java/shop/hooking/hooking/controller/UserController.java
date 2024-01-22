@@ -1,5 +1,6 @@
 package shop.hooking.hooking.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,7 +15,7 @@ import java.util.Map;
 public class UserController {
 
     private final OAuthUserService oAuthUserService;
-
+    @Operation(summary = "유저 정보 조회하기")
     @GetMapping("/information")
     public OAuthUserResDto getUserInfo(HttpServletRequest httpRequest) {
         return oAuthUserService.getUser(httpRequest);

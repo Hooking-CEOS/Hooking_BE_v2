@@ -73,10 +73,18 @@ public class SecurityConfig {
                 .authorizeRequests()
                 .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
                 .antMatchers("/api/v2/**", "/", "/css/**", "/images/**", "/js/**", "/h2/**",
-                        "/select-role","/information", "/upload",
+                        "/select-role","/information", "/file/**",
                         /* swagger v3 */
                         "/v3/api-docs/**",
-                        "/swagger-ui/**"
+                        "/swagger-ui/**",
+                        "/v2/api-docs",
+                        "/swagger-resources",
+                        "/swagger-resources/**",
+                        "/configuration/ui",
+                        "/configuration/security",
+                        "/swagger-ui.html",
+                        "/webjars/**"
+
                 ).permitAll()
 //                .antMatchers("/api/v2/**").hasRole(Role.
 //                        USER.name())
