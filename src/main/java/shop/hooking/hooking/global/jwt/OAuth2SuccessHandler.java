@@ -75,6 +75,8 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
     private void writeTokenResponse(HttpServletResponse response, String accessToken, String refreshToken, String targetUrl) throws IOException {
         Cookie accessTokenCookie = new Cookie("accessToken", accessToken);
+        accessTokenCookie.setSecure(false);
+        accessTokenCookie.setHttpOnly(false);
         accessTokenCookie.setPath("/");
         response.addCookie(accessTokenCookie);
 
