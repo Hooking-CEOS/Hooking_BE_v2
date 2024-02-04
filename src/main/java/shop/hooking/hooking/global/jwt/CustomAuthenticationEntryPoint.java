@@ -22,7 +22,7 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
         } else {
             // 가입되지 않은 사용자의 접근
             if (!request.getRequestURI().equals("/auth/login") && !request.getRequestURI().startsWith("/auth/")) {
-                response.sendRedirect("/auth/login");
+                response.sendRedirect("/");
             }
 
         }
