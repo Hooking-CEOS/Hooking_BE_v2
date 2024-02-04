@@ -10,6 +10,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
+import org.springframework.web.util.UriComponentsBuilder;
 import shop.hooking.hooking.entity.User;
 import shop.hooking.hooking.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Value;
@@ -71,11 +72,10 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 //            targetUrl ="https://hooking.me/oath-processor"; // 로컬 환경
 //        }
 
-        writeTokenResponse(response, accessToken, refreshToken, targetUrl);
+        writeTokenResponse(request, response, accessToken, refreshToken, targetUrl);
     }
 
-    private void writeTokenResponse(HttpServletResponse response, String accessToken, String refreshToken, String targetUrl) throws IOException {
-        // 쿠키 설정
+    private void writeTokenResponse(HttpServletRequest request, HttpServletResponse response, String accessToken, String refreshToken, String targetUrl) throws IOException {
         Cookie accessTokenCookie = new Cookie("accessToken", accessToken);
         accessTokenCookie.setSecure(false);
         accessTokenCookie.setHttpOnly(false);
@@ -86,9 +86,11 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         refreshTokenCookie.setPath("/");
         response.addCookie(refreshTokenCookie);
 
-        // 리다이렉트 수행
-        response.sendRedirect(targetUrl);
-        log.info("타켓URl, 쿠키정보: " + targetUrl + ", " + accessTokenCookie + ", " + refreshTokenCookie);
+        targetUrl = UriComponentsBuilder.fromUriString(targetUrl)
+                .build().toUriString();
+
+        log.info("타켓URl, 쿠키정보: " + targetUrl, accessTokenCookie, refreshTokenCookie);
+        getRedirectStrategy().sendRedirect(request,response, targetUrl);
     }
 
 }
