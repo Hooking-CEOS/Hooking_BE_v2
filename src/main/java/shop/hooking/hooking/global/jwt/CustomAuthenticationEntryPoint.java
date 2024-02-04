@@ -24,6 +24,7 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
             if (!request.getRequestURI().equals("/auth/login") && !request.getRequestURI().startsWith("/auth/")) {
                 response.sendRedirect("/auth/login");
             }
+
         }
     }
 
