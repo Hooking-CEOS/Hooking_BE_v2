@@ -86,8 +86,11 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         refreshTokenCookie.setPath("/");
         response.addCookie(refreshTokenCookie);
 
+//        targetUrl = UriComponentsBuilder.fromUriString(targetUrl)
+//                .build().toUriString();
+        response.sendRedirect(targetUrl);
         log.info("타켓URl, 쿠키정보: " + targetUrl, accessTokenCookie, refreshTokenCookie);
-        getRedirectStrategy().sendRedirect(request, response, targetUrl);
+        // getRedirectStrategy().sendRedirect(request,response, targetUrl);
     }
 
 }
