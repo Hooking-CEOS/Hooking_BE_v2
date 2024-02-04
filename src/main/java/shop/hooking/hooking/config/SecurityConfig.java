@@ -86,6 +86,7 @@ public class SecurityConfig {
                         "/webjars/**",
                         "**/oath-processor/**",
                         "/login/oauth2/code/kakao/**"
+
                 ).permitAll()
 //                .antMatchers("/api/v2/**").hasRole(Role.
 //                        USER.name())
