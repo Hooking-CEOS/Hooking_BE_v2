@@ -55,19 +55,20 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         String referer = request.getHeader("Referer");
         String host = request.getHeader("Host");
         String targetUrl;
+        targetUrl = referer;
 
-        // Referer와 Host에 따라서 targetUrl 설정
-        if (referer != null && referer.startsWith(requestUrl) && host.equals("hooking.shop")) {
-            targetUrl = redirectUrl; // 배포 환경
-        } else if (referer != null && referer.startsWith("http://localhost:3000/") && host.equals("hooking.shop")) {
-            targetUrl = "http://localhost:3000/oath-processor"; // 로컬 환경
-        } else if (referer != null && referer.startsWith("https://hooking.me/") && host.equals("hooking.shop")) {
-            targetUrl = "https://hooking.me/oath-processor"; // 실배포 환경
-        }
-        else {
-            // 기본적으로 로컬 개발 환경으로 설정
-            targetUrl ="https://hooking.me/oath-processor"; // 로컬 환경
-        }
+//        // Referer와 Host에 따라서 targetUrl 설정
+//        if (referer != null && referer.startsWith(requestUrl) && host.equals("hooking.shop")) {
+//            targetUrl = redirectUrl; // 배포 환경
+//        } else if (referer != null && referer.startsWith("http://localhost:3000/") && host.equals("hooking.shop")) {
+//            targetUrl = "http://localhost:3000/oath-processor"; // 로컬 환경
+//        } else if (referer != null && referer.startsWith("https://hooking.me/") && host.equals("hooking.shop")) {
+//            targetUrl = "https://hooking.me/oath-processor"; // 실배포 환경
+//        }
+//        else {
+//            // 기본적으로 로컬 개발 환경으로 설정
+//            targetUrl ="https://hooking.me/oath-processor"; // 로컬 환경
+//        }
 
         writeTokenResponse(response, accessToken, refreshToken, targetUrl);
     }
@@ -82,7 +83,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         response.addCookie(refreshTokenCookie);
 
         response.sendRedirect(targetUrl);
-        getRedirectStrategy().sendRedirect((HttpServletRequest) response, response, targetUrl);
+       // getRedirectStrategy().sendRedirect((HttpServletRequest) response, response, targetUrl);
     }
 
 }
