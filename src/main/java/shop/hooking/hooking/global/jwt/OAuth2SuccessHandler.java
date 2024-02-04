@@ -56,6 +56,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         String host = request.getHeader("Host");
         String targetUrl;
         targetUrl = referer;
+        log.info(referer);
 
 //        // Referer와 Host에 따라서 targetUrl 설정
 //        if (referer != null && referer.startsWith(requestUrl) && host.equals("hooking.shop")) {
