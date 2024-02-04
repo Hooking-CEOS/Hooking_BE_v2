@@ -55,7 +55,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         String referer = request.getHeader("Referer");
         String host = request.getHeader("Host");
         String targetUrl;
-        targetUrl = "http://localhost:3000";
+        targetUrl = referer;
         log.info(referer);
 
 //        // Referer와 Host에 따라서 targetUrl 설정
@@ -87,7 +87,6 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
         response.sendRedirect(targetUrl);
         log.info("타켓URl, 쿠키정보: " + targetUrl, accessTokenCookie, refreshTokenCookie);
-        //getRedirectStrategy().sendRedirect((HttpServletRequest) response, response, targetUrl);
     }
 
 }
