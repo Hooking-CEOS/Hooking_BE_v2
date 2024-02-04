@@ -84,7 +84,8 @@ public class SecurityConfig {
                         "/configuration/security",
                         "/swagger-ui.html",
                         "/webjars/**",
-                        "**/oath-processor/**"
+                        "**/oath-processor/**",
+                        "/login/oauth2/code/kakao/**"
 
                 ).permitAll()
 //                .antMatchers("/api/v2/**").hasRole(Role.
