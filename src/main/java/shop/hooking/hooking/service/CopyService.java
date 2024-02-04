@@ -190,7 +190,7 @@ public class CopyService {
         }
         return scrapList;
     }
-
+//
     @Transactional
     public Long createScrap(HttpServletRequest httpRequest, CopyReqDto copyReq) {
         User user = jwtTokenProvider.getUserInfoByToken(httpRequest);
