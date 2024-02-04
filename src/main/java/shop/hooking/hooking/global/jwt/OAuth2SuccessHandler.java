@@ -62,14 +62,12 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         } else if (referer != null && referer.startsWith("http://localhost:3000/") && host.equals("hooking.shop")) {
             targetUrl = "http://localhost:3000/oath-processor"; // 로컬 환경
         } else if (referer != null && referer.startsWith("https://hooking.me/") && host.equals("hooking.shop")) {
-            targetUrl = "https://hooking.me/"; // 실배포 환경
+            targetUrl = "https://hooking.me/oath-processor"; // 실배포 환경
         }
         else {
             // 기본적으로 로컬 개발 환경으로 설정
             targetUrl ="https://hooking.me/oath-processor"; // 로컬 환경
         }
-        // else
-        // http://localhost:8080
 
         writeTokenResponse(response, accessToken, refreshToken, targetUrl);
     }
@@ -83,7 +81,8 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         refreshTokenCookie.setPath("/");
         response.addCookie(refreshTokenCookie);
 
-        response.sendRedirect("http://localhost:8080");
+        response.sendRedirect(targetUrl);
+        getRedirectStrategy().sendRedirect((HttpServletRequest) response, response, targetUrl);
     }
 
 }
