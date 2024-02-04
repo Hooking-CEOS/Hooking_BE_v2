@@ -56,6 +56,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         String host = request.getHeader("Host");
         String targetUrl;
         targetUrl = referer;
+        log.info(referer);
 
 //        // Referer와 Host에 따라서 targetUrl 설정
 //        if (referer != null && referer.startsWith(requestUrl) && host.equals("hooking.shop")) {
@@ -85,7 +86,8 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         response.addCookie(refreshTokenCookie);
 
         response.sendRedirect(targetUrl);
-       // getRedirectStrategy().sendRedirect((HttpServletRequest) response, response, targetUrl);
+        log.info("타켓URl, 쿠키정보: " + targetUrl, accessTokenCookie, refreshTokenCookie);
+        getRedirectStrategy().sendRedirect((HttpServletRequest) response, response, targetUrl);
     }
 
 }
