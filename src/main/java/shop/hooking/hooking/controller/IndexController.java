@@ -1,5 +1,6 @@
 package shop.hooking.hooking.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -15,6 +16,7 @@ import javax.servlet.http.HttpSession;
 public class IndexController {
     private final HttpSession httpSession;
 
+    @Operation(summary = "테스트용 카카오 로그인")
     @GetMapping("/")
     public String index(Model model) {
         SessionUser user = (SessionUser) httpSession.getAttribute("user");

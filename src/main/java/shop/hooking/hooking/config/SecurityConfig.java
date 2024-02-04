@@ -84,7 +84,6 @@ public class SecurityConfig {
                         "/configuration/security",
                         "/swagger-ui.html",
                         "/webjars/**"
-
                 ).permitAll()
 //                .antMatchers("/api/v2/**").hasRole(Role.
 //                        USER.name())

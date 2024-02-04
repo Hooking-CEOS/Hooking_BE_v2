@@ -18,6 +18,7 @@ public class BrandController {
     private final BrandService brandService;
 
 
+
     //브랜드 전체 조회
     @Operation(summary = "브랜드 전체 조회하기")
     @GetMapping("")
@@ -25,6 +26,7 @@ public class BrandController {
         return ResponseEntity.ok(brandService.getBrandList());
 
     }
+
 
     //브랜드 상세 조회
     @Operation(summary = "브랜드 상세 조회하기")

@@ -15,12 +15,14 @@ import java.util.Map;
 public class UserController {
 
     private final OAuthUserService oAuthUserService;
+
     @Operation(summary = "유저 정보 조회하기")
     @GetMapping("/information")
     public OAuthUserResDto getUserInfo(HttpServletRequest httpRequest) {
         return oAuthUserService.getUser(httpRequest);
     }
 
+    @Operation(summary = "역할 선택하기")
     @PostMapping("/select-role")
     public ResponseEntity<?> selectRole(HttpServletRequest httpRequest, @RequestParam String role) {
         try {
