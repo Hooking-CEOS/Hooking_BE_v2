@@ -55,7 +55,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         String referer = request.getHeader("Referer");
         String host = request.getHeader("Host");
         String targetUrl;
-        targetUrl = referer;
+        targetUrl = "http://localhost:3000/";
         log.info(referer);
 
 //        // Referer와 Host에 따라서 targetUrl 설정
