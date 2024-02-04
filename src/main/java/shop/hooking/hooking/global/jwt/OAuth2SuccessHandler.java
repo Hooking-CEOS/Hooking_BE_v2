@@ -68,11 +68,13 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
             // 기본적으로 로컬 개발 환경으로 설정
             targetUrl ="https://hooking.me/oath-processor"; // 로컬 환경
         }
+        // else
+        // http://localhost:8080
 
-        writeTokenResponse(response, accessToken, refreshToken);
+        writeTokenResponse(response, accessToken, refreshToken, targetUrl);
     }
 
-    private void writeTokenResponse(HttpServletResponse response, String accessToken, String refreshToken) throws IOException {
+    private void writeTokenResponse(HttpServletResponse response, String accessToken, String refreshToken, String targetUrl) throws IOException {
         Cookie accessTokenCookie = new Cookie("accessToken", accessToken);
         accessTokenCookie.setPath("/");
         response.addCookie(accessTokenCookie);
@@ -81,7 +83,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         refreshTokenCookie.setPath("/");
         response.addCookie(refreshTokenCookie);
 
-        response.sendRedirect("http://localhost:8080");
+        response.sendRedirect(targetUrl);
     }
 
 }

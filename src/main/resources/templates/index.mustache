@@ -1,3 +1,4 @@
+<!-- 기존 코드 -->
 <h1>Springboot Oauth2 실습</h1>
 <div>
     {{#nickname}}
@@ -6,6 +7,12 @@
         Logged in as: <span id="user">{{nickname}}</span>
         {{picture}}
         <br> <a href="/logout" role="button">Logout</a>
+        <div>
+            <form id="uploadForm" enctype="multipart/form-data">
+                <input type="file" id="fileInput" name="file">
+                <button type="button" onclick="uploadFile()">Upload</button>
+            </form>
+        </div>
     </p>
     <p>
         <!-- 권한 선택 버튼 -->
@@ -21,6 +28,49 @@
 </div>
 <br>
 
+<!-- 추가된 JavaScript(fetch) 코드 -->
+<script>
+    function uploadFile() {
+        const fileInput = document.getElementById('fileInput');
+        const file = fileInput.files[0];
+
+        // 이미지를 받는 폼
+        const formData = new FormData();
+        formData.append('file', file);
+
+        // 백엔드로 HTTP POST 요청 보내기
+        fetch('http://localhost:8080/file/upload', {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'Authorization': 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIzMjYxODk3NjgzIiwicm9sZXMiOiJHVUVTVCIsImlhdCI6MTcwNTMzNjMxNywiZXhwIjoxNzA1MzQzNTE3fQ.BJ_nos8kyp9nhElSAWRHx5el8sWf1HSoZMbFPp1DhuE',  // 액세스 토큰은 실제로 유효한 토큰으로 대체
+            }
+        })
+        .then(response => response.text())
+        .then(data => {
+            // 백엔드에서 받은 presignedURL을 이용하여 이미지 업로드
+            const presignedURL = data;
+            fetch(presignedURL, {
+                method: 'PUT',
+                body: file
+            })
+            .then(() => {
+                console.log('Image uploaded successfully.');
+                // 업로드가 성공하면 필요한 로직 수행
+            })
+            .catch(error => {
+                console.error('Error uploading image:', error);
+            });
+        })
+        .catch(error => {
+            console.error('Error sending file to the server:', error);
+        });
+    }
+</script>
+
+
+
+<!-- 기존 코드 -->
 <script>
    function selectRole(role) {
            // 사용자의 권한을 선택하고 서버로 업데이트

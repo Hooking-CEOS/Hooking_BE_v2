@@ -20,7 +20,6 @@ import java.util.*;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v2/copy")
-//@Tag(name = "Copy")
 public class CopyController {
 
     private final CopyService copyService;

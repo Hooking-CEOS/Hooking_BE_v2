@@ -16,7 +16,7 @@ public class UserController {
 
     private final OAuthUserService oAuthUserService;
 
-    @Operation(summary = "토큰으로 사용자 정보 불러오기")
+    @Operation(summary = "유저 정보 조회하기")
     @GetMapping("/information")
     public OAuthUserResDto getUserInfo(HttpServletRequest httpRequest) {
         return oAuthUserService.getUser(httpRequest);

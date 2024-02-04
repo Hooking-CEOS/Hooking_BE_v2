@@ -73,7 +73,7 @@ public class SecurityConfig {
                 .authorizeRequests()
                 .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
                 .antMatchers("/api/v2/**", "/", "/css/**", "/images/**", "/js/**", "/h2/**",
-                        "/select-role","/information", "/upload",
+                        "/select-role","/information", "/file/**",
                         /* swagger v3 */
                         "/v3/api-docs/**",
                         "/swagger-ui/**",
