@@ -73,7 +73,7 @@ public class SecurityConfig {
                 .authorizeRequests()
                 .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
                 .antMatchers("/api/v2/**", "/", "/css/**", "/images/**", "/js/**", "/h2/**",
-                        "/select-role","/information", "/file/**",
+                        "/select-role", "/information", "/file/**",
                         /* swagger v3 */
                         "/v3/api-docs/**",
                         "/swagger-ui/**",
@@ -85,9 +85,7 @@ public class SecurityConfig {
                         "/swagger-ui.html",
                         "/webjars/**",
                         "**/oath-processor/**",
-                        "/login/oauth2/code/kakao/**",
-                        "/auth/login"
-
+                        "/login/oauth2/code/kakao/**"
                 ).permitAll()
 //                .antMatchers("/api/v2/**").hasRole(Role.
 //                        USER.name())
@@ -96,11 +94,17 @@ public class SecurityConfig {
                 .logout()
                 .logoutSuccessUrl("/")
                 .and()
-                .oauth2Login().loginPage("/login/oauth2/code/kakao")//인가코드 > 토큰받아옴 > 유저정보 요청(여기까지 자동으로 loadUser해줌) > 유저정보 받아옴
+                .oauth2Login()
+                .loginPage("/login/oauth2/code/kakao")//인가코드 > 토큰받아옴 > 유저정보 요청(여기까지 자동으로 loadUser해줌) > 유저정보 받아옴
                 .successHandler(authenticationSuccessHandler) //전체로그인 성공 시, handler를 설정
+                .failureHandler((request, response, exception) -> {
+                    // OAuth 2.0 로그인 실패 시 처리 (예: 리다이렉트)
+                    response.sendRedirect("/auth/login/ex");
+                })
                 .userInfoEndpoint() //OAuth 2 로그인 성공 이후 사용자 정보를 가져올 때의 설정
-                .userService(oAuthUserService); //소설 로그인 성공 시 후속 조치를 진행할 UserService 인터페이스의 구현체를 등록
+                .userService(oAuthUserService); //소셜 로그인 성공 시 후속 조치를 진행할 UserService 인터페이스의 구현체를 등록
 
         return http.addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class).build();
     }
+
 }
