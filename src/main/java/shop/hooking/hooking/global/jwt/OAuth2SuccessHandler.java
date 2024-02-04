@@ -75,6 +75,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
     }
 
     private void writeTokenResponse(HttpServletResponse response, String accessToken, String refreshToken, String targetUrl) throws IOException {
+        // 쿠키 설정
         Cookie accessTokenCookie = new Cookie("accessToken", accessToken);
         accessTokenCookie.setSecure(false);
         accessTokenCookie.setHttpOnly(false);
@@ -85,9 +86,9 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         refreshTokenCookie.setPath("/");
         response.addCookie(refreshTokenCookie);
 
-//        response.sendRedirect(targetUrl);
-        log.info("타켓URl, 쿠키정보: " + targetUrl, accessTokenCookie, refreshTokenCookie);
-        getRedirectStrategy().sendRedirect((HttpServletRequest) response, response, targetUrl);
+        // 리다이렉트 수행
+        response.sendRedirect(targetUrl);
+        log.info("타켓URl, 쿠키정보: " + targetUrl + ", " + accessTokenCookie + ", " + refreshTokenCookie);
     }
 
 }
