@@ -21,7 +21,7 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
         } else {
             // 가입되지 않은 사용자의 접근
-            if (!request.getRequestURI().equals("/auth/login") && !request.getRequestURI().startsWith("/auth/")) {
+            if (!request.getRequestURI().startsWith("/login/")) {
                 response.sendRedirect("/auth/login");
             }
         }
