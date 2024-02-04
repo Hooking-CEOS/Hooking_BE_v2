@@ -56,42 +56,48 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         String referer = request.getHeader("Referer");
         String host = request.getHeader("Host");
         String targetUrl;
-        targetUrl = referer;
+        String newtargetUrl;
         log.info(referer);
 
-//        // Referer와 Host에 따라서 targetUrl 설정
-//        if (referer != null && referer.startsWith(requestUrl) && host.equals("hooking.shop")) {
-//            targetUrl = redirectUrl; // 배포 환경
-//        } else if (referer != null && referer.startsWith("http://localhost:3000/") && host.equals("hooking.shop")) {
-//            targetUrl = "http://localhost:3000/oath-processor"; // 로컬 환경
-//        } else if (referer != null && referer.startsWith("https://hooking.me/") && host.equals("hooking.shop")) {
-//            targetUrl = "https://hooking.me/oath-processor"; // 실배포 환경
-//        }
-//        else {
-//            // 기본적으로 로컬 개발 환경으로 설정
-//            targetUrl ="https://hooking.me/oath-processor"; // 로컬 환경
-//        }
+        // Referer와 Host에 따라서 targetUrl 설정
+        if (referer != null && referer.startsWith(requestUrl) && host.equals("hooking.shop")) {
+            targetUrl = redirectUrl; // 배포 환경
+        } else if (referer != null && referer.startsWith("http://localhost:3000/") && host.equals("hooking.shop")) {
+            targetUrl = "http://localhost:3000/oath-processor"; // 로컬 환경
+        } else if (referer != null && referer.startsWith("https://hooking.me/") && host.equals("hooking.shop")) {
+            targetUrl = "https://hooking.me/oath-processor"; // 실배포 환경
+        }
+        else {
+            // 기본적으로 로컬 개발 환경으로 설정
+            targetUrl ="https://hooking.me/oath-processor"; // 로컬 환경
+        }
+// 쿼리 파라미터를 추가하여 targetUrl 생성
+        newtargetUrl = UriComponentsBuilder.fromUriString(targetUrl)
+                .queryParam("accessToken", accessToken)
+                .build().toUriString();
 
-        writeTokenResponse(request, response, accessToken, refreshToken, targetUrl);
+        // response body로 보냄
+        getRedirectStrategy().sendRedirect(request, response, newtargetUrl);
+        //writeTokenResponse(request, response, accessToken, refreshToken, targetUrl);
     }
 
-    private void writeTokenResponse(HttpServletRequest request, HttpServletResponse response, String accessToken, String refreshToken, String targetUrl) throws IOException {
-        Cookie accessTokenCookie = new Cookie("accessToken", accessToken);
-        accessTokenCookie.setSecure(false);
-        accessTokenCookie.setHttpOnly(false);
-        accessTokenCookie.setPath("/");
-        response.addCookie(accessTokenCookie);
-
-        Cookie refreshTokenCookie = new Cookie("refreshToken", refreshToken);
-        refreshTokenCookie.setPath("/");
-        response.addCookie(refreshTokenCookie);
-
-//        targetUrl = UriComponentsBuilder.fromUriString(targetUrl)
-//                .build().toUriString();
-        response.sendRedirect(targetUrl);
-        log.info("타켓URl, 쿠키정보: " + targetUrl, accessTokenCookie, refreshTokenCookie);
-        // getRedirectStrategy().sendRedirect(request,response, targetUrl);
-    }
+//    private void writeTokenResponse(HttpServletRequest request, HttpServletResponse response, String accessToken, String refreshToken, String targetUrl) throws IOException {
+//        Cookie accessTokenCookie = new Cookie("accessToken", accessToken);
+//        accessTokenCookie.setSecure(false);
+//        accessTokenCookie.setHttpOnly(false);
+//        accessTokenCookie.setPath("/");
+//        response.addCookie(accessTokenCookie);
+//
+//        Cookie refreshTokenCookie = new Cookie("refreshToken", refreshToken);
+//        refreshTokenCookie.setPath("/");
+//        response.addCookie(refreshTokenCookie);
+//
+////        targetUrl = UriComponentsBuilder.fromUriString(targetUrl)
+////                .build().toUriString();
+//        response.sendRedirect(targetUrl);
+//        log.info("타켓URl, 쿠키정보: " + targetUrl, accessTokenCookie, refreshTokenCookie);
+//        // getRedirectStrategy().sendRedirect(request,response, targetUrl);
+//    }
 
 }
 
