@@ -85,6 +85,7 @@ public class SecurityConfig {
                         "/swagger-ui.html",
                         "/webjars/**",
                         "**/oath-processor/**"
+
                 ).permitAll()
 //                .antMatchers("/api/v2/**").hasRole(Role.
 //                        USER.name())
