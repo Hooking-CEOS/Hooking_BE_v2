@@ -110,8 +110,7 @@ public class BrandService {
         return brandDetailDto;
     }
 
-     public List<BrandResDto.cardDto> getLimitedCardsByIndex(List<BrandResDto.cardDto> cards, int index) {
-         int startIndex = index * 30;
+     public List<BrandResDto.cardDto> getLimitedCardsByIndex(List<BrandResDto.cardDto> cards, int startIndex) {
          int endIndex = Math.min(startIndex + 30, cards.size());
          if (startIndex >= endIndex) {
              throw new OutOfIndexException();
