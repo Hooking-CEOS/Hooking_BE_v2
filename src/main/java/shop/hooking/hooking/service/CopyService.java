@@ -37,7 +37,7 @@ public class CopyService {
         Long[] brandIds = {1L, 2L, 3L, 4L, 5L, 6L, 7L, 8L, 9L, 10L, 11L, 12L, 13L, 14L, 15L, 16L, 17L, 18L, 19L, 20L, 21L, 22L, 23L, 24L, 25L, 26L, 27L, 28L};
         List<CopyResDto> tempCopyRes = new ArrayList<>();
         for (Long brandId : brandIds) {
-            List<CopyResDto> copyRes = getTopSixCopy(brandId);
+            List<CopyResDto> copyRes = getTopEightCopy(brandId);
             tempCopyRes.addAll(copyRes);
         }
         Collections.shuffle(tempCopyRes);
@@ -82,8 +82,8 @@ public class CopyService {
     }
 
     @Transactional
-    public List<CopyResDto> getTopSixCopy(Long brandId) {
-        List<Card> cards = cardRepository.findTop6ByBrandIdOrderByCreatedAtDesc(brandId);
+    public List<CopyResDto> getTopEightCopy(Long brandId) {
+        List<Card> cards = cardRepository.findTop8ByBrandIdOrderByCreatedAtDesc(brandId);
         List<CopyResDto> copyResList = new ArrayList<>();
 
         for (Card card : cards) {
