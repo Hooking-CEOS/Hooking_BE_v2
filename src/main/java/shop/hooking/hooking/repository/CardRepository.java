@@ -12,7 +12,7 @@ import java.util.List;
 @Repository
 public interface CardRepository extends JpaRepository<Card, Long>{
 
-    List<Card> findTop6ByBrandIdOrderByCreatedAtDesc(Long brandId);
+    List<Card> findTop8ByBrandIdOrderByCreatedAtDesc(Long brandId);
 
     @Override
     List<Card> findAll();
