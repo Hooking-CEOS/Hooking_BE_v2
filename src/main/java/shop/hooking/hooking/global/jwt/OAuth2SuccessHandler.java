@@ -73,7 +73,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
             // 기본적으로 로컬 개발 환경으로 설정
             targetUrl ="https://hooking.me/oath-processor"; // 로컬 환경
         }
-// 쿼리 파라미터를 추가하여 targetUrl 생성
+        // 쿼리 파라미터를 추가하여 targetUrl 생성
         newtargetUrl = UriComponentsBuilder.fromUriString(targetUrl)
                 .queryParam("accessToken", accessToken)
                 .build().toUriString();
@@ -94,8 +94,6 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 //        refreshTokenCookie.setPath("/");
 //        response.addCookie(refreshTokenCookie);
 //
-////        targetUrl = UriComponentsBuilder.fromUriString(targetUrl)
-////                .build().toUriString();
 //        response.sendRedirect(targetUrl);
 //        log.info("타켓URl, 쿠키정보: " + targetUrl, accessTokenCookie, refreshTokenCookie);
 //        // getRedirectStrategy().sendRedirect(request,response, targetUrl);

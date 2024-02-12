@@ -28,7 +28,7 @@ public class BrandController {
     }
 
 
-    //브랜드 상세 조회
+    //브랜드 상세 조회 - 수정
     @Operation(summary = "브랜드 상세 조회하기")
     @GetMapping("/{brand_id}/{index}")
     public ResponseEntity<BrandResDto.BrandDetailDto> getOneBrand(HttpServletRequest httpRequest, @PathVariable Long brand_id, @PathVariable int index) {
