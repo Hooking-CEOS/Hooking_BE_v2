@@ -172,24 +172,24 @@ public class CopyService {
         List<Scrap> scraps = scrapRepository.findScrapByUser(user);
         List<CopyResDto> scrapList = new ArrayList<>();
 
-        for (Scrap scrap : scraps) { //10,20,30
-            if (scrap.getId() == null)
-                throw new ScrapNotFoundException(); // 왜 안터지지...
+        for (Scrap scrap : scraps) {
+            if (scrap.getId() == null) {
+                throw new ScrapNotFoundException(); // scrap.getId()가 null이면 예외를 던집니다.
+            }
 
             CopyResDto copyRes = createScrapRes(scrap);
             scrapList.add(copyRes);
             copyRes.setScrapTime(scrap.getCreatedAt());
-
-
-            setIsScrap(user, scrapList);
-            scrapList.sort(Comparator.comparing(CopyResDto::getScrapTime).reversed()); // 최신순으로 정렬
-            List<CopyResDto> result = getCopyByIndex(scrapList, index);
-
-
-            return result;
         }
-        return scrapList;
+
+        // 위 반복문이 모두 실행된 후에 정렬하고 인덱스에 해당하는 스크랩만 반환합니다.
+        setIsScrap(user, scrapList);
+        scrapList.sort(Comparator.comparing(CopyResDto::getScrapTime).reversed());
+        List<CopyResDto> result = getCopyByIndex(scrapList, index);
+
+        return result;
     }
+
 //
     @Transactional
     public Long createScrap(HttpServletRequest httpRequest, CopyReqDto copyReq) {
