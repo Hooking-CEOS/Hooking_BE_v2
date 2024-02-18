@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import shop.hooking.hooking.dto.CardSearchCondition;
 import shop.hooking.hooking.dto.request.CopyReqDto;
 import shop.hooking.hooking.dto.request.CrawlingReqDto;
+import shop.hooking.hooking.dto.request.RandomSeedDto;
 import shop.hooking.hooking.dto.response.CopyResDto;
 import shop.hooking.hooking.dto.response.CopySearchResDto;
 import shop.hooking.hooking.exception.OutOfIndexException;
@@ -27,9 +28,9 @@ public class CopyController {
 
     @Operation(summary = "전체 카피라이팅 조회하기")
     @GetMapping("/{index}")
-    public ResponseEntity<List<CopyResDto>> getCopyList(HttpServletRequest httpRequest, @PathVariable int index) {
+    public ResponseEntity<List<CopyResDto>> getCopyList(HttpServletRequest httpRequest, @PathVariable int index,@RequestBody(required = false) RandomSeedDto randomSeedDto) {
         try {
-            List<CopyResDto> copyResList = copyService.getCopyList(httpRequest, index);
+            List<CopyResDto> copyResList = copyService.getCopyList(httpRequest, index,randomSeedDto.getRandomSeed());
             return ResponseEntity.ok(copyResList);
         } catch (IllegalArgumentException ex) {
             throw new OutOfIndexException();
@@ -38,27 +39,27 @@ public class CopyController {
 
 
     @Operation(summary = "브랜드 카피라이팅 검색하기")
-    @GetMapping("/search/brand/{index}")
+    @PostMapping("/search/brand/{index}")
     public ResponseEntity<CopySearchResDto> searchBrandList(HttpServletRequest httpRequest,
                                                             @RequestParam(name = "keyword") String q,
-                                                            @PathVariable int index) {
-        return ResponseEntity.ok(copyService.searchBrandList(httpRequest, q, index));
+                                                            @PathVariable int index, @RequestBody(required = false) RandomSeedDto randomSeedDto) {
+        return ResponseEntity.ok(copyService.searchBrandList(httpRequest, q, index, randomSeedDto.getRandomSeed()));
     }
 
     @Operation(summary = "키워드 카피라이팅 검색하기")
-    @GetMapping("/search/text/{index}")
+    @PostMapping("/search/text/{index}")
     public ResponseEntity<CopySearchResDto> searchCopyList(HttpServletRequest httpRequest,
                                                            @RequestParam(name = "keyword") String q,
-                                                           @PathVariable int index) {
-        return ResponseEntity.ok(copyService.searchCopyList(httpRequest, q, index));
+                                                           @PathVariable int index,@RequestBody(required = false) RandomSeedDto randomSeedDto) {
+        return ResponseEntity.ok(copyService.searchCopyList(httpRequest, q, index,randomSeedDto.getRandomSeed()));
     }
 
     @Operation(summary = "무드 카피라이팅 검색하기")
-    @GetMapping("/search/mood/{index}")
+    @PostMapping("/search/mood/{index}")
     public ResponseEntity<CopySearchResDto> searchMoodList(HttpServletRequest httpRequest,
                                                            @RequestParam(name = "keyword") String q,
-                                                           @PathVariable int index) {
-        return ResponseEntity.ok(copyService.searchMoodList(httpRequest, q, index));
+                                                           @PathVariable int index,@RequestBody(required = false) RandomSeedDto randomSeedDto) {
+        return ResponseEntity.ok(copyService.searchMoodList(httpRequest, q, index, randomSeedDto.getRandomSeed()));
     }
 
 
