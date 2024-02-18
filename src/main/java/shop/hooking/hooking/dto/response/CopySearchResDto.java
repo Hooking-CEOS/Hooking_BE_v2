@@ -16,13 +16,16 @@ public class CopySearchResDto {
     private String type;
     private List<CopyResDto> data;
 
+    private Long randomSeed;
+
 
     @Builder
-    public CopySearchResDto(int totalNum, String keyword, String type, List<CopyResDto> data) {
+    public CopySearchResDto(int totalNum, String keyword, String type, List<CopyResDto> data, Long randomSeed) {
         this.totalNum = totalNum;
         this.keyword = keyword;
         this.type = type;
         this.data = data;
+        this.randomSeed=randomSeed;
     }
 
 }
