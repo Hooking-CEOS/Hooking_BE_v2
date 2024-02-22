@@ -52,6 +52,7 @@ public class CopyService {
     }
 
 
+
     public List<CopyResDto> getCopyByIndex(List<CopyResDto> copyResList, int index) {
         int startIndex = index * 30;
         int endIndex = Math.min(startIndex + 30, copyResList.size());
@@ -95,7 +96,7 @@ public class CopyService {
         return copyResList;
     }
 
-    public CopySearchResDto searchBrandList(HttpServletRequest httpRequest, String q, int index) {
+    public CopySearchResDto searchBrandList(HttpServletRequest httpRequest, String q, int index, Long randomSeedDto) {
         User user = jwtTokenProvider.getUserInfoByToken(httpRequest);
 
         q = checkKeyword(q);
@@ -103,18 +104,36 @@ public class CopyService {
         List<CopyResDto> brandCopyRes;
 
         if (BrandType.containsKeyword(q)) {
-            brandCopyRes = cardJpaRepository.searchBrand(q);
-            setScrapCnt(httpRequest, brandCopyRes);
-            setIsScrap(user, brandCopyRes);
-            Collections.shuffle(brandCopyRes);
+            // index가 0이면 백엔드에서 랜덤 시드값 생성
+            if (index == 0) {
+                Long seed = new Random().nextLong(); // 랜덤 시드값 생성
+                brandCopyRes = cardJpaRepository.searchBrand(q);
+                setScrapCnt(httpRequest, brandCopyRes);
+                setIsScrap(user, brandCopyRes);
+                Collections.shuffle(brandCopyRes, new Random(seed)); // 생성한 시드값으로 섞기
 
-            CopySearchResDto brandSearchResult = createCopySearchResult("brand", q, brandCopyRes, index);
-            return brandSearchResult;
+                // 생성한 랜덤 시드값과 함께 결과 반환
+                CopySearchResDto brandSearchResult = createCopySearchResult("brand", q, brandCopyRes, index, seed);
+                return brandSearchResult;
+            } else if (index > 0) {
+                // index가 1 이상이면 프론트엔드에서 전달한 시드값 사용
+                // 프론트엔드에서 전달받은 시드값으로 섞기
+                // 여기서는 seed를 프론트엔드에서 전달받는다고 가정합니다.
+                Long seed = randomSeedDto; // 프론트엔드에서 전달받은 시드값
+                brandCopyRes = cardJpaRepository.searchBrand(q);
+                setScrapCnt(httpRequest, brandCopyRes);
+                setIsScrap(user, brandCopyRes);
+                Collections.shuffle(brandCopyRes, new Random(seed)); // 전달받은 시드값으로 섞기
+
+                CopySearchResDto brandSearchResult = createCopySearchResult("brand", q,brandCopyRes, index, seed);
+                return brandSearchResult;
+            }
         }
 
         // 검색 결과가 없다면
         throw new CardNotFoundException();
     }
+
 
 
     public String checkKeyword(String q) {
@@ -124,19 +143,36 @@ public class CopyService {
         return q;
     }
 
-    public CopySearchResDto searchMoodList(HttpServletRequest httpRequest, String q, int index) {
+    public CopySearchResDto searchMoodList(HttpServletRequest httpRequest, String q, int index, Long randomSeedDto) {
         User user = jwtTokenProvider.getUserInfoByToken(httpRequest);
 
         List<CopyResDto> moodCopyRes;
 
         if (MoodType.containsKeyword(q)) {
-            moodCopyRes = cardJpaRepository.searchMood(q);
-            setScrapCnt(httpRequest, moodCopyRes);
-            setIsScrap(user, moodCopyRes);
-            Collections.shuffle(moodCopyRes);
+            // index가 0이면 백엔드에서 랜덤 시드값 생성
+            if (index == 0) {
+                Long seed = new Random().nextLong(); // 랜덤 시드값 생성
+                moodCopyRes = cardJpaRepository.searchMood(q);
+                setScrapCnt(httpRequest, moodCopyRes);
+                setIsScrap(user, moodCopyRes);
+                Collections.shuffle(moodCopyRes, new Random(seed)); // 생성한 시드값으로 섞기
 
-            CopySearchResDto moodSearchResult = createCopySearchResult("mood", q, moodCopyRes, index);
-            return moodSearchResult;
+                // 생성한 랜덤 시드값과 함께 결과 반환
+                CopySearchResDto moodSearchResult = createCopySearchResult("mood", q, moodCopyRes, index, seed);
+                return moodSearchResult;
+            } else if (index > 0) {
+                // index가 1 이상이면 프론트엔드에서 전달한 시드값 사용
+                // 프론트엔드에서 전달받은 시드값으로 섞기
+                // 여기서는 seed를 프론트엔드에서 전달받는다고 가정합니다.
+                Long seed = randomSeedDto; // 프론트엔드에서 전달받은 시드값
+                moodCopyRes = cardJpaRepository.searchMood(q);
+                setScrapCnt(httpRequest, moodCopyRes);
+                setIsScrap(user, moodCopyRes);
+                Collections.shuffle(moodCopyRes, new Random(seed)); // 전달받은 시드값으로 섞기
+
+                CopySearchResDto moodSearchResult = createCopySearchResult("mood", q, moodCopyRes, index,seed);
+                return moodSearchResult;
+            }
         }
 
         // 검색 결과가 없다면
@@ -145,7 +181,7 @@ public class CopyService {
 
 
 
-    public CopySearchResDto searchCopyList(HttpServletRequest httpRequest, String q, int index) {
+    public CopySearchResDto searchCopyList(HttpServletRequest httpRequest, String q, int index, Long randomSeedDto) {
         User user = jwtTokenProvider.getUserInfoByToken(httpRequest);
 
         List<CopyResDto> textCopyRes;
@@ -153,17 +189,34 @@ public class CopyService {
         textCopyRes = cardJpaRepository.searchCopy(q);
 
         if (!textCopyRes.isEmpty()) {
-            setScrapCnt(httpRequest, textCopyRes);
-            setIsScrap(user, textCopyRes);
-            Collections.shuffle(textCopyRes);
+            // index가 0이면 백엔드에서 랜덤 시드값 생성
+            if (index == 0) {
+                Long seed = new Random().nextLong(); // 랜덤 시드값 생성
+                setScrapCnt(httpRequest, textCopyRes);
+                setIsScrap(user, textCopyRes);
+                Collections.shuffle(textCopyRes, new Random(seed)); // 생성한 시드값으로 섞기
 
-            CopySearchResDto textSearchResult = createCopySearchResult("text", q, textCopyRes, index);
-            return textSearchResult;
+                // 생성한 랜덤 시드값과 함께 결과 반환
+                CopySearchResDto textSearchResult = createCopySearchResult("text", q, textCopyRes, index, seed);
+                return textSearchResult;
+            } else if (index > 0) {
+                // index가 1 이상이면 프론트엔드에서 전달한 시드값 사용
+                // 프론트엔드에서 전달받은 시드값으로 섞기
+                // 여기서는 seed를 프론트엔드에서 전달받는다고 가정합니다.
+                Long seed = randomSeedDto; // 프론트엔드에서 전달받은 시드값
+                setScrapCnt(httpRequest, textCopyRes);
+                setIsScrap(user, textCopyRes);
+                Collections.shuffle(textCopyRes, new Random(seed)); // 전달받은 시드값으로 섞기
+
+                CopySearchResDto textSearchResult = createCopySearchResult("text", q, textCopyRes, index,seed);
+                return textSearchResult;
+            }
         }
 
         // 검색 결과가 없다면
         throw new CardNotFoundException();
     }
+
 
 
 
@@ -287,7 +340,7 @@ public class CopyService {
 
 
 
-    public CopySearchResDto createCopySearchResult(String type, String keyword, List<CopyResDto> copyResList, int index) {
+    public CopySearchResDto createCopySearchResult(String type, String keyword, List<CopyResDto> copyResList, int index,Long seed) {
         List<CopyResDto> slicedCopyResList = getCopyByIndex(copyResList, index);
 
         return CopySearchResDto.builder()
@@ -295,6 +348,7 @@ public class CopyService {
                 .keyword(keyword)
                 .totalNum(copyResList.size())
                 .data(slicedCopyResList)
+                .randomSeed(seed)
                 .build();
     }
 
