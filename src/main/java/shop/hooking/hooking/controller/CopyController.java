@@ -9,9 +9,9 @@ import org.springframework.web.bind.annotation.*;
 import shop.hooking.hooking.dto.CardSearchCondition;
 import shop.hooking.hooking.dto.request.CopyReqDto;
 import shop.hooking.hooking.dto.request.CrawlingReqDto;
+
 import shop.hooking.hooking.dto.request.ScrapReqDto;
 import shop.hooking.hooking.dto.request.RandomSeedDto;
-
 import shop.hooking.hooking.dto.response.CopyResDto;
 import shop.hooking.hooking.dto.response.CopySearchResDto;
 import shop.hooking.hooking.entity.Card;
