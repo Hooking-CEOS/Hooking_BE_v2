@@ -6,11 +6,6 @@ import org.springframework.stereotype.Service;
 import shop.hooking.hooking.config.enumtype.BrandType;
 import shop.hooking.hooking.config.enumtype.MoodType;
 import shop.hooking.hooking.dto.request.ScrapReqDto;
-<<<<<<< HEAD
-=======
-import shop.hooking.hooking.dto.request.RandomSeedDto;
-
->>>>>>> c42d793cedf87583e42c5a9579a87546547d6450
 import shop.hooking.hooking.dto.response.CopyResDto;
 import shop.hooking.hooking.global.jwt.JwtTokenProvider;
 import shop.hooking.hooking.dto.CardSearchCondition;
