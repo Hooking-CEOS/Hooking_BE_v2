@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import shop.hooking.hooking.dto.CardSearchCondition;
 import shop.hooking.hooking.dto.request.CopyReqDto;
 import shop.hooking.hooking.dto.request.CrawlingReqDto;
-import shop.hooking.hooking.dto.request.FolderReqDto;
+
 import shop.hooking.hooking.dto.request.ScrapReqDto;
 import shop.hooking.hooking.dto.request.RandomSeedDto;
 import shop.hooking.hooking.dto.response.CopyResDto;
@@ -35,9 +35,9 @@ public class CopyController {
 
     @Operation(summary = "전체 카피라이팅 조회하기")
     @GetMapping("/{index}")
-    public ResponseEntity<List<CopyResDto>> getCopyList(HttpServletRequest httpRequest, @PathVariable int index,@RequestBody(required = false) RandomSeedDto randomSeedDto) {
+    public ResponseEntity<List<CopyResDto>> getCopyList(HttpServletRequest httpRequest, @PathVariable int index) {
         try {
-            List<CopyResDto> copyResList = copyService.getCopyList(httpRequest, index,randomSeedDto.getRandomSeed());
+            List<CopyResDto> copyResList = copyService.getCopyList(httpRequest, index);
             return ResponseEntity.ok(copyResList);
         } catch (IllegalArgumentException ex) {
             throw new OutOfIndexException();
@@ -70,7 +70,6 @@ public class CopyController {
         return ResponseEntity.ok(copyService.searchMoodList(httpRequest, q, index, randomSeedDto.getRandomSeed()));
     }
 
-
     @Operation(summary = "카피라이팅 스크랩 조회하기")
     @GetMapping("/scrap/{index}")
     public ResponseEntity<List<CopyResDto>> getScrapList(HttpServletRequest httpRequest, @PathVariable int index) {
@@ -88,6 +87,7 @@ public class CopyController {
         return ResponseEntity.status(HttpStatus.OK).body(result);
 
     }
+
 
     @Operation(summary= "사용자의 폴더 리스트 보여주기")
     @GetMapping("/folder")

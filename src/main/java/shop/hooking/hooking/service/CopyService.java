@@ -6,8 +6,11 @@ import org.springframework.stereotype.Service;
 import shop.hooking.hooking.config.enumtype.BrandType;
 import shop.hooking.hooking.config.enumtype.MoodType;
 import shop.hooking.hooking.dto.request.ScrapReqDto;
+<<<<<<< HEAD
+=======
 import shop.hooking.hooking.dto.request.RandomSeedDto;
 
+>>>>>>> c42d793cedf87583e42c5a9579a87546547d6450
 import shop.hooking.hooking.dto.response.CopyResDto;
 import shop.hooking.hooking.global.jwt.JwtTokenProvider;
 import shop.hooking.hooking.dto.CardSearchCondition;
@@ -37,7 +40,7 @@ public class CopyService {
     private final ContainRepository containRepository;
 
     //상속 -> 일반 부모 , 카카오 자식
-    public List<CopyResDto> getCopyList(HttpServletRequest httpRequest, int index, Long randomSeedDto) {
+    public List<CopyResDto> getCopyList(HttpServletRequest httpRequest, int index) {
         User user = jwtTokenProvider.getUserInfoByToken(httpRequest);
         Long[] brandIds = {1L, 2L, 3L, 4L, 5L, 6L, 7L, 8L, 9L, 10L, 11L, 12L, 13L, 14L, 15L, 16L, 17L, 18L, 19L, 20L, 21L, 22L, 23L, 24L, 25L, 26L, 27L, 28L};
         List<CopyResDto> tempCopyRes = new ArrayList<>();
@@ -45,7 +48,6 @@ public class CopyService {
             List<CopyResDto> copyRes = getTopEightCopy(brandId);
             tempCopyRes.addAll(copyRes);
         }
-
         Collections.shuffle(tempCopyRes);
         List<CopyResDto> resultCopyRes = getCopyByIndex(tempCopyRes, index);
         setScrapCnt(httpRequest, resultCopyRes);
@@ -53,6 +55,7 @@ public class CopyService {
         return resultCopyRes;
 
     }
+
 
 
     public List<CopyResDto> getCopyByIndex(List<CopyResDto> copyResList, int index) {
