@@ -119,9 +119,6 @@ public class CopyService {
                 CopySearchResDto brandSearchResult = createCopySearchResult("brand", q, brandCopyRes, index, seed);
                 return brandSearchResult;
             } else if (index > 0) {
-                // index가 1 이상이면 프론트엔드에서 전달한 시드값 사용
-                // 프론트엔드에서 전달받은 시드값으로 섞기
-                // 여기서는 seed를 프론트엔드에서 전달받는다고 가정합니다.
                 Long seed = randomSeedDto; // 프론트엔드에서 전달받은 시드값
                 brandCopyRes = cardJpaRepository.searchBrand(q);
                 setScrapCnt(httpRequest, brandCopyRes);
@@ -419,6 +416,34 @@ public class CopyService {
         return folderNames;
     }
 
+    public List<CopyResDto> getFolderScrapDetails(Long folderId) {
+        // Contain 엔티티에서 폴더에 속한 스크랩 조회
+        List<Contain> contains = containRepository.findByFolderId(folderId);
+        List<CopyResDto> copyResDtos = new ArrayList<>();
+
+        // 조회된 스크랩이 없는 경우
+        if (contains.isEmpty()) {
+            return copyResDtos; // 빈 목록 반환
+        }
+
+        for (Contain contain : contains) {
+            Scrap scrap = contain.getScrap();
+            Card card = scrap.getCard(); // 스크랩에서 카드 정보 가져오기
+
+            // CopyResDto 객체 생성
+            CopyResDto copyResDto = CopyResDto.builder()
+                    .id(card.getId())
+                    .brand(scrap.getCard().getBrand())
+                    .text(card.getText())
+                    .createdAt(scrap.getCreatedAt())
+                    .cardLink(scrap.getCard().getUrl())
+                    .build();
+
+            copyResDtos.add(copyResDto);
+        }
+
+        return copyResDtos;
+    }
 
 
 

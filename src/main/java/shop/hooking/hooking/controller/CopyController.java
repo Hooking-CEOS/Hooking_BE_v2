@@ -99,33 +99,8 @@ public class CopyController {
     @Operation(summary = "폴더 스크랩 세부 조회하기")
     @GetMapping("/folder/{folderId}")
     public ResponseEntity<List<CopyResDto>> getFolderScrap(HttpServletRequest httpRequest, @PathVariable Long folderId) {
-        // Contain 엔티티에서 폴더에 속한 스크랩 조회
-        List<Contain> contains = containRepository.findByFolderId(folderId);
-        List<CopyResDto> copyResDtos = new ArrayList<>();
-
-        // 조회된 스크랩이 없는 경우
-        if (contains.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ArrayList<>()); // 빈 목록 반환
-        }
-
-        for (Contain contain : contains) {
-            Scrap scrap = contain.getScrap();
-            Card card = scrap.getCard(); // 스크랩에서 카드 정보 가져오기
-
-            // CopyResDto 객체 생성
-            CopyResDto copyResDto = CopyResDto.builder()
-                    .id(card.getId())
-                    .brand(scrap.getCard().getBrand())
-                    .text(card.getText())
-                    .createdAt(scrap.getCreatedAt())
-                    .cardLink(scrap.getCard().getUrl())
-                    .build();
-
-            copyResDtos.add(copyResDto);
-        }
-
-        // 스크랩된 CopyResDto 목록을 반환
-        return ResponseEntity.ok(copyResDtos);
+        List<CopyResDto> copyResList = copyService.getFolderScrapDetails(folderId);
+        return ResponseEntity.ok(copyResList);
     }
 
 
