@@ -11,5 +11,7 @@ public interface DraftRepository extends JpaRepository<Draft, Long>{
     List<Draft> findByUser(User user);
 
 
-    List<Draft> findBydraftId(Long id);
+    Draft findBydraftId(Long id);
+
+
 }
