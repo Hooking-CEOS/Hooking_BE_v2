@@ -106,7 +106,7 @@ public class CopyService {
         if (BrandType.containsKeyword(q)) {
             // index가 0이면 백엔드에서 랜덤 시드값 생성
             if (index == 0) {
-                Long seed = new Random().nextLong(); // 랜덤 시드값 생성
+                long seed = new Random().nextInt(1000001); // 랜덤 시드값 생성
                 brandCopyRes = cardJpaRepository.searchBrand(q);
                 setScrapCnt(httpRequest, brandCopyRes);
                 setIsScrap(user, brandCopyRes);
