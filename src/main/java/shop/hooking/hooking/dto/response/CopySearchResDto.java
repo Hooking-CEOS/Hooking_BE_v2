@@ -15,7 +15,6 @@ public class CopySearchResDto {
     private String keyword;
     private String type;
     private List<CopyResDto> data;
-
     private Long randomSeed;
 
 

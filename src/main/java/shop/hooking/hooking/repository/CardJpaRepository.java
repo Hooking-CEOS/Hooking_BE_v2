@@ -14,6 +14,8 @@ import static shop.hooking.hooking.entity.QBrand.brand;
 import static shop.hooking.hooking.entity.QCard.card;
 import static shop.hooking.hooking.entity.QHave.have;
 import static shop.hooking.hooking.entity.QMood.mood;
+
+
 @Repository
 public class CardJpaRepository {
 
