@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import shop.hooking.hooking.config.enumtype.BrandType;
 import shop.hooking.hooking.config.enumtype.MoodType;
-import shop.hooking.hooking.dto.request.RandomSeedDto;
+import shop.hooking.hooking.dto.request.ScrapReqDto;
 import shop.hooking.hooking.dto.response.CopyResDto;
 import shop.hooking.hooking.global.jwt.JwtTokenProvider;
 import shop.hooking.hooking.dto.CardSearchCondition;
@@ -31,9 +31,11 @@ public class CopyService {
     private final ScrapRepository scrapRepository;
     private final CardJpaRepository cardJpaRepository;
     private final JwtTokenProvider jwtTokenProvider;
+    private final FolderRepository folderRepository;
+    private final ContainRepository containRepository;
 
     //상속 -> 일반 부모 , 카카오 자식
-    public List<CopyResDto> getCopyList(HttpServletRequest httpRequest, int index, Long randomSeedDto) {
+    public List<CopyResDto> getCopyList(HttpServletRequest httpRequest, int index) {
         User user = jwtTokenProvider.getUserInfoByToken(httpRequest);
         Long[] brandIds = {1L, 2L, 3L, 4L, 5L, 6L, 7L, 8L, 9L, 10L, 11L, 12L, 13L, 14L, 15L, 16L, 17L, 18L, 19L, 20L, 21L, 22L, 23L, 24L, 25L, 26L, 27L, 28L};
         List<CopyResDto> tempCopyRes = new ArrayList<>();
@@ -41,7 +43,6 @@ public class CopyService {
             List<CopyResDto> copyRes = getTopEightCopy(brandId);
             tempCopyRes.addAll(copyRes);
         }
-
         Collections.shuffle(tempCopyRes);
         List<CopyResDto> resultCopyRes = getCopyByIndex(tempCopyRes, index);
         setScrapCnt(httpRequest, resultCopyRes);
@@ -49,7 +50,6 @@ public class CopyService {
         return resultCopyRes;
 
     }
-
 
 
 
@@ -254,21 +254,46 @@ public class CopyService {
     }
 
 //
-    @Transactional
-    public Long createScrap(HttpServletRequest httpRequest, CopyReqDto copyReq) {
+    public void createScrap(HttpServletRequest httpRequest, ScrapReqDto scrapReqDto) {
         User user = jwtTokenProvider.getUserInfoByToken(httpRequest);
-        System.out.println(user.getEmail()+" createScrap");
-        Card card = cardRepository.findCardById(copyReq.getCardId());
+        System.out.println(user.getEmail() + " createScrap");
+        Card card = cardRepository.findCardById(scrapReqDto.getCardId());
+        Optional<Folder> optionalFolder = folderRepository.findById(scrapReqDto.getFolderId());
 
-        if (hasScrapped(user, card)) {
-            throw new DuplicateScrapException();
+        if (optionalFolder.isPresent()) {
+            Folder folder = optionalFolder.get();
+
+            if (hasScrapped(user, card)) {
+                throw new DuplicateScrapException();
+            }
+
+            Scrap scrap = saveCopy(user, card); // 스크랩 저장
+
+            // 폴더에 스크랩 추가
+            Contain newContain = Contain.builder()
+                    .folder(folder)
+                    .scrap(scrap)
+                    .build();
+            containRepository.save(newContain);
+        } else {
+            // 폴더가 없는 경우 새로운 폴더 생성
+            Folder newFolder = Folder.builder()
+                    .name(scrapReqDto.getFolderName())
+                    .user(user)
+                    .build();
+            folderRepository.save(newFolder);
+
+            Scrap scrap = saveCopy(user, card); // 스크랩 저장
+
+            // 새로 생성된 폴더에 스크랩 추가
+            Contain newContain = Contain.builder()
+                    .folder(newFolder)
+                    .scrap(scrap)
+                    .build();
+            containRepository.save(newContain);
         }
-
-        Long cardId = card.getId();
-        saveCopy(user, card);
-
-        return cardId;
     }
+
 
     private boolean hasScrapped(User user, Card card) {
         Scrap existingScrap = scrapRepository.findByUserAndCard(user, card);
@@ -276,7 +301,7 @@ public class CopyService {
     }
 
     @Transactional
-    public Long saveCopy(User user, Card card) {
+    public Scrap saveCopy(User user, Card card) {
 
         Scrap scrap = Scrap.builder()
                 .user(user)
@@ -285,7 +310,7 @@ public class CopyService {
 
         Scrap savedScrap = scrapRepository.save(scrap);
 
-        return savedScrap.getId();
+        return savedScrap;
     }
 
 
@@ -379,6 +404,22 @@ public class CopyService {
             cardRepository.save(card);
         }
     }
+    @Transactional
+    public List<String> getFolderList(HttpServletRequest httpRequest) {
+        User user = jwtTokenProvider.getUserInfoByToken(httpRequest);
+        List<Folder> folders = folderRepository.findByUser(user);
+
+        List<String> folderNames = new ArrayList<>();
+
+        for (Folder folder : folders) {
+            String folderName = folder.getName();
+            folderNames.add(folderName);
+        }
+
+        return folderNames;
+    }
+
+
 
 
 }
