@@ -106,7 +106,10 @@ public class CopyService {
         if (BrandType.containsKeyword(q)) {
             // index가 0이면 백엔드에서 랜덤 시드값 생성
             if (index == 0) {
-                Long seed = new Random().nextLong(); // 랜덤 시드값 생성
+                Random random = new Random();
+                long minSeed = 1000000L;
+                long maxSeed = 9999999L;
+                long seed = minSeed + (long)(random.nextDouble() * (maxSeed - minSeed));
                 brandCopyRes = cardJpaRepository.searchBrand(q);
                 setScrapCnt(httpRequest, brandCopyRes);
                 setIsScrap(user, brandCopyRes);
@@ -151,7 +154,10 @@ public class CopyService {
         if (MoodType.containsKeyword(q)) {
             // index가 0이면 백엔드에서 랜덤 시드값 생성
             if (index == 0) {
-                Long seed = new Random().nextLong(); // 랜덤 시드값 생성
+                Random random = new Random();
+                long minSeed = 1000000L;
+                long maxSeed = 9999999L;
+                long seed = minSeed + (long)(random.nextDouble() * (maxSeed - minSeed));
                 moodCopyRes = cardJpaRepository.searchMood(q);
                 setScrapCnt(httpRequest, moodCopyRes);
                 setIsScrap(user, moodCopyRes);
@@ -191,7 +197,10 @@ public class CopyService {
         if (!textCopyRes.isEmpty()) {
             // index가 0이면 백엔드에서 랜덤 시드값 생성
             if (index == 0) {
-                Long seed = new Random().nextLong(); // 랜덤 시드값 생성
+                Random random = new Random();
+                long minSeed = 1000000L;
+                long maxSeed = 9999999L;
+                long seed = minSeed + (long)(random.nextDouble() * (maxSeed - minSeed));
                 setScrapCnt(httpRequest, textCopyRes);
                 setIsScrap(user, textCopyRes);
                 Collections.shuffle(textCopyRes, new Random(seed)); // 생성한 시드값으로 섞기
