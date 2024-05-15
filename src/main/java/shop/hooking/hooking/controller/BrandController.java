@@ -19,7 +19,7 @@ public class BrandController {
 
 
 
-    //브랜드 전체 조회하기
+    //브랜드 전체 조회하기.
     @Operation(summary = "브랜드 전체 조회하기")
     @GetMapping("")
     public ResponseEntity<List<BrandResDto.BrandDto>> showAllBrand() {
