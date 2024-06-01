@@ -2,6 +2,7 @@
 마케터들을 위한 레퍼런스 플랫폼, 후킹
 </br></br>
 <img src="https://github.com/Hooking-CEOS/Hooking_BE_v2/assets/99666136/1796e10f-58a1-4af8-8336-bf606eaec609" width="400" />
+</br>
 
 ## 🏆 수상경력
 - 서강대 창업동아리 선발 (2024.01)
