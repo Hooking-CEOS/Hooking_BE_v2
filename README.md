@@ -39,23 +39,22 @@
 <img src="https://github.com/Hooking-CEOS/Hooking_BE_v2/assets/99666136/fd391030-c314-4e69-b0fd-ba50bdd60e3c" width="600" />
 </br>
 
-- 브랜드 크롤링
+- Uipath를 통한 브랜드 크롤링
 <img src="https://github.com/Hooking-CEOS/Hooking_BE_v2/assets/99666136/4e21fb4c-de32-4ad2-867c-752c468d9c1d" width="600" />
 </br>
 
-- 특정 브랜드 카피라이팅 크롤링
+- 카피라이팅 필터링
 <img src="https://github.com/Hooking-CEOS/Hooking_BE_v2/assets/99666136/a6969321-9054-4cae-aa28-a48b7692d1e9" width="600" />
 </br>
 
-- 카피라이팅 필터링하기
+- 랜덤시드 및 페이지네이션을 통한 중복값 방지 및 API 속도 개선
 <img src="https://github.com/Hooking-CEOS/Hooking_BE_v2/assets/99666136/477d8fc8-920f-4d07-a878-28aacc00c28a" width="600" />
 </br>
 
-- 랜덤시드 및 페이지네이션을 통한 중복값 방지 및 API 속도 개선
+- 카카오 로그인을 통한 인증 및 인가 절차
 <img src="https://github.com/Hooking-CEOS/Hooking_BE_v2/assets/99666136/1abb6c3a-4654-4e6b-920b-b3dfdf551e6f" width="600" />
 </br>
 
-- 카카오 로그인을 통한 인증 및 인가 절차
-<img src="https://github.com/Hooking-CEOS/Hooking_BE_v2/assets/99666136/e4957638-26ec-4f24-bfab-a208f475b486" width="600" />
+
 
 
